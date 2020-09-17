@@ -1,0 +1,29 @@
+name: UHC
+version: Beta1.0
+author: Neyuux_
+main: fr.neyuux.uhc.Index
+softdepend: [NeyGin_Core]
+commands:
+  uhc:
+    description: Commande Principale
+    permission: uhc.*
+  revive:
+    description: Commande de Revive
+    permission: uhc.revive
+  heal:
+    description: Commande de Final Heal
+    permission: uhc.heal
+  inv:
+    description: Commande pour afficher le stuff de depart
+  finish:
+    description: Commande de finish de l'inv de depart
+    permission: uhc.finish
+  enchant:
+    description: Commande pour enchanter un item dans l'inv de depart
+    permission: uhc.enchant
+  scenario:
+    description: Commande pour afficher les scenarios
+    aliases: [scen, scenarios]
+permissions:
+   uhc.*:
+     description: Gives access to all UHC commands
