@@ -24,6 +24,10 @@ commands:
   scenario:
     description: Commande pour afficher les scenarios
     aliases: [scen, scenarios]
+  helpop:
+      description: Commande de question
+      aliases:
+        - question
 permissions:
    uhc.*:
      description: Gives access to all UHC commands

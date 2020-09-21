@@ -2,6 +2,7 @@ package fr.neyuux.uhc.teams;
 
 import fr.neyuux.uhc.Index;
 import fr.neyuux.uhc.PlayerUHC;
+import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Scoreboard;
@@ -9,7 +10,6 @@ import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class UHCTeam {

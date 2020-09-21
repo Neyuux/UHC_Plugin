@@ -4,8 +4,8 @@ import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.inventory.ItemStack;
 
-public class Bookception extends Scenario {
-    public Bookception(Scenarios scenario, ItemStack menuItem) {
+public class BowLess extends Scenario {
+    public BowLess(Scenarios scenario, ItemStack menuItem) {
         super(scenario, menuItem);
     }
 

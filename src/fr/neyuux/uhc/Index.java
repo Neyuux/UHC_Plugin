@@ -1,21 +1,21 @@
 package fr.neyuux.uhc;
 
-import fr.neyuux.uhc.commands.CommandEnchant;
 import fr.neyuux.uhc.commands.*;
+import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.listeners.UHCListener;
 import fr.neyuux.uhc.teams.UHCTeamManager;
-import net.minecraft.server.v1_8_R3.*;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
+import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,7 +34,7 @@ public class Index extends JavaPlugin {
 	public final List<Player> spectators = new ArrayList<Player>();
 	private Gstate state;
 	public final Map<UUID, ScoreboardSign> boards = new HashMap<UUID, ScoreboardSign>();
-	private StartInventoryManager startInventoryManager = new StartInventoryManager(this);
+	private InventoryManager InventoryManager = new InventoryManager(this);
 	private UHCTeamManager uhcTeamManager = new UHCTeamManager(this);
 	private GameConfig config = new GameConfig(this);
 	public static final HashMap<String, List<UUID>> Grades = new HashMap<String, List<UUID>>();
@@ -72,7 +72,7 @@ public class Index extends JavaPlugin {
 
 		System.out.println("UHC enabling");
 		setState(Gstate.WAITING);
-		this.startInventoryManager = new StartInventoryManager(this);
+		this.InventoryManager = new InventoryManager(this);
 		getCommand("uhc").setExecutor(new CommandUHC(this));
 		getCommand("revive").setExecutor(new CommandRevive(this));
 		getCommand("heal").setExecutor(new CommandHeal(this));
@@ -82,6 +82,7 @@ public class Index extends JavaPlugin {
 		getCommand("helpop").setExecutor(new CommandHelpOp(this));
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new UHCListener(this), this);
+		pm.registerEvents(config, this);
 		rel();
 
 		reloadScoreboard();
@@ -98,8 +99,12 @@ public class Index extends JavaPlugin {
 		return null;
 	}
 
-	public StartInventoryManager getStartInventoryManager() {
-		return startInventoryManager;
+	public static ItemStack getGoldenHead() {
+		return new ItemsStack(Material.GOLDEN_APPLE, "§6Golden Head", "§7Donne §dRégénération 2 pendant 8 secondes", "§7et §e2 coeurs d'absorption").toItemStack();
+	}
+
+	public InventoryManager getStartInventoryManager() {
+		return InventoryManager;
 	}
 
 	public UHCTeamManager getUHCTeamManager() {
@@ -232,24 +237,40 @@ public class Index extends JavaPlugin {
 
 
 
-	public static void setPlayerTabList(Player p,String abovelist, String underlist) {
-		EntityPlayer pl = (((CraftPlayer)p).getHandle());
-		PlayerConnection c = pl.playerConnection;
-		IChatBaseComponent header = IChatBaseComponent.ChatSerializer.a("{'text': '" + abovelist+ "'}");
-		IChatBaseComponent msg = IChatBaseComponent.ChatSerializer.a("{'text': '" + underlist + "'}");
-		PacketPlayOutPlayerListHeaderFooter l = new PacketPlayOutPlayerListHeaderFooter(header);
+	public static void setPlayerTabList(Player player,String header, String footer) {
+			CraftPlayer cplayer = (CraftPlayer) player;
+			PlayerConnection connection = cplayer.getHandle().playerConnection;
 
-		c.sendPacket(l);
+			IChatBaseComponent top = IChatBaseComponent.ChatSerializer.a("{text: '" + header + "'}");
+			IChatBaseComponent bot = IChatBaseComponent.ChatSerializer.a("{text: '" + footer + "'}");
 
-		try {
-			Field field = l.getClass().getDeclaredField("b");
-			field.setAccessible(true);
-			field.set(l, msg);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			c.sendPacket(l);
-		}
+			PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter();
+
+			try {
+				Field headerField = packet.getClass().getDeclaredField("a");
+				headerField.setAccessible(true);
+				headerField.set(packet, top);
+				headerField.setAccessible(!headerField.isAccessible());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			connection.sendPacket(packet);
+
+
+
+			PacketPlayOutPlayerListHeaderFooter packet2 = new PacketPlayOutPlayerListHeaderFooter();
+
+			try {
+				Field headerField = packet2.getClass().getDeclaredField("a");
+				headerField.setAccessible(true);
+				headerField.set(packet2, bot);
+				headerField.setAccessible(!headerField.isAccessible());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			connection.sendPacket(packet);
 	}
 
 

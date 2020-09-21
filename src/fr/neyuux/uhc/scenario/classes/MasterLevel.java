@@ -4,13 +4,13 @@ import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.inventory.ItemStack;
 
-public class Bookception extends Scenario {
-    public Bookception(Scenarios scenario, ItemStack menuItem) {
+public class MasterLevel extends Scenario {
+    public MasterLevel(Scenarios scenario, ItemStack menuItem) {
         super(scenario, menuItem);
     }
 
     @Override
-    public void activate() {
+    protected void activate() {
 
     }
 

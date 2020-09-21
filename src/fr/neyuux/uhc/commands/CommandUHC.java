@@ -1,8 +1,8 @@
 package fr.neyuux.uhc.commands;
 
 import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.InventoryManager;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.StartInventoryManager;
 import fr.neyuux.uhc.enums.Gstate;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -163,7 +163,7 @@ public class CommandUHC implements CommandExecutor {
                                         player.setGameMode(GameMode.SPECTATOR);
                                         player.setDisplayName("§8[§7Spectateur§8] §7" + player.getName());
                                         player.setPlayerListName(player.getDisplayName());
-                                        StartInventoryManager.clearInventory(player);
+                                        InventoryManager.clearInventory(player);
                                         playerUHC.heal();
 
                                         player.sendMessage(main.getPrefix() + "§6Votre mode de jeu à été établi en spectateur.");
@@ -178,7 +178,7 @@ public class CommandUHC implements CommandExecutor {
                                         player.setGameMode(GameMode.ADVENTURE);
                                         player.setDisplayName(player.getName());
                                         player.setPlayerListName(player.getDisplayName());
-                                        StartInventoryManager.giveWaitInventory(player);
+                                        InventoryManager.giveWaitInventory(player);
 
                                         player.sendMessage(main.getPrefix() + "§6Vous n'êtes plus un spectateur.");
                                     } else player.sendMessage(main.getPrefix() + "§cCette commande est inutilisable une fois la partie commencée.");

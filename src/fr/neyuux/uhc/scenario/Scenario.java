@@ -8,25 +8,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class Scenario {
 
     public Scenarios scenario;
     public ItemStack menuItem;
+    private final HashMap<String, Object> attachements = new HashMap<>();
     public Scenario(Scenarios scenario, ItemStack menuItem) {
         this.scenario = scenario;
         this.menuItem = menuItem;
     }
 
-    public void activeScenario(Player p){
-        if(scenario.getActivated()){
-            Bukkit.broadcastMessage(Index.getStaticPrefix() + ChatColor.RED + "Désactivation" + ChatColor.GRAY + " du scénario " +
-                    "" + ChatColor.GOLD + scenario.getName());
-                    scenario.setActivated(false);
-
-            desactivate();
-        } else {
+    public void activate(Player p){
+        if (!scenario.getActivated()){
             Bukkit.broadcastMessage(Index.getStaticPrefix()+ChatColor.GREEN+"Activation"+ChatColor.GRAY+" du sc"+ChatColor.GOLD+scenario.getName());
             scenario.setActivated(true);
             activate();
@@ -61,10 +57,23 @@ public abstract class Scenario {
         return newItem.toItemStack();
     }
 
-    public abstract void activate(); // ACTIVATION DU SCENARIO
+    protected abstract void activate(); // ACTIVATION DU SCENARIO
     public abstract void execute(); // EXECUTION DU SCENARIO
 
-    public void openMenu(Player p) {} // OUVERTURE DU MENU SI SCENARIO CONFIGURABLE
-    public void desactivate() {} // DESACTIVATION DU SCENARIO
+    public void openMenu(Player p) {
+
+    } // OUVERTURE DU MENU SI SCENARIO CONFIGURABLE
+
+    public void desactivate() {
+        if(scenario.getActivated()){
+            Bukkit.broadcastMessage(Index.getStaticPrefix() + ChatColor.RED + "Désactivation" + ChatColor.GRAY + " du scénario " +
+                    "" + ChatColor.GOLD + scenario.getName());
+            scenario.setActivated(false);
+        }
+    }
+
+    public HashMap<String, Object> getAttachements() {
+        return attachements;
+    }
 }
 

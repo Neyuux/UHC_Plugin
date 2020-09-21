@@ -23,7 +23,7 @@ public class InventoryManager {
     public static void giveWaitInventory(Player player) {
         player.getInventory().setItem(1, Index.getItem(Material.GHAST_TEAR, 1, Arrays.asList("§7Permet de devenir spectateur", "§b>>Clique droit"), "§7§lDevenir Spectateur", (short)0));
         if (player.hasPermission("uhc.*"))
-            player.getInventory().setItem(6, Index.getItem(Material.REDSTONE_COMPARATOR, 1, Arrays.asList("§7Permet de configurer la partie", "§b>>Clique droit"), "§c§lConfiguration de la partie", (short)0));
+            player.getInventory().setItem(6, );
     }
 
 }

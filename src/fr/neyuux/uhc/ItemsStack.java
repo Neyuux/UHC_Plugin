@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class ItemsStack {
 
-    // Ma classe gles items (plus facile que les itemstack)
+    // Ma classe les items (plus facile que les itemstack)
 
     Material material;
     String name;
@@ -70,6 +70,19 @@ public class ItemsStack {
         this.amount = 1;
         this.durabilite = durabilite;
 
+        this.item = new ItemStack(material);
+    }
+
+    public ItemsStack(Material material, short durabilite, String name, String... lore) {
+        this.material = material;
+        this.name = name;
+        this.amount = 1;
+        this.durabilite = durabilite;
+        List<String> desc = new ArrayList<>();
+        for (String s : lore) {
+            desc.add(s);
+            this.lore = desc;
+        }
         this.item = new ItemStack(material);
     }
 
@@ -233,13 +246,15 @@ public class ItemsStack {
         this.item.removeEnchantment(enchant);
     }
 
-    public void addGlowEffect() {
+    public ItemsStack addGlowEffect() {
         ItemMeta itemMeta = this.item.getItemMeta();
 
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         itemMeta.addEnchant(org.bukkit.enchantments.Enchantment.DURABILITY, 1, true);
 
         this.item.setItemMeta(itemMeta);
+
+        return new ItemsStack(item);
     }
 
     public Map<Enchantment, Integer> getEnchantments() {
