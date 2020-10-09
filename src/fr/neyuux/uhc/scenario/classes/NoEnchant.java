@@ -2,11 +2,12 @@ package fr.neyuux.uhc.scenario.classes;
 
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class NoEnchant extends Scenario {
-    public NoEnchant(Scenarios scenario, ItemStack menuItem) {
-        super(scenario, menuItem);
+    public NoEnchant() {
+        super(Scenarios.NO_ENCHANT, new ItemStack(Material.ENCHANTMENT_TABLE));
     }
 
     @Override

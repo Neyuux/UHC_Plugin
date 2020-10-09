@@ -2,11 +2,12 @@ package fr.neyuux.uhc.scenario.classes;
 
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class Bookception extends Scenario {
-    public Bookception(Scenarios scenario, ItemStack menuItem) {
-        super(scenario, menuItem);
+    public Bookception() {
+        super(Scenarios.BOOKCEPTION, new ItemStack(Material.ENCHANTED_BOOK));
     }
 
     @Override

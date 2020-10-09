@@ -2,6 +2,7 @@ package fr.neyuux.uhc.commands;
 
 import fr.neyuux.uhc.Index;
 import fr.neyuux.uhc.InventoryManager;
+import fr.neyuux.uhc.ItemsStack;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.enums.Gstate;
 import org.bukkit.Bukkit;
@@ -13,8 +14,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-
-import java.util.Arrays;
 
 public class CommandUHC implements CommandExecutor {
 
@@ -36,10 +35,10 @@ public class CommandUHC implements CommandExecutor {
                 switch (args[0]) {
 
                     case "whitelist":
-                        if (player.hasPermission("uhc.*")) {
-                            final String helpwhitelistmessage = "§6La whitelist permet de trier les joueurs entrant sur le serveur.\nArgument possibles : " +
+                        if (main.getGameConfig().hosts.contains(player.getUniqueId())) {
+                            final String helpwhitelistmessage = "§6La whitelist permet de trier les joueurs entrant sur le serveur.\nArgument possibles : \n" +
                                     "§eon §6: Active la whitelist (autorise seulement les joueurs whitelistés a rentrer sur le serveur)\n" +
-                                    "§eoff §6: Désactive la whitelist\n§eadd §a<joueur> §6: Ajoute quelqu'un à la whitelist\n§eremove §a<joueur> §6: retire quelqu'un de la whitelist" +
+                                    "§eoff §6: Désactive la whitelist§r\n§eadd §a<joueur> §6: Ajoute quelqu'un à la whitelist\n§eremove §a<joueur> §6: retire quelqu'un de la whitelist" +
                                     "§elist §6: Affiche la liste des joueurs whitelistés.\n§eclear §6: Vide la liste des joueurs whitelistés";
                             if (args.length > 1) {
                                 if (args[1].equalsIgnoreCase("on") && !Bukkit.getServer().hasWhitelist()) {
@@ -93,15 +92,15 @@ public class CommandUHC implements CommandExecutor {
                         break;
                     case "classementores":
                         if (!playerUHC.isAlive()) {
-                            if (player.hasPermission("uhc.*")) {
+                            if (main.getGameConfig().hosts.contains(player.getUniqueId())) {
                                 if (main.isState(Gstate.PLAYING)) {
-                                    Inventory inv = Bukkit.createInventory(null, main.adaptInvSizeFromPlayers(), "§6Classement des minerais");
+                                    Inventory inv = Bukkit.createInventory(null, main.adaptInvSizeForInt(main.getAlivePlayers().size(), 0), "§6Classement des minerais");
                                     for (PlayerUHC pu : main.getAlivePlayers())
                                         if (pu.isAlive()) {
-                                            inv.addItem(Index.getItem(Material.SKULL_ITEM, 1,
-                                                    Arrays.asList("§7Informations sur la partie de §l" + pu.getPlayer().getName(), "", "§bDiamants minés : §6§l" + pu.getDiamonds(), "§eOrs miné : §6§l" + pu.getGolds(),
-                                                            "§fFers minés : §6§l" + pu.getIrons(), "§5Animaux tués : §6§l" + pu.getAnimals(), "§8Monstres tués : §6§l" + pu.getMonsters())
-                                                    , pu.getTeam().getPrefix().toString() + pu.getPlayer().getName(), (short)3));
+                                            inv.addItem(new ItemsStack(Material.SKULL_ITEM, (short)3,
+                                                    pu.getTeam().getPrefix().toString() + pu.getPlayer().getName(),
+                                                    "§7Informations sur la partie de §l" + pu.getPlayer().getName(), "", "§bDiamants minés : §6§l" + pu.getDiamonds(), "§eOrs miné : §6§l" + pu.getGolds(),
+                                                            "§fFers minés : §6§l" + pu.getIrons(), "§5Animaux tués : §6§l" + pu.getAnimals(), "§8Monstres tués : §6§l" + pu.getMonsters()).toItemStack());
                                         }
                                     player.openInventory(inv);
                                 } else player.sendMessage(main.getPrefix() + "§cCette commande n'est disponible qu'en jeu.");
@@ -113,30 +112,33 @@ public class CommandUHC implements CommandExecutor {
                     case "team":
                         break;
                     case "host":
-                        final String helphostmessage = "§6La commande host permet de prouvoir quelqu'un host de la partie.\nArgument possibles : " +
-                                "§eadd §a<joueur> §6: Proumevoit quelqu'un host\n§eremove §a<joueur> §6: Enlève le host à quelqu'un" +
+                        final String helphostmessage = "§6La commande host permet de prouvoir quelqu'un host de la partie.\nArgument possibles : \n" +
+                                "§eadd §a<joueur> §6: Proumevoit quelqu'un host§r\n§eremove §a<joueur> §6: Enlève le host à quelqu'un§r\n" +
                                 "§elist §6: Affiche la liste des host.";
                         if (args.length > 1) {
                             if (args[1].equalsIgnoreCase("add")) {
-                                if (player.hasPermission("uhc.*")) {
+                                if (main.getGameConfig().hosts.contains(player.getUniqueId())) {
                                     if (args.length > 2) {
                                         Player p = Bukkit.getPlayer(args[2]);
                                         if (p != null) {
-                                            main.setPlayerHost(p, true);
-                                            Bukkit.broadcastMessage(main.getPrefix() + "§a§l" + p.getName() + " §6a été promu §lHost §6de la partie");
+                                            if (!main.getPlayerUHC(p).isHost()) {
+                                                main.setPlayerHost(p, true);
+                                                Bukkit.broadcastMessage(main.getPrefix() + "§a§l" + p.getName() + " §6a été promu §lHost §6de la partie !");
+                                            } else player.sendMessage(main.getPrefix() + "§cCe joueur est déjà §6§lHost §cde la partie !");
                                         } else player.sendMessage(main.getPrefix() + "§cLe joueur §4\"§e" + args[2] + "§4\" §cn'existe pas.");
                                     } else player.sendMessage(main.getPrefix() + helphostmessage);
                                 } else player.sendMessage(main.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");
 
                             } else if (args[1].equalsIgnoreCase("remove")) {
-                                if (player.hasPermission("uhc.*")) {
+                                if (main.getGameConfig().hosts.contains(player.getUniqueId())) {
                                     if (args.length > 2) {
                                         Player p = Bukkit.getPlayer(args[2]);
-                                        if (p != null) {
-                                            main.setPlayerHost(p, false);
-                                            Bukkit.broadcastMessage(main.getPrefix() + "§c§l" + p.getName() + " §6n'est plus §lHost §6de la partie");
-                                        } else
-                                            player.sendMessage(main.getPrefix() + "§cLe joueur §4\"§e" + args[2] + "§4\" §cn'existe pas.");
+                                        if (p != null)
+                                            if (main.getPlayerUHC(p).isHost()) {
+                                                main.setPlayerHost(p, false);
+                                                Bukkit.broadcastMessage(main.getPrefix() + "§c§l" + p.getName() + " §6n'est plus §lHost §6de la partie !");
+                                            } else player.sendMessage(main.getPrefix() + "§cCe joueur n'est pas §6§lHost §cde la partie !");
+                                        else player.sendMessage(main.getPrefix() + "§cLe joueur §4\"§e" + args[2] + "§4\" §cn'existe pas.");
                                     } else player.sendMessage(main.getPrefix() + helphostmessage);
                                 } else
                                     player.sendMessage(main.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");

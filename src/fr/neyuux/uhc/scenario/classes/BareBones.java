@@ -2,11 +2,12 @@ package fr.neyuux.uhc.scenario.classes;
 
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class BareBones extends Scenario {
-    public BareBones(Scenarios scenario, ItemStack menuItem) {
-        super(scenario, menuItem);
+    public BareBones() {
+        super(Scenarios.BAREBONES, new ItemStack(Material.STRING));
     }
 
     @Override

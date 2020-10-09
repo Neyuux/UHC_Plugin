@@ -30,6 +30,7 @@ public enum Symbols {
         Symbols.ARROW_RIGHT_SEMI_UP = "\u27a3";
         Symbols.CERCLED_S = "\u24c8";
         Symbols.CERCLED_G = "\u24bc";
+        Symbols.DOUBLE_ARROW = "\u00BB";
     }
     public static String GAMING_CROSS;
     public static String HEARTH;
@@ -56,6 +57,7 @@ public enum Symbols {
     public static String ARROW_RIGHT_SEMI_UP;
     public static String CERCLED_S;
     public static String CERCLED_G;
+    public static String DOUBLE_ARROW;
 
 
 }

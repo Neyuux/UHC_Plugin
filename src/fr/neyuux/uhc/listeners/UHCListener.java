@@ -17,8 +17,11 @@ public class UHCListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent ev) {
         Player player = ev.getPlayer();
-        player.removeAttachment(main.permissions.get(player.getName()));
-        main.permissions.remove(player.getName());
+
+        if (main.permissions.get(player.getName()) != null) {
+            player.removeAttachment(main.permissions.get(player.getName()));
+            main.permissions.remove(player.getName());
+        }
     }
 
 }

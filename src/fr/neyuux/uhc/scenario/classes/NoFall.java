@@ -2,11 +2,12 @@ package fr.neyuux.uhc.scenario.classes;
 
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class NoFall extends Scenario {
-    public NoFall(Scenarios scenario, ItemStack menuItem) {
-        super(scenario, menuItem);
+    public NoFall() {
+        super(Scenarios.NO_FALL, new ItemStack(Material.GOLD_BOOTS));
     }
 
     @Override

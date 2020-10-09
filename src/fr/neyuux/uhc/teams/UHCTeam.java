@@ -2,6 +2,7 @@ package fr.neyuux.uhc.teams;
 
 import fr.neyuux.uhc.Index;
 import fr.neyuux.uhc.PlayerUHC;
+import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.NameTagVisibility;
@@ -15,19 +16,17 @@ import java.util.Set;
 public class UHCTeam {
 
     private Team team;
-    private TeamPrefix prefix;
-    private Set<PlayerUHC> players;
-    private Set<PlayerUHC> alivePlayers;
-    private Set<PlayerUHC> deathPlayers;
-    private Set<PlayerUHC> pendingInvitations;
-    private Index main;
+    private final TeamPrefix prefix;
+    private final Set<PlayerUHC> players;
+    private final Set<PlayerUHC> alivePlayers;
+    private final Set<PlayerUHC> deathPlayers;
+    private final Index main;
     public UHCTeam(Index main, TeamPrefix prefix) {
         this.main = main;
         this.prefix = prefix;
         this.players = new HashSet<>();
         this.alivePlayers = new HashSet<>();
         this.deathPlayers = new HashSet<>();
-        this.pendingInvitations = new HashSet<>();
 
         setupTeam();
     }
@@ -37,7 +36,7 @@ public class UHCTeam {
         team = scoreboard.registerNewTeam(prefix.toString() + " " + prefix.color.getName());
         team.setPrefix(prefix.toString());
         team.setSuffix("§r");
-        //team.setAllowFriendlyFire(Joueur.FRIENDLYFIRE.getValue());
+        team.setAllowFriendlyFire(GameConfig.PlayerRules.FRIENDLYFIRE.getValue());
         team.setCanSeeFriendlyInvisibles(true);
         team.setNameTagVisibility(NameTagVisibility.ALWAYS);
     }
@@ -51,17 +50,18 @@ public class UHCTeam {
     }
 
     public void add(Player player) {
-        Teamsize teams = Teamsize.getCurrentTeam();
-        if (teams.getName().startsWith("To")  && players.size() >= teams.getNumberPlayer()) {
-            ChatUtil.sendMessage(player, Messages.TEAM_FULL);
+        if (main.getGameConfig().getTeamType().startsWith("To") && players.size() >= Integer.parseInt(main.getGameConfig().getTeamType().substring(2))) {
+            player.sendMessage(main.getPrefix() + "§cL'équipe " + team.getDisplayName() + " §cest pleine !");
             return;
         }
         team.addEntry(player.getName());
 
+        if (main.getGameConfig().getTeamType().startsWith("To")) {
+            player.sendMessage(main.getPrefix() + prefix.color.getColor() + "Vous avez rejoint l'équipe " + team.getName() + " !");
+            sendMessage(main.getPrefix() + player.getDisplayName() + prefix.color.getColor() + " a rejoint votre équipe !");
+        }
         players.add(main.getPlayerUHC(player));
         alivePlayers.add(main.getPlayerUHC(player));
-        if (teams.getName().startsWith("To") && !isOwner(player.getUniqueId()))
-            sendMessage(Messages.PLAYER_JOIN_TEAM, player.getName());
 
         player.setDisplayName(prefix.toString() + player.getName());
         player.setPlayerListName(player.getDisplayName());
@@ -74,17 +74,13 @@ public class UHCTeam {
     }
 
     public void leave(PlayerUHC pu) {
-        Teamsize teams = Teamsize.getCurrentTeam();
-        if(!Scenarios.SWITCH.getActivated()) {
-            if (isOwner(uuid) && teams.getName().startsWith("To") && UHCPlayerManager.getPlayer(uuid).isPlaying()) {
-                sendMessage(Messages.DELETE_TEAM);
+        if(!Scenarios.SWITCH.isActivated()) {
+            if (alivePlayers.size() == 1 && alivePlayers.contains(pu))
                 main.getUHCTeamManager().removeTeam(this);
-                return;
-            }
         }
         Player player = pu.getPlayer().getPlayer();
-        if (teams.getName().startsWith("To") && player != null) {
-            sendMessage(Messages.PLAYER_LEAVE_TEAM, player.getName());
+        if (main.getGameConfig().getTeamType().startsWith("To") && player != null) {
+            player.sendMessage(main.getPrefix() + prefix.color.getColor() + "Vous avez bien quitté l'équipe " + team.getName() + " !");
             player.setDisplayName(player.getName());
             player.setPlayerListName(player.getDisplayName());
         }
@@ -113,7 +109,7 @@ public class UHCTeam {
     public void revive(PlayerUHC pu) {
         alivePlayers.add(pu);
         deathPlayers.remove(pu);
-        pu.getPlayer().getPlayer().setDisplayName(prefix.color + prefix.symbol + pu.getPlayer().getName());
+        pu.getPlayer().getPlayer().setDisplayName(prefix.toString() + pu.getPlayer().getName());
         pu.getPlayer().getPlayer().setPlayerListName(pu.getPlayer().getPlayer().getDisplayName());
     }
 
@@ -139,7 +135,7 @@ public class UHCTeam {
         return i;
     }
 
-    public int getKillsOnlyInLive() {
+    public int getAlivePlayersKills() {
         int i = 0;
         for (PlayerUHC up : alivePlayers)
             i += up.getKills();
@@ -159,7 +155,7 @@ public class UHCTeam {
     }
 
     public ArrayList<PlayerUHC> getListPlayers(){
-        return new ArrayList<PlayerUHC>(alivePlayers);
+        return new ArrayList<>(alivePlayers);
     }
 
 }

@@ -1,5 +1,6 @@
 package fr.neyuux.uhc;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -7,10 +8,12 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class ItemsStack {
 
@@ -89,6 +92,7 @@ public class ItemsStack {
     public ItemsStack(ItemStack item) {
         this.material = item.getType();
         this.amount = item.getAmount();
+        this.durabilite = item.getDurability();
         if (item.hasItemMeta() && item.getItemMeta().hasDisplayName())
             this.name = item.getItemMeta().getDisplayName();
         if (item.hasItemMeta() && item.getItemMeta().hasLore())
@@ -194,6 +198,35 @@ public class ItemsStack {
         return item;
     }
 
+    public ItemStack toItemStackwithSkullMeta(String owner) {
+        ItemStack item = this.item;
+        item.setAmount(this.amount);
+        item.setDurability(this.durabilite);
+
+        SkullMeta itemMeta = (SkullMeta) item.getItemMeta();
+        itemMeta.setDisplayName(this.name);
+        itemMeta.setLore(this.lore);
+        itemMeta.setOwner(owner);
+        item.setItemMeta(itemMeta);
+
+        return item;
+    }
+
+    public ItemStack toItemStackwithMinecraftHeadsValueMeta(String value) {
+        ItemStack item = this.item;
+        item.setAmount(this.amount);
+        item.setDurability(this.durabilite);
+
+        SkullMeta itemMeta = (SkullMeta) item.getItemMeta();
+        itemMeta.setDisplayName(this.name);
+        itemMeta.setLore(this.lore);
+        item.setItemMeta(itemMeta);
+        UUID hashAsId = new UUID(value.hashCode(), value.hashCode());
+        return Bukkit.getUnsafe().modifyItemStack(item,
+                "{SkullOwner:{Id:\"" + hashAsId + "\",Properties:{textures:[{Value:\"" + value + "\"}]}}}"
+        );
+    }
+
     public Material getMaterial() {
         return material;
     }
@@ -246,7 +279,7 @@ public class ItemsStack {
         this.item.removeEnchantment(enchant);
     }
 
-    public ItemsStack addGlowEffect() {
+    public ItemStack addGlowEffect() {
         ItemMeta itemMeta = this.item.getItemMeta();
 
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -254,7 +287,7 @@ public class ItemsStack {
 
         this.item.setItemMeta(itemMeta);
 
-        return new ItemsStack(item);
+        return item;
     }
 
     public Map<Enchantment, Integer> getEnchantments() {

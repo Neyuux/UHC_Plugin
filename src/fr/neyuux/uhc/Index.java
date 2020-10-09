@@ -3,22 +3,23 @@ package fr.neyuux.uhc;
 import fr.neyuux.uhc.commands.*;
 import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
+import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.listeners.UHCListener;
 import fr.neyuux.uhc.teams.UHCTeamManager;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -29,23 +30,35 @@ import java.util.*;
 
 public class Index extends JavaPlugin {
 
-	private final static String prefix = "§e§lUHC";
-	public final List<PlayerUHC> players = new ArrayList<PlayerUHC>();
-	public final List<Player> spectators = new ArrayList<Player>();
+	public final List<PlayerUHC> players = new ArrayList<>();
+	public final List<Player> spectators = new ArrayList<>();
 	private Gstate state;
-	public final Map<UUID, ScoreboardSign> boards = new HashMap<UUID, ScoreboardSign>();
+	public final Map<UUID, ScoreboardSign> boards = new HashMap<>();
 	private InventoryManager InventoryManager = new InventoryManager(this);
 	private UHCTeamManager uhcTeamManager = new UHCTeamManager(this);
-	private GameConfig config = new GameConfig(this);
-	public static final HashMap<String, List<UUID>> Grades = new HashMap<String, List<UUID>>();
-	public final HashMap<String, PermissionAttachment> permissions = new HashMap<String, PermissionAttachment>();
+	private Modes mode = Modes.UHC;
+	private GameConfig config = new GameConfig(this, Modes.UHC);
+	private static String prefix = ChatColor.translateAlternateColorCodes('&', Modes.UHC.getPrefix());
+	public static final HashMap<String, List<UUID>> Grades = new HashMap<>();
+	public final HashMap<String, PermissionAttachment> permissions = new HashMap<>();
 
 	public final String getPrefix() {
-		return prefix + "§8§l» §r";
+		return ChatColor.translateAlternateColorCodes('&', prefix) + ChatColor.translateAlternateColorCodes('&', "&8&l"+Symbols.DOUBLE_ARROW+" &r");
 	}
 
-	public static final String getStaticPrefix() {
-		return prefix;
+	public HashMap<String, List<UUID>> getGrades() {
+		return Grades;
+	}
+
+	public static String getStaticPrefix() {
+		return ChatColor.translateAlternateColorCodes('&', prefix) + ChatColor.translateAlternateColorCodes('&', "&8&l"+ Symbols.DOUBLE_ARROW+" &r");
+	}
+
+	public void changeMode(Modes mode) {
+		this.mode = mode;
+		prefix = mode.getPrefix();
+		rel();
+		System.out.println("ouichange");
 	}
 
 	public Gstate getState() {
@@ -83,9 +96,8 @@ public class Index extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new UHCListener(this), this);
 		pm.registerEvents(config, this);
-		rel();
-
 		reloadScoreboard();
+		rel();
 
 		super.onEnable();
 	}
@@ -93,17 +105,21 @@ public class Index extends JavaPlugin {
 
 	public PlayerUHC getPlayerUHC(OfflinePlayer player) {
 		for (PlayerUHC pu : players)
-			if (pu.getPlayer().equals(player.getUniqueId()))
+			if (pu.getPlayer().getUniqueId().equals(player.getUniqueId()))
 				return pu;
 
 		return null;
 	}
 
 	public static ItemStack getGoldenHead() {
-		return new ItemsStack(Material.GOLDEN_APPLE, "§6Golden Head", "§7Donne §dRégénération 2 pendant 8 secondes", "§7et §e2 coeurs d'absorption").toItemStack();
+		return new ItemsStack(Material.GOLDEN_APPLE, ChatColor.translateAlternateColorCodes('&', "&6Golden Head"), ChatColor.translateAlternateColorCodes('&', "&7Donne &dRégénération 2 pendant 8 secondes"), ChatColor.translateAlternateColorCodes('&', "&7et &e2 coeurs d'absorption")).toItemStack();
 	}
 
-	public InventoryManager getStartInventoryManager() {
+	public static ItemStack getSpecTear() {
+		return new ItemsStack(Material.GHAST_TEAR, ChatColor.translateAlternateColorCodes('&', "&7&lDevenir Spectateur"), ChatColor.translateAlternateColorCodes('&', "&7Permet de devenir spectateur"), ChatColor.translateAlternateColorCodes('&', "&b>>Clique droit")).toItemStack();
+	}
+
+	public InventoryManager getInventoryManager() {
 		return InventoryManager;
 	}
 
@@ -115,16 +131,6 @@ public class Index extends JavaPlugin {
 		return config;
 	}
 
-	public static ItemStack getItem(Material type, int amount, List<String> lore, String name, short durability) {
-		ItemStack it = new ItemStack(type, amount, durability);
-		ItemMeta itm = it.getItemMeta();
-		itm.setDisplayName(name);
-		itm.setLore(lore);
-		it.setItemMeta(itm);
-
-		return it;
-	}
-
 	public List<PlayerUHC> getAlivePlayers() {
 		List<PlayerUHC> list = new ArrayList<>();
 		for (PlayerUHC pu : players)
@@ -133,106 +139,183 @@ public class Index extends JavaPlugin {
 		return list;
 	}
 
-	public int adaptInvSizeFromPlayers() {
-		for (int size = 0; size == 6; size++)
-			if (size * 9 >= getAlivePlayers().size()) {
-				return size * 9;
+	public int adaptInvSizeForInt(int toAdapt, int marge) {
+		for (int size = 0; size <= 6; size++)
+			if (size * 9 >= toAdapt + marge) return size * 9;
+		return 54;
+	}
+
+	public static String getTimer(int seconds) {
+		String valeur;
+		Boolean isOk = false;
+		if (seconds % 60 > 9) {
+			valeur = (seconds % 60) + "s";
+		} else {
+			valeur = "0" + (seconds % 60) + "s";
+		}
+		if (seconds / 3600 > 0) {
+			if (seconds % 3600 / 60 > 9) {
+				valeur = (seconds / 3600) + "h" + (seconds % 3600 / 60) + "m" + valeur;
+			} else {
+				valeur = (seconds / 3600) + "h0" + (seconds % 3600 / 60) + "m" + valeur;
 			}
-		return 0;
+		} else if (seconds / 60 > 0) {
+			valeur = (seconds / 60) + "m" + valeur;
+		}
+		while (!isOk) {
+			if (valeur.endsWith("00m") || valeur.endsWith("00s")) {
+				valeur = valeur.substring(0, valeur.length() - 3);
+			} else isOk = true;
+		}
+		return valeur;
 	}
 
 	public void setPlayerHost(Player player, boolean isHost) {
-
+		if (isHost) {
+			PermissionAttachment attachment = player.addAttachment(this);
+			attachment.setPermission("uhc.*", true);
+			permissions.put(player.getName(), attachment);
+			if (!config.hosts.contains(player.getUniqueId())) config.hosts.add(player.getUniqueId());
+			Bukkit.getScoreboardManager().getMainScoreboard().getTeam("hostJoueur").addEntry(player.getName());
+			for (Map.Entry<String, List<UUID>> en : Grades.entrySet())
+				if (en.getValue().contains(player.getUniqueId())) {
+					Bukkit.getScoreboardManager().getMainScoreboard().getTeam("host" + en.getKey()).addEntry(player.getName());
+					player.setDisplayName(Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(player.getName()).getPrefix() + player.getName());
+					player.setPlayerListName(player.getDisplayName());
+				}
+		} else {
+			config.hosts.remove(player.getUniqueId());
+			if (permissions.get(player.getName()) != null) {
+				player.removeAttachment(permissions.get(player.getName()));
+				permissions.remove(player.getName());
+			}
+		}
 	}
 
 
-	public static Scoreboard reloadScoreboard() {
+	public void updatesGrades() {
+		List<UUID> Dieux = new ArrayList<>();
+		List<UUID> DieuxM = new ArrayList<>();
+		List<UUID> DieuxX = new ArrayList<>();
+		List<UUID> DieuxE = new ArrayList<>();
+		List<UUID> Leaders = new ArrayList<>();
+		for (Player p : Bukkit.getOnlinePlayers())  {
+			if (p.getUniqueId().toString().equals("0234db8c-e6e5-45e5-8709-ea079fa575bb")) Dieux.add(p.getUniqueId());
+
+			if (p.getUniqueId().toString().equals("a9198cde-e7b0-407e-9b52-b17478e17f90")) DieuxM.add(p.getUniqueId());
+
+			if (p.getUniqueId().toString().equals("290d1443-a362-4f79-b616-893bfb1361e5")) DieuxX.add(p.getUniqueId());
+
+			if (p.getUniqueId().toString().equals("9a4d5447-13e0-43a3-87af-977ba87e77a7") || p.getUniqueId().toString().equals("cb067197-d121-4bfc-ac47-d6b4e40841b2"))
+				DieuxE.add(p.getUniqueId());
+
+			if (p.isOp() && !Dieux.contains(p.getUniqueId()) && !DieuxM.contains(p.getUniqueId()) && !DieuxX.contains(p.getUniqueId()) && !DieuxE.contains(p.getUniqueId()))
+				Leaders.add(p.getUniqueId());
+		}
+		Grades.put("Dieu", Dieux);
+		Grades.put("DieuM", DieuxM);
+		Grades.put("DieuX", DieuxX);
+		Grades.put("DieuE", DieuxE);
+		Grades.put("Leader", Leaders);
+
+		for (Player p : Bukkit.getOnlinePlayers())
+			if (!config.hosts.contains(p.getUniqueId()))
+				Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Joueur").addEntry(p.getName());
+			else
+				Bukkit.getScoreboardManager().getMainScoreboard().getTeam("hostJoueur").addEntry(p.getName());
+		for (Map.Entry<String, List<UUID>> en : Grades.entrySet()) {
+			for (UUID id : en.getValue())
+				setPlayerHost(Bukkit.getPlayer(id), true);
+		}
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			p.setDisplayName(Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(p.getName()).getPrefix() + p.getName());
+			p.setPlayerListName(p.getDisplayName());
+		}
+	}
+
+
+	public void rel() {
+		Bukkit.getScheduler().cancelTasks(this);
+
+		players.clear();
+		spectators.clear();
+		boards.forEach((id, ss) -> ss.destroy());
+		boards.clear();
+		InventoryManager = new InventoryManager(this);
+		uhcTeamManager = new UHCTeamManager(this);
+		HandlerList.unregisterAll(config);
+		config = new GameConfig(this, mode);
+		getServer().getPluginManager().registerEvents(config, this);
+		for (Player p : Bukkit.getOnlinePlayers())
+			if (p.hasPermission("uhc.*"))
+				config.hosts.add(p.getUniqueId());
+
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			players.add(new PlayerUHC(p, this));
+
+			for (Player p2 : Bukkit.getOnlinePlayers())
+				p.showPlayer(p2);
+			//p.teleport(new Location(Bukkit.getWorld("PvPKits"), -6.096, 5.1, -2.486, -89.6f, -0.5f));
+			fr.neyuux.uhc.InventoryManager.clearInventory(p);
+			p.getInventory().clear();
+			p.updateInventory();
+			p.setExp(0f);
+			p.setLevel(0);
+			p.setMaxHealth(20);
+			p.setHealth(20);
+			((CraftPlayer) p).getHandle().setAbsorptionHearts(0);
+			for (PotionEffect pe : p.getActivePotionEffects()) {
+				p.removePotionEffect(pe.getType());
+			}
+			PotionEffect saturation = new PotionEffect(PotionEffectType.SATURATION, Integer.MAX_VALUE, 0, true, false);
+			p.addPotionEffect(saturation);
+			p.setDisplayName(p.getName());
+			p.setPlayerListName(p.getName());
+			p.setGameMode(GameMode.ADVENTURE);
+
+			fr.neyuux.uhc.InventoryManager.giveWaitInventory(p);
+			p.updateInventory();
+
+			try {
+				Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Joueur").addEntry(p.getName());
+			} catch (NullPointerException e) {
+				reloadScoreboard();
+			} finally {
+				Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Joueur").addEntry(p.getName());
+			}
+		}
+		updatesGrades();
+	}
+
+
+	public static void reloadScoreboard() {
 		Scoreboard s = Bukkit.getScoreboardManager().getMainScoreboard();
 		for (Team t : s.getTeams())
 				t.unregister();
 		for (Objective ob : s.getObjectives())
 			ob.unregister();
 
-		List<String> tc = new ArrayList<String>();
-		tc.add("Rouge"); //F
-		tc.add("Bleu");//C
-		tc.add("Vert");//D
-		tc.add("Rose");//E
-		tc.add("Jaune");//G
-		tc.add("Noir");//B
-		tc.add("");
-
-		if (!s.getTeams().isEmpty() && tc.size() != 7) {
-			while (!s.getTeams().isEmpty() && tc.size() != 7) {
-				System.out.println("slt");
-			}
-		} else {
-			System.out.println(tc + " " + s.getTeams());
+		s.registerNewTeam("Dieu");
+		s.getTeam("Dieu").setPrefix(ChatColor.translateAlternateColorCodes('&', "&c"));
+		s.registerNewTeam("DieuM");
+		s.getTeam("DieuM").setPrefix(ChatColor.translateAlternateColorCodes('&', "&5"));
+		s.registerNewTeam("DieuX");
+		s.getTeam("DieuX").setPrefix(ChatColor.translateAlternateColorCodes('&', "&6"));
+		s.registerNewTeam("DieuE");
+		s.getTeam("DieuE").setPrefix(ChatColor.translateAlternateColorCodes('&', "&3"));
+		s.registerNewTeam("Leader");
+		s.getTeam("Leader").setPrefix(ChatColor.translateAlternateColorCodes('&', "&2"));
+		s.registerNewTeam("Joueur");
+		s.getTeam("Joueur").setPrefix(ChatColor.translateAlternateColorCodes('&', "&f"));
+		for (Team t : s.getTeams()) {
+			Team nht = s.registerNewTeam("host" + t.getName());
+			nht.setPrefix(ChatColor.translateAlternateColorCodes('&', "&6[&fHost&6] " + t.getPrefix()));
+			nht.setPrefix(ChatColor.translateAlternateColorCodes('&', "&6[&fHost&6] " + t.getPrefix()));
 		}
 
-		for (String st : tc) {
-			String tabplace = "non";
-			if (st.equalsIgnoreCase("Rouge")) tabplace = "F";
-			if (st.equalsIgnoreCase("Bleu")) tabplace = "C";
-			if (st.equalsIgnoreCase("Vert")) tabplace = "D";
-			if (st.equalsIgnoreCase("Rose")) tabplace = "E";
-			if (st.equalsIgnoreCase("Jaune")) tabplace = "G";
-			if (st.equalsIgnoreCase("Noir")) tabplace = "B";
-			if (st.equalsIgnoreCase("")) tabplace = "A";
+		s.registerNewObjective("health", "health");
+		s.getObjective("health").setDisplayName(ChatColor.translateAlternateColorCodes('&', "&4♥"));
 
-			String color = "§f";
-			if (st.equalsIgnoreCase("Rouge")) color = "§4";
-			if (st.equalsIgnoreCase("Bleu")) color = "§1";
-			if (st.equalsIgnoreCase("Vert")) color = "§a";
-			if (st.equalsIgnoreCase("Rose")) color = "§d";
-			if (st.equalsIgnoreCase("Jaune")) color = "§e";
-			if (st.equalsIgnoreCase("Noir")) color = "§8";
-
-			s.registerNewTeam(tabplace + "ADieu" + st);
-			s.getTeam(tabplace + "ADieu" + st).setDisplayName("Dieu" + st);
-			s.getTeam(tabplace + "ADieu" + st).setPrefix("§c§lDieu. " + color + "§l");
-			s.getTeam(tabplace + "ADieu" + st).setSuffix("§d§k§laa§r");
-
-			s.registerNewTeam(tabplace + "BDieuM" + st);
-			s.getTeam(tabplace + "BDieuM" + st).setDisplayName("DieuM" + st);
-			s.getTeam(tabplace + "BDieuM" + st).setPrefix("§5§lDieu. " + color + "§l");
-			s.getTeam(tabplace + "BDieuM" + st).setSuffix("§6§k§laa§r");
-
-			s.registerNewTeam(tabplace + "CDieuX" + st);
-			s.getTeam(tabplace + "CDieuX" + st).setDisplayName("DieuX" + st);
-			s.getTeam(tabplace + "CDieuX" + st).setPrefix("§6§lDieu. " + color + "§l");
-			s.getTeam(tabplace + "CDieuX" + st).setSuffix("§5§k§laa§r");
-
-			s.registerNewTeam(tabplace + "DDieuE" + st);
-			s.getTeam(tabplace + "DDieuE" + st).setDisplayName("DieuE" + st);
-			s.getTeam(tabplace + "DDieuE" + st).setPrefix("§3§lDieu. " + color + "§l");
-			s.getTeam(tabplace + "DDieuE" + st).setSuffix("§0§k§laa§r");
-
-			s.registerNewTeam(tabplace + "EDémon" + st);
-			s.getTeam(tabplace + "EDémon" + st).setDisplayName("Démon" + st);
-			s.getTeam(tabplace + "EDémon" + st).setPrefix("§b§lDémon. " + color + "§l");
-			s.getTeam(tabplace + "EDémon" + st).setSuffix("§c§k§laa§r");
-
-			s.registerNewTeam(tabplace + "FLeader" + st);
-			s.getTeam(tabplace + "FLeader" + st).setDisplayName("Leader" + st);
-			s.getTeam(tabplace + "FLeader" + st).setPrefix("§2Leader. " + color + "§l");
-			s.getTeam(tabplace + "FLeader" + st).setSuffix("§0§kaa§r");
-
-			if(!st.equalsIgnoreCase("")) {
-				s.registerNewTeam(tabplace + "G" + color + st + "§r");
-				s.getTeam(tabplace + "G" + color + st + "§r").setDisplayName(color + st + "§r");
-				s.getTeam(tabplace + "G" + color + st + "§r").setPrefix(color + st + "§l ");
-				s.getTeam(tabplace + "G" + color + st + "§r").setSuffix("§r");
-
-			}
-		}
-		s.registerNewTeam("AGJoueur");
-		s.getTeam("AGJoueur").setDisplayName("Joueur");
-		s.registerNewObjective("§4♥", "health");
-
-		Teams.reloadTeams();
-
-		return s;
 	}
 
 
@@ -334,6 +417,25 @@ public class Index extends JavaPlugin {
 		IChatBaseComponent cbc = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
 		PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc, (byte) 2);
 		((CraftPlayer) p).getHandle().playerConnection.sendPacket(ppoc);
+	}
+
+
+
+	public enum Modes {
+
+		LG("&4&lL&8&lG &9&lUHC"),
+		UHC("&e&lUHC");
+
+		Modes(String prefix) {
+			this.prefix = prefix;
+		}
+
+		private String prefix;
+
+		public String getPrefix() {
+			return prefix;
+		}
+
 	}
 
 }

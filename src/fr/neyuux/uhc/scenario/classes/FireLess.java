@@ -2,11 +2,12 @@ package fr.neyuux.uhc.scenario.classes;
 
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class FireLess extends Scenario {
-    public FireLess(Scenarios scenario, ItemStack menuItem) {
-        super(scenario, menuItem);
+    public FireLess() {
+        super(Scenarios.FIRE_LESS, new ItemStack(Material.FLINT_AND_STEEL));
     }
 
     @Override

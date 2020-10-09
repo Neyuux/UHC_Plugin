@@ -2,11 +2,12 @@ package fr.neyuux.uhc.scenario.classes;
 
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class EnchantLimiter extends Scenario {
-    public EnchantLimiter(Scenarios scenario, ItemStack menuItem) {
-        super(scenario, menuItem);
+    public EnchantLimiter() {
+        super(Scenarios.ENCHANT_LIMITER, new ItemStack(Material.ENCHANTED_BOOK));
     }
 
     @Override

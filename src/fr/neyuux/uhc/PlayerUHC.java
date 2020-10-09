@@ -10,7 +10,7 @@ public class PlayerUHC {
     private final Index main;
     private int kills, diamonds, golds, irons, animals, monsters;
     private double maxHealth, health, foodLevel;
-    private boolean isAlive, isHost;
+    private boolean isAlive;
     private UHCTeam team;
 
     public PlayerUHC(Player player, Index main) {
@@ -20,7 +20,6 @@ public class PlayerUHC {
         this.irons = 0; this.monsters = 0; this.animals = 0;
         this.maxHealth = 20.0; this.health = maxHealth; this.foodLevel = 20.0;
         this.isAlive = false;
-        this.isHost = false;
     }
 
 
@@ -35,6 +34,7 @@ public class PlayerUHC {
     public int getDiamonds() {
         return diamonds;
     }
+
     public int getGolds() {
         return golds;
     }
@@ -56,7 +56,7 @@ public class PlayerUHC {
     }
 
     public boolean isHost() {
-        return isHost;
+        return main.getGameConfig().hosts.contains(player.getUniqueId());
     }
 
     public UHCTeam getTeam() {
