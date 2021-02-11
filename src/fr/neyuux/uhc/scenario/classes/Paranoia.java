@@ -10,6 +10,9 @@ public class Paranoia extends Scenario {
         super(Scenarios.PARANOIA, new ItemStack(Material.PAPER));
     }
 
+    public static boolean hasMineDiamond = false, hasMineGold = false, hasCraftEnchant = false, hasCraftAnvil = false, hasCraftGoldenApple = false,
+            hasCraftGoldenHead = false, hasDeath = false, hasPortalTravel = false, hasUseGoldenApple = false, hasUseGoldenHead = false;
+
     @Override
     protected void activate() {
 
@@ -18,5 +21,10 @@ public class Paranoia extends Scenario {
     @Override
     public void execute() {
 
+    }
+
+    @Override
+    public boolean checkStart() {
+        return true;
     }
 }

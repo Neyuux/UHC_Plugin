@@ -10,6 +10,8 @@ public class VanillaPlus extends Scenario {
         super(Scenarios.VANILLA_PLUS, new ItemStack(Material.APPLE));
     }
 
+    public static int apples = 2, flints = 2;
+
     @Override
     protected void activate() {
 
@@ -18,5 +20,10 @@ public class VanillaPlus extends Scenario {
     @Override
     public void execute() {
 
+    }
+
+    @Override
+    public boolean checkStart() {
+        return true;
     }
 }

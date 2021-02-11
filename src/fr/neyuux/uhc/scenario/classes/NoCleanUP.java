@@ -10,6 +10,8 @@ public class NoCleanUP extends Scenario {
         super(Scenarios.NO_CLEANUP, new ItemStack(Material.IRON_SWORD));
     }
 
+    public static double healthAdded = 3.0;
+
     @Override
     public void activate() {
 
@@ -18,5 +20,10 @@ public class NoCleanUP extends Scenario {
     @Override
     public void execute() {
 
+    }
+
+    @Override
+    public boolean checkStart() {
+        return true;
     }
 }

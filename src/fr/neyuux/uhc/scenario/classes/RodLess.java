@@ -19,4 +19,9 @@ public class RodLess extends Scenario {
     public void execute() {
 
     }
+
+    @Override
+    public boolean checkStart() {
+        return true;
+    }
 }

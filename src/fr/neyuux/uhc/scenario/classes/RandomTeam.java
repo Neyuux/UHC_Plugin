@@ -1,5 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
+import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.Material;
@@ -12,11 +13,16 @@ public class RandomTeam extends Scenario {
 
     @Override
     protected void activate() {
-
+        GameConfig.ConfigurableParams.TEAMTYPE.setValue(GameConfig.getTeamTypeString(GameConfig.getTeamTypeInt((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()), true));
     }
 
     @Override
     public void execute() {
 
+    }
+
+    @Override
+    public boolean checkStart() {
+        return !GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA");
     }
 }

@@ -19,4 +19,9 @@ public class NoBookShelves extends Scenario {
     public void execute() {
 
     }
+
+    @Override
+    public boolean checkStart() {
+        return true;
+    }
 }

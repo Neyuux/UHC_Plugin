@@ -10,6 +10,8 @@ public class SuperHeroes extends Scenario {
         super(Scenarios.SUPER_HEROES, new ItemStack(Material.NETHER_STAR));
     }
 
+    public static boolean hasResistance = true, hasStrength = true, hasSpeed = true, hasJumpBoost = true, hasDoubleHealth = true;
+
     @Override
     public void activate() {
 
@@ -18,5 +20,10 @@ public class SuperHeroes extends Scenario {
     @Override
     public void execute() {
 
+    }
+
+    @Override
+    public boolean checkStart() {
+        return true;
     }
 }

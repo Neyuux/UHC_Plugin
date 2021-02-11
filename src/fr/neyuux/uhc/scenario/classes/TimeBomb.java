@@ -10,6 +10,8 @@ public class TimeBomb extends Scenario {
         super(Scenarios.TIME_BOMB, new ItemStack(Material.TRAPPED_CHEST));
     }
 
+    public static int timer = 20;
+
     @Override
     public void activate() {
 
@@ -18,5 +20,10 @@ public class TimeBomb extends Scenario {
     @Override
     public void execute() {
 
+    }
+
+    @Override
+    public boolean checkStart() {
+        return true;
     }
 }

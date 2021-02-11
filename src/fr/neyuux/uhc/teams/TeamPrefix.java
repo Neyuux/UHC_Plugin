@@ -9,7 +9,7 @@ public class TeamPrefix {
     private static final String[] symbols = { Symbols.HEARTH + " ", Symbols.STARBALL + " ",
             Symbols.ARROW_RIGHT_FULL + " ", Symbols.SNOWMAN + " ", Symbols.CROSS + " ",
             Symbols.OK + " ", Symbols.NUCLEAR + " ", Symbols.INFINITE + " ", Symbols.CERCLED_S + " "};
-    private Index main;
+    private final Index main;
 
     public final UHCTeamColors color;
     public final String symbol;
@@ -37,26 +37,32 @@ public class TeamPrefix {
         return ChatColor.DARK_RED.toString() + ChatColor.BOLD + "T " + ChatColor.DARK_RED;
     }
 
+    public static String getHostPrefix() {
+        return "§6[§fHost§6] §r";
+    }
+
 
     private String getCurrentSymbol() {
         if (main.getUHCTeamManager().getTeams().size() < 13)
+            return "";
+        else if (main.getUHCTeamManager().getTeams().size() < 26)
             return symbols[0];
-        else if (main.getUHCTeamManager().getTeams().size() < 13 * 2)
+        else if (main.getUHCTeamManager().getTeams().size() < 39)
             return symbols[1];
-        else if (main.getUHCTeamManager().getTeams().size() < 13 * 3)
+        else if (main.getUHCTeamManager().getTeams().size() < 52)
             return symbols[2];
-        else if (main.getUHCTeamManager().getTeams().size() < 13 * 4)
+        else if (main.getUHCTeamManager().getTeams().size() < 65)
             return symbols[3];
-        else if (main.getUHCTeamManager().getTeams().size() < 13 * 5)
+        else if (main.getUHCTeamManager().getTeams().size() < 78)
             return symbols[4];
-        else if (main.getUHCTeamManager().getTeams().size() < 13 * 6)
+        else if (main.getUHCTeamManager().getTeams().size() < 91)
             return symbols[5];
-        else if (main.getUHCTeamManager().getTeams().size() < 13 * 7)
+        else if (main.getUHCTeamManager().getTeams().size() < 104)
             return symbols[6];
-        else if (main.getUHCTeamManager().getTeams().size() < 13 * 8)
+        else if (main.getUHCTeamManager().getTeams().size() < 117)
             return symbols[7];
-        else if (main.getUHCTeamManager().getTeams().size() < 13 * 9)
+        else if (main.getUHCTeamManager().getTeams().size() < 130)
             return symbols[8];
-        return null;
+        return "";
     }
 }

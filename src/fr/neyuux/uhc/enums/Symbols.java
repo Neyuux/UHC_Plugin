@@ -7,6 +7,7 @@ public enum Symbols {
     static {
         Symbols.GAMING_CROSS = "\u271c";
         Symbols.HEARTH = "\u2764";
+        Symbols.LITTLE_HEART = "\u2764";
         Symbols.STARBALL = "\u272a";
         Symbols.NUCLEAR = "\u2622";
         Symbols.DEATH = "\u2620";
@@ -26,14 +27,24 @@ public enum Symbols {
         Symbols.HAND_RIGHT = "\u261e";
         Symbols.HAND_DOWN = "\u261f";
         Symbols.ARROW_RIGHT_FULL = "\u27a4";
-        Symbols.ARROW_RIGHT_SEMI_DOWN = "\u27a2 ";
+        Symbols.ARROW_RIGHT_SEMI_DOWN = "\u27a2";
         Symbols.ARROW_RIGHT_SEMI_UP = "\u27a3";
         Symbols.CERCLED_S = "\u24c8";
         Symbols.CERCLED_G = "\u24bc";
         Symbols.DOUBLE_ARROW = "\u00BB";
+        Symbols.PLUS_MINUS = "\u00B1";
+        Symbols.WEST_ARROW = "\u2B05";
+        Symbols.NORTHWEST_ARROW = "\u2B09";
+        Symbols.EAST_ARROW = "\u2B95";
+        Symbols.NORTHEAST_ARROW = "\u2B08";
+        Symbols.SOUTH_ARROW = "\u2B07";
+        Symbols.SOUTHWEST_ARROW = "\u2B0B";
+        Symbols.NORTH_ARROW = "\u2B06";
+        Symbols.SOUTHEAST_ARROW = "\u2B0A";
     }
     public static String GAMING_CROSS;
     public static String HEARTH;
+    public static String LITTLE_HEART;
     public static String STARBALL;
     public static String NUCLEAR;
     public static String DEATH;
@@ -58,6 +69,22 @@ public enum Symbols {
     public static String CERCLED_S;
     public static String CERCLED_G;
     public static String DOUBLE_ARROW;
+    public static String PLUS_MINUS;
+    public static String WEST_ARROW;
+    public static String NORTHWEST_ARROW;
+    public static String EAST_ARROW;
+    public static String NORTHEAST_ARROW;
+    public static String SOUTH_ARROW;
+    public static String SOUTHWEST_ARROW;
+    public static String NORTH_ARROW;
+    public static String SOUTHEAST_ARROW;
+
+    public static Symbols getBySymbol(String s) {
+        for (Symbols sy : Symbols.values())
+            if (sy.equals(s))
+                return sy;
+        return null;
+    }
 
 
 }

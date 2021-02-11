@@ -1,8 +1,12 @@
 package fr.neyuux.uhc.teams;
 
 import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.util.ItemsStack;
 import fr.neyuux.uhc.PlayerUHC;
+import fr.neyuux.uhc.config.GameConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.*;
@@ -10,42 +14,59 @@ import java.util.*;
 public class UHCTeamManager {
 
     private final Index main;
-    private final Scoreboard scoreboard;
-    private final Set<UHCTeam> teams;
+    private List<UHCTeam> teams;
+    public static int baseteams;
+    public static List<PlayerUHC> baseplayers;
 
     public UHCTeamManager(Index main) {
         this.main = main;
-        scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-        teams = new HashSet<>();
+        teams = new ArrayList<>();
     }
 
     public UHCTeam createTeam() {
         UHCTeam UHCTeam = new UHCTeam(main, new TeamPrefix(main, null, null));
         teams.add(UHCTeam);
+        teams = sortTeams();
         return UHCTeam;
     }
 
     public UHCTeam createTeam(TeamPrefix prefix) {
         UHCTeam uhcTeam = new UHCTeam(main, prefix);
         teams.add(uhcTeam);
+        teams = sortTeams();
         return  uhcTeam;
     }
 
     public void removeTeam(UHCTeam team) {
         team.removeTeam();
         teams.remove(team);
+        UHCTeamColors.used =- 1;
+    }
+
+    public void clearTeams() {
+        for (UHCTeam t : teams)
+            t.removeTeam();
+        teams.clear();
+        UHCTeamColors.used = 0;
     }
 
     public Scoreboard getScoreboard() {
-        return scoreboard;
+        return Bukkit.getScoreboardManager().getMainScoreboard();
     }
 
-    public Set<UHCTeam> getTeams() {
+    public List<UHCTeam> getTeams() {
         return teams;
     }
 
+    public List<UHCTeam> getAliveTeams() {
+        List<UHCTeam> l = new ArrayList<>();
+        for (UHCTeam t : getTeams())
+            if (t.getAlivePlayers().size() != 0) l.add(t);
+        return l;
+    }
+
     public void randomTeams() {
-        int max = Integer.parseInt(main.getGameConfig().getTeamType().substring("Random To".length()));
+        int max = Integer.parseInt(((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).substring("Random To".length()));
         List<PlayerUHC> players = new ArrayList<>(main.players);
 
         int nbTeams = players.size() / max;
@@ -53,21 +74,6 @@ public class UHCTeamManager {
             nbTeams++;
         for (int i = 0; i <= nbTeams; i++)
             attributeToTeam(players, max);
-    }
-
-    public void randomTeamsRedVSBlue() {
-        List<PlayerUHC> players = new ArrayList<>(main.players);
-
-        int max = players.size() / 2;
-        boolean two = false;
-        for (int i = 0; i <= 1; i++) {
-            if (i == 1) {
-                two = true;
-                if ((players.size() % 2) != 0)
-                    max++;
-            }
-            attributeToTeamRedVSBlue(players, max, two);
-        }
     }
 
     private void attributeToTeam(List<PlayerUHC> players, int teamSize) {
@@ -82,16 +88,26 @@ public class UHCTeamManager {
         }
     }
 
-    private void attributeToTeamRedVSBlue(List<PlayerUHC> players, int teamSize, boolean two) {
-        Collections.shuffle(players);
-        TeamPrefix prefix = two ? new TeamPrefix(main, UHCTeamColors.RED, "") : new TeamPrefix(main, UHCTeamColors.DARK_AQUA, "");
-        UHCTeam team = createTeam(prefix);
-        for (int i = 0; i <= teamSize; i++) {
-            if (players.isEmpty())
-                break;
-            PlayerUHC player = players.get(0);
-            team.add(player.getPlayer().getPlayer());
-            players.remove(player);
-        }
+
+    public static ItemStack getTeamBanner(PlayerUHC player) {
+        if (player.getTeam() == null) return new ItemsStack(Material.BANNER, (short)15).toItemStack();
+        else return player.getTeam().getBanner();
+    }
+
+    public UHCTeam getTeamByDisplayName(String dname) {
+        for (UHCTeam t : teams)
+            if (t.getTeam().getDisplayName().equals(dname))
+                return t;
+        return null;
+    }
+
+    private List<UHCTeam> sortTeams() {
+        List<UHCTeam> l = new ArrayList<>(teams);
+        l.sort((o1, o2) -> {
+            Integer i1 = o1.id;
+            Integer i2 = o2.id;
+            return i1.compareTo(i2);
+        });
+        return l;
     }
 }

@@ -19,4 +19,9 @@ public class VeinMiner extends Scenario {
     public void execute() {
 
     }
+
+    @Override
+    public boolean checkStart() {
+        return true;
+    }
 }

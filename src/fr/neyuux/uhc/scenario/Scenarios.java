@@ -1,87 +1,89 @@
 package fr.neyuux.uhc.scenario;
 
 import fr.neyuux.uhc.Index;
-import fr.neyuux.uhc.ItemsStack;
+import fr.neyuux.uhc.util.ItemsStack;
 import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.classes.*;
-import fr.neyuux.uhc.scenario.classes.modes.Moles;
-import fr.neyuux.uhc.scenario.classes.modes.Switch;
+import fr.neyuux.uhc.scenario.classes.modes.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public enum Scenarios {
 
-    CUT_CLEAN("CutClean", "§7§lCutClean", false, "prout", CutClean.class),
-    FAST_SMELTING("FastSmelting", "§7§lFastSmelting", false, "", FastSmelting.class, createConfigInv("§7§lFastSmelting", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.COAL, "§7Rapidité de Cuisson", "§bValeur : §a3 fois plus rapide")))), getValue("§7Rapidité de Cuisson", 3, " fois plus rapide")),
-    HASTEY_BOYS("HasteyBoys", "§e§lHasteyBoys", false, "", HasteyBoys.class, createConfigInv("§e§lHasteyBoys", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.BOOK, "§dNiveau des Enchantements", "§bValeur : §a§l3")))), getValue("§dNiveau des Enchantements", 3, "")),
-    BLOOD_DIAMOND("BloodDiamond", "§4§lBlood§b§lDiamond", false, "", BloodDiamond.class, createConfigInv("§4§lBlood§b§lDiamond", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.REDSTONE, "§cDégâts reçus", "§bValeur : §4§l0.5" + Symbols.HEARTH)))), getValue("§cDégâts reçus", 0.5, Symbols.HEARTH)),
-    FINAL_HEAL("Final Heal", "§d§lFinal Heal", false, "", FinalHeal.class, createConfigInv("§d§lFinal Heal", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.WATCH, "§eTemps d'activation", "§bValeur : §a10 minutes")))), getValue("§eTemps d'activation", 60 * 10, "timer")),
+    CUT_CLEAN("CutClean", "§7§lCutClean", false, "La nourriture et les minerais sont automatiquement cuits.", CutClean.class),
+    FAST_SMELTING("FastSmelting", "§7§lFastSmelting", false, "Accélère la vitesse de cuisson des fours. ", FastSmelting.class, createConfigInv("§7§lFastSmelting", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.COAL, "§7Rapidité de Cuisson", "§bValeur : §a§lScenarioField./FastSmelting.smeltSpeed fois plus rapide")))), getValue("§7Rapidité de Cuisson", "/FastSmelting.smeltSpeed", " fois plus rapide", "smeltSpeed")),
+    HASTEY_BOYS("HasteyBoys", "§e§lHasteyBoys", false, "Tous les outils sont automatiquement enchantés efficacité et durabilité 2.", HasteyBoys.class, createConfigInv("§e§lHasteyBoys", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.BOOK, "§dNiveau de l'Efficacité", "§bValeur : §a§lScenarioField./HasteyBoys.enchantLevel")))), getValue("§dNiveau de l'Efficacité", "/HasteyBoys.enchantLevel", "", "enchantLevel")),
+    BLOOD_DIAMOND("BloodDiamond", "§4§lBlood§b§lDiamond", false, "Miner des minerais de diamants inflige des dégâts.", BloodDiamond.class, createConfigInv("§4§lBlood§b§lDiamond", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.REDSTONE, "§cDégâts reçus", "§bValeur : §4§lScenarioField./BloodDiamond.damage " + Symbols.HEARTH)))), getValue("§cDégâts reçus", "/BloodDiamond.damage", Symbols.HEARTH, "damage")),
+    FINAL_HEAL("Final Heal", "§d§lFinal Heal", false, "Tous les joueurs sont soignés au bout d'un temps donné.", FinalHeal.class, createConfigInv("§d§lFinal Heal", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.WATCH, "§eTemps d'activation", "§bValeur : §a§lScenarioField./FinalHeal.timer minutes")))), getValue("§eTemps d'activation", "/FinalHeal.timer", "timer", "timer")),
 
-    BAREBONES("Barebones", "§e§lBarebones", false, "", BareBones.class, createConfigInv("§e§lBarebones", 5, Arrays.asList(getEntry(0, new ItemsStack(Material.DIAMOND, "§bNombre de Diamants reçus", "§bValeur : §a§l1")), getEntry(1, new ItemsStack(Material.GOLDEN_APPLE, "§eNombre de Pommes en Or reçues", "§bValeur : §a§l1")), getEntry(2, new ItemsStack(Material.ARROW, "§7Nombre de Flèches reçues", "§bValeur : §a§l32")), getEntry(3, new ItemsStack(Material.STRING, "§fNombre de Fils reçus", "§bValeur : §a§l2")))), getValue("§bNombre de Diamants réçus", 1, ""), getValue("§eNombre de Golden Apple réçues", 1, ""), getValue("§7Nombre de Flèches reçues", 32, ""), getValue("§fNombre de Fils reçus", 2, "")),
-    VEINMINER("Veinminer", "§5§lVeinMiner", false, "", VeinMiner.class),
-    SUPER_HEROES("SuperHeroes", "§c§lSuperHeroes", false, "", SuperHeroes.class, createConfigInv("§c§lSuperHeroes", 9, Arrays.asList(getEntry(0, new ItemsStack(Material.IRON_CHESTPLATE, "§7Effet de Résistance", "§bValeur : §aActivé")), getEntry(1, new ItemsStack(new ItemsStack(Material.IRON_SWORD, "§cEffet de Force", "§bValeur : §aActivé").toItemStackwithItemFlag(ItemFlag.HIDE_ATTRIBUTES))), getEntry(0, new ItemsStack(Material.SUGAR, "§bEffet de Rapidité", "§bValeur : §aActivé")), getEntry(3, new ItemsStack(Material.BARRIER, "§dEffet de Double Vie", "§bValeur : §aActivé")), getEntry(4, new ItemsStack(Material.RABBIT_FOOT, "§aEffet de Jump Boost", "§bValeur : §aActivé")))), getValue("§7Effet de Résistance", true, ""), getValue("§cEffet de Force", true, ""), getValue("§bEffet de Rapidité", true, ""), getValue("§dEffet de Double Vie", true, ""), getValue("§aEffet de Jump Boost", true, "")),
+    BAREBONES("Barebones", "§e§lBarebones", false, "Donne des diamants, des pommes en or, des fils et des flèches au kill.", BareBones.class, createConfigInv("§e§lBarebones", 5, Arrays.asList(getEntry(0, new ItemsStack(Material.DIAMOND, "§bNombre de Diamants reçus", "§bValeur : §a§lScenarioField./BareBones.diamonds")), getEntry(1, new ItemsStack(Material.GOLDEN_APPLE, "§eNombre de Pommes en Or reçues", "§bValeur : §a§lScenarioField./BareBones.gApples")), getEntry(2, new ItemsStack(Material.ARROW, "§7Nombre de Flèches reçues", "§bValeur : §a§lScenarioField./BareBones.arrows")), getEntry(3, new ItemsStack(Material.STRING, "§fNombre de Fils reçus", "§bValeur : §a§lScenarioField./BareBones.strings")))), getValue("§bNombre de Diamants reçus", "/BareBones.diamonds", "", "diamonds"), getValue("§eNombre de Golden Apple reçues", "/BareBones.gApples", "", "gApples"), getValue("§7Nombre de Flèches reçues", "/BareBones.arrows", "", "arrows"), getValue("§fNombre de Fils reçus", "/BareBones.strings", "", "strings")),
+    VEINMINER("Veinminer", "§5§lVeinMiner", false, "Miner un bloc dans un filon détruit le filon entier.", VeinMiner.class),
+    SUPER_HEROES("SuperHeroes", "§c§lSuperHeroes", false, "Donne un effet aléatoire entre Résistance, Force, Vitesse, Double Vie et Saut Amélioré à chaque joueur de la partie.", SuperHeroes.class, createConfigInv("§c§lSuperHeroes", 9, Arrays.asList(getEntry(0, new ItemsStack(Material.IRON_CHESTPLATE, "§7Effet de Résistance", "§bValeur : §a§lScenarioField./SuperHeroes.hasResistance")), getEntry(1, new ItemsStack(new ItemsStack(Material.IRON_SWORD, "§cEffet de Force", "§bValeur : §a§lScenarioField./SuperHeroes.hasStrength").toItemStackwithItemFlag(ItemFlag.HIDE_ATTRIBUTES))), getEntry(0, new ItemsStack(Material.SUGAR, "§bEffet de Rapidité", "§bValeur : §a§lScenarioField./SuperHeroes.hasSpeed")), getEntry(3, new ItemsStack(Material.BARRIER, "§dEffet de Double Vie", "§bValeur : §a§lScenarioField./SuperHeroes.hasDoubleHealth")), getEntry(4, new ItemsStack(Material.RABBIT_FOOT, "§aEffet de Jump Boost", "§bValeur : §a§lScenarioField./BareBones.hasJumpBoost")))), getValue("§7Effet de Résistance", "/SuperHeroes.hasResistance", "", "hasResistance"), getValue("§cEffet de Force", "/SuperHeroes.hasStrength", "", "hasStrength"), getValue("§bEffet de Rapidité", "/SuperHeroes.hasSpeed", "", "hasSpeed"), getValue("§dEffet de Double Vie", "/SuperHeroes.hasDoubleHealth", "", "hasDoubleHealth"), getValue("§aEffet de Jump Boost", "/SuperHeroes.hasJumpBoost", "", "hasJumpBoost")),
 
-    FIRE_LESS("FireLess", "§6§lFireLess", false, "", FireLess.class),
-    NO_FALL("NoFall", "§f§lNoFall", false, "", NoFall.class),
-    TIME_BOMB("TimeBomb", "§c§lTimeBomb", false, "", TimeBomb.class, createConfigInv("§c§lTimeBomb", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.WATCH, "§6Temps avant explosion", "§bValeur : §a20 secondes")))), getValue("§6Temps avant explosion", 20, "timer")),
+    FIRE_LESS("FireLess", "§6§lFireLess", false, "Tous les dégâts de feu sont annulés.", FireLess.class),
+    NO_FALL("NoFall", "§f§lNoFall", false, "Tous les dégâts de chute sont anuulés.", NoFall.class),
+    TIME_BOMB("TimeBomb", "§c§lTimeBomb", false, "A la mort, le stuff du joueur mort apparaît dans un coffre qui explose au bout de quelques secondes.", TimeBomb.class, createConfigInv("§c§lTimeBomb", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.WATCH, "§6Temps avant explosion", "§bValeur : §a§lScenarioField./TimeBomb.timer secondes")))), getValue("§6Temps avant explosion", "/TimeBomb.timer", "timer", "timer")),
 
-    BOW_SWAP("BowSwap", "§5§lBowSwap", false, "", BowSwap.class, createConfigInv("§5§lBowSwap", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.ENDER_PEARL, "§5Pourcentage de chance de Swap", "§bValeur : §a§l30%")))), getValue("§5Pourcentage de chance de Swap", 30, "%")),
-    BOOKCEPTION("Bookception", "§5§lBookCeption", false, "", Bookception.class),
-    PARANOIA("Paranoia", "§5§lParanoia", false, "Sa grosse mère la tchoin", Paranoia.class, createConfigInv("§5§lParanoia", 18, Arrays.asList(getEntry(0, new ItemsStack(Material.DIAMOND_ORE, "§bAnnonce lors du minage d'un diamant", "§bValeur : §aActivé")), getEntry(1, new ItemsStack(Material.GOLD_INGOT, "§6Annonce lors du craft d'une Golden Head", "§bValeur : §aActivé")), getEntry(2, new ItemsStack(Material.APPLE, "§eAnnonce lors du craft d'une GApple", "§bValeur : §aActivé")), getEntry(3, new ItemsStack(Material.ANVIL, "§7Annonce lors du craft d'une enclume", "§bValeur : §aActivé")), getEntry(4, new ItemsStack(Material.ENCHANTMENT_TABLE, "§dAnnonce lors du craft d'une table d'enchant", "§bValeur : §aActivé")), getEntry(5, new ItemsStack(Material.GOLD_ORE, "§eAnnonce lors du minage d'un or", "§bValeur : §aActivé")), getEntry(6, new ItemsStack(Material.IRON_SWORD, "§4Annonce lors d'une mort d'un joueur", "§bValeur : §aActivé")), getEntry(7, new ItemsStack(Material.OBSIDIAN, "§5Annonce lors du passage d'un portail", "§bValeur : §aActivé")), getEntry(8, new ItemsStack(new ItemsStack(Material.GOLDEN_APPLE, "§eAnnonce lors de l'utilisation d'une GApple", "§bValeur : §aActivé").addGlowEffect())), getEntry(9, new ItemsStack(Material.GOLDEN_APPLE, (short)1, "§6Annonce lors de l'utilisation d'une golden head", "§bValeur : §aActivé")))), getValue("§bAnnonce lors du minage d'un diamant", true, ""), getValue("§6Annonce lors du craft d'une Golden Head", true, ""), getValue("§eAnnonce lors du craft d'une Golden Apple", true, ""), getValue("§7Annonce lors du craft d'une enclume", true, ""), getValue("§dAnnonce lors du craft d'une table d'enchantement", true, ""), getValue("§eAnnonce lors du minage d'un or", true, ""), getValue("§4Annonce lors de la mort d'un joueur", true, ""), getValue("§5Annonce lors du passage d'un portail", true, ""), getValue("§eAnnonce lors de l'utilisation d'une GApple", true, ""), getValue("§6Annonce lors de l'utilisation d'une Golden Head", true, "")),
-    NO_CLEANUP("NoCleanUP", "§c§lNoCleanUp", false, "", NoCleanUP.class, createConfigInv("§c§lNoCleanUp", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.APPLE, "§cNombre de Coeurs récupérés", "§bValeur : §a3.0" + Symbols.HEARTH)))), getValue("§cNombre de Coeurs récupérés", 3.0, Symbols.HEARTH)),
+    BOW_SWAP("BowSwap", "§5§lBowSwap", false, "A chaque flèche touchée, le joueur qui a tiré et celui qui prend des dégâts ont un pourcentage de chance d'échanger de positions.", BowSwap.class, createConfigInv("§5§lBowSwap", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.ENDER_PEARL, "§5Pourcentage de chance de Swap", "§bValeur : §a§lScenarioField./BowSwap.percentage %")))), getValue("§5Pourcentage de chance de Swap", "/BowSwap.percentage", "%", "percentage")),
+    BOOKCEPTION("Bookception", "§5§lBookCeption", false, "Au kill, un livre avec un enchantement aléatoire est jeté.", Bookception.class),
+    PARANOIA("Paranoia", "§5§lParanoia", false, "Certaines actions effectuées par des joueurs dans la parties donnent la position du dit joueur dans le chat.", Paranoia.class, createConfigInv("§5§lParanoia", 18, Arrays.asList(getEntry(0, new ItemsStack(Material.DIAMOND_ORE, "§bAnnonce lors du minage d'un diamant", "§bValeur : §a§lScenarioField./Paranoia.hasMineDiamond")), getEntry(1, new ItemsStack(Material.GOLD_INGOT, "§6Annonce lors du craft d'une Golden Head", "§bValeur : §a§lScenarioField./Paranoia.hasCraftGoldenHead")), getEntry(2, new ItemsStack(Material.APPLE, "§eAnnonce lors du craft d'une GApple", "§bValeur : §a§lScenarioField./Paranoia.hasCraftGoldenApple")), getEntry(3, new ItemsStack(Material.ANVIL, "§7Annonce lors du craft d'une enclume", "§bValeur : §a§lScenarioField./Paranoia.hasCraftAnvil")), getEntry(4, new ItemsStack(Material.ENCHANTMENT_TABLE, "§dAnnonce lors du craft d'une table d'enchant", "§bValeur : §a§lScenarioField./Paranoia.hasCraftEnchant")), getEntry(5, new ItemsStack(Material.GOLD_ORE, "§eAnnonce lors du minage d'un or", "§bValeur : §a§lScenarioField./Paranoia.hasMineGold")), getEntry(6, new ItemsStack(Material.IRON_SWORD, "§4Annonce lors d'une mort d'un joueur", "§bValeur : §a§lScenarioField./Paranoia.hasDeath")), getEntry(7, new ItemsStack(Material.OBSIDIAN, "§5Annonce lors du passage d'un portail", "§bValeur : §a§lScenarioField./Paranoia.hasPortalTravel")), getEntry(8,new ItemsStack(Material.GOLDEN_APPLE, "§eAnnonce lors de l'utilisation d'une GApple", "§bValeur : §a§lScenarioField./Paranoia.hasUseGoldenApple")), getEntry(9, new ItemsStack(Material.GOLDEN_APPLE, (short)1, "§6Annonce lors de l'utilisation d'une golden head", "§bValeur : §a§lScenarioField./Paranoia.hasUseGoldenHead")))), getValue("§bAnnonce lors du minage d'un diamant", "/Paranoia.hasMineDiamond", "", "hasMineDiamond"), getValue("§6Annonce lors du craft d'une Golden Head", "/Paranoia.hasCraftGoldenHead", "", "hasCraftGoldenHead"), getValue("§eAnnonce lors du craft d'une Golden Apple", "/Paranoia.hasCraftGoldenApple", "", "hasCraftGoldenApple"), getValue("§7Annonce lors du craft d'une enclume", "/Paranoia.hasCraftAnvil", "", "hasCraftAnvil"), getValue("§dAnnonce lors du craft d'une table d'enchantement", "/Paranoia.hasCraftEnchant", "", "hasCraftEnchant"), getValue("§eAnnonce lors du minage d'un or", "/Paranoia.hasMineGold", "", "hasMineGold"), getValue("§4Annonce lors de la mort d'un joueur", "/Paranoia.hasDeath", "", "hasDeath"), getValue("§5Annonce lors du passage d'un portail", "/Paranoia.hasPortalTravel", "", "hasPortalTravel"), getValue("§eAnnonce lors de l'utilisation d'une GApple", "/Paranoia.hasUseGoldenApple", "", "hasUseGoldenApple"), getValue("§6Annonce lors de l'utilisation d'une Golden Head", "/Paranoia.hasUseGoldenHead", "", "hasUseGoldenHead")),
+    NO_CLEANUP("NoCleanUP", "§c§lNoCleanUp", false, "Tuer quelqu'un rend de la vie au tueur.", NoCleanUP.class, createConfigInv("§c§lNoCleanUp", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.APPLE, "§cNombre de Coeurs récupérés", "§bValeur : §a§lScenarioField./NoCleanUP.healthAdded " + Symbols.HEARTH)))), getValue("§cNombre de Coeurs récupérés", "/NoCleanUP.healthAdded", Symbols.HEARTH, "healthAdded")),
 
-    ROD_LESS("RodLess", "§8§lRodLess", false, "", RodLess.class),
-    BOW_LESS("BowLess", "§8§lBowLess", false, "", BowLess.class),
-    NO_ANVIL("NoAnvil", "§8§lNoAnvil", false, "", NoAnvil.class),
-    FIRE_ENCHANT_LESS("Fire Enchant Less", "§6§lFire Enchant Less", false, "", FireEnchantLess.class, createConfigInv("§6§lFire Enchant Less", 5, Arrays.asList(getEntry(0, new ItemsStack(Material.IRON_SWORD, "§cFire Aspect", "§bValeur : §cDésactivée")), getEntry(1, new ItemsStack(Material.BOW, "§7Flame", "§bValeur : Désactivé")))), getValue("§cFire Aspect", false, ""), getValue("§7Flame", false, "")),
-    GONE_FISHING("GoneFishing", "§a§lGoneFishing", false, "", GoneFishing.class),
+    ROD_LESS("RodLess", "§8§lRodLess", false, "Empêche l'utilisation de la canne à pêche pour le PvP.", RodLess.class),
+    BOW_LESS("BowLess", "§8§lBowLess", false, "Empêche la réalisation d'arc.", BowLess.class),
+    NO_ANVIL("NoAnvil", "§8§lNoAnvil", false, "Empêche la réalisation et l'utilisation d'enclume.", NoAnvil.class),
+    GONE_FISHING("GoneFishing", "§a§lGoneFishing", false, "Donne une canne à pêche Chance de la mer 7 et Appât 250.", GoneFishing.class),
 
-    TIMBER("Timber", "§6§lTimber", false, "", Timber.class),
-    SKY_HIGH("SkyHigh", "§6§lSkyHigh", false, "", SkyHigh.class, createConfigInv("§6§lSkyHigh", 9, Arrays.asList(getEntry(0, new ItemsStack(Material.WATCH, "§eTemps d'activation", "§bValeur : §a60 minutes")), getEntry(1, new ItemsStack(Material.APPLE, "§cNombre de coeurs perdus", "§bValeur : §4§l0.5" + Symbols.HEARTH)), getEntry(2, new ItemsStack(Material.DIRT, "§aHauteur minimale", "§bValeur : §a150 blocks")), getEntry(3, new ItemsStack(Material.WATCH, "§2Give d'EnderPearls", "§bValeur : §cAucun give")), getEntry(4, new ItemsStack(Material.NETHER_STAR, "§6Stuff drop au pied du tueur", "§bValeur : §cDésactivé")))), getValue("§eTemps d'activation", 60 * 60, "timer"), getValue("§cNombre de coeurs perdus", 0.5, Symbols.HEARTH), getValue("§aHauteur minimale", 150, " blocks"), getValue("§2Give d'EnderPearls", 0, ""), getValue("§6Stuff drop au pied du tueur", false, "")),
-    NETHERIBUS("Netheribus", "§c§lNetheribus", false, "", Netheribus.class, createConfigInv("§c§lNetheribus", 5, Arrays.asList(getEntry(0, new ItemsStack(Material.WATCH, "§eTemps d'activation", "§bValeur : §a60 minutes")), getEntry(1, new ItemsStack(Material.APPLE, "§cNombre de coeurs perdus", "§bValeur : §4§l0.5" + Symbols.HEARTH)))), getValue("§eTemps d'activation", 60 * 60, "timer"), getValue("§cNombre de coeurs perdus", 0.5, Symbols.HEARTH)),
+    TIMBER("Timber", "§6§lTimber", false, "Casser une bûche d'un arbre casse les bûches de l'arbre en entier.", Timber.class),
+    SKY_HIGH("SkyHigh", "§6§lSkyHigh", false, "Après un certain temps de jeu, tous les joueurs sous une couche précise subissent des dégâts. Les joueurs commencent également avec de la terre infinie.", SkyHigh.class, createConfigInv("§6§lSkyHigh", 9, Arrays.asList(getEntry(0, new ItemsStack(Material.WATCH, "§eTemps d'activation", "§bValeur : §a§lScenarioField./SkyHigh.timer minutes")), getEntry(1, new ItemsStack(Material.APPLE, "§cNombre de coeurs perdus", "§bValeur : §4§lScenarioField./SkyHigh.damage " + Symbols.HEARTH)), getEntry(2, new ItemsStack(Material.DIRT, "§aHauteur minimale", "§bValeur : §a§lScenarioField./SkyHigh.highMin blocks")), getEntry(3, new ItemsStack(Material.ENDER_PEARL, "§2Give d'EnderPearls", "§bValeur : §a§lScenarioField./SkyHigh.enderpearlGives")), getEntry(4, new ItemsStack(Material.NETHER_STAR, "§6Stuff drop au pied du tueur", "§bValeur : §a§lScenarioField./SkyHigh.hasStuffDropOnKiller")))), getValue("§eTemps d'activation", "/SkyHigh.timer", "timer", "timer"), getValue("§cNombre de coeurs perdus", "/SkyHigh.damage", Symbols.HEARTH, "damage"), getValue("§aHauteur minimale", "/SkyHigh.highMin", " blocks", "highMin"), getValue("§2Give d'EnderPearls", "/SkyHigh.enderpearlGives", "", "enderpearlGives"), getValue("§6Stuff drop au pied du tueur", "/SkyHigh.hasStuffDropOnKiller", "", "hasStuffDropOnKiller")),
+    NETHERIBUS("Netheribus", "§c§lNetheribus", false, "Après un certain temps de jeu, tous les joueurs qui ne sont pas dans le Nether subissent des dégâts.", Netheribus.class, createConfigInv("§c§lNetheribus", 5, Arrays.asList(getEntry(0, new ItemsStack(Material.WATCH, "§eTemps d'activation", "§bValeur : §a§lScenarioField./Netheribus.timer minutes")), getEntry(1, new ItemsStack(Material.APPLE, "§cNombre de coeurs perdus", "§bValeur : §4§lScenarioField./Netheribus.damage " + Symbols.HEARTH)))), getValue("§eTemps d'activation", "/Netheribus.timer", "timer", "timer"), getValue("§cNombre de coeurs perdus", "/Netheribus.damage", Symbols.HEARTH, "damage")),
 
-    ANONYMOUS("Anonymous", "§7§lAnonymous", false, "", Anonymous.class),
-    BEST_PVE("BestPVE", "§f§lBestPVE", false, "", BestPVE.class, createConfigInv("§f§lBestPVE", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.WATCH, "§eTemps entre chaque activation", "§Valeur : §a15 minutes")))), getValue("§eTemps entre chaque activation", 15 * 60, "timer")),
-    NO_ENCHANT("NoEnchant", "§d§lNoEnchant", false, "", NoEnchant.class),
+    ANONYMOUS("Anonymous", "§7§lAnonymous", false, "Tous les joueurs de la partie sont anonymes : leurs skins et leurs pseudos sont changés.", Anonymous.class),
+    BEST_PVE("BestPVE", "§f§lBestPVE", false, "Au début de la partie, les joueurs sont ajoutés à une liste appelée \"Best PvE\". Tant que que vous êtes sur cette liste, vous gagnerez un coeur supplémentaire tous les §e§lX §7temps. Un joueur qui subit un dégât est supprimé de cette liste. Si un joueur fait un kill, il est rajouté à la liste.", BestPVE.class, createConfigInv("§f§lBestPVE", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.WATCH, "§eTemps entre chaque activation", "§bValeur : §a§lScenarioField./BestPVE.timer minutes")))), getValue("§eTemps entre chaque activation", "/BestPVE.timer", "timer", "timer")),
+    NO_ENCHANT("NoEnchant", "§d§lNoEnchant", false, "Empêche la réalisation et l'utilisation de table d'enchantement.", NoEnchant.class),
 
-    FAST_GETAWAY("FastGetaway", "§b§lFastGetAway", false, "", FastGetaway.class, createConfigInv("§b§lFastGetAway", 5, Arrays.asList(getEntry(0, new ItemsStack(Material.SUGAR, "§bNiveau de l'effet de Rapidité", "§bValeur : §a§l2")), getEntry(1, new ItemsStack(Material.WATCH, "§eDurée de l'effet", "§bValeur : §a§l10s")))), getValue("§bNiveau de la Rapidité", 2, ""), getValue("§eDurée de l'effet", 10, "timer")),
-    NO_BOOK_SHELVES("NoBookShelves", "§5§lNoBookShelves", false, "", NoBookShelves.class),
+    FAST_GETAWAY("FastGetaway", "§b§lFastGetAway", false, "Après un kill, le tueur reçoit un effet Vitesse.", FastGetaway.class, createConfigInv("§b§lFastGetAway", 5, Arrays.asList(getEntry(0, new ItemsStack(Material.SUGAR, "§bNiveau de l'effet de Rapidité", "§bValeur : §a§lScenarioField./FastGetaway.level")), getEntry(1, new ItemsStack(Material.WATCH, "§eDurée de l'effet", "§bValeur : §a§lScenarioField./FastGetaway.duration secondes")))), getValue("§bNiveau de l'effet de Rapidité", "/FastGetaway.level", "", "level"), getValue("§eDurée de l'effet", "/FastGetaway.duration", "timer", "duration")),
+    NO_BOOK_SHELVES("NoBookShelves", "§5§lNoBookShelves", false, "Empêche la réalisation et l'utilisation de bibliothèques.", NoBookShelves.class),
 
-    DIAMOND_LESS("DiamondLess", "§b§lDiamond§8§lLess", false, "", DiamondLess.class),
-    VANILLA_PLUS("Vanilla+", "§a§lVanilla+", false, "", VanillaPlus.class, createConfigInv("§a§lVanilla+", 5, Arrays.asList(getEntry(0, new ItemsStack(Material.APPLE, "§cMultiplicateur du drop des pommes", "§bValeur : §a§l2")), getEntry(1, new ItemsStack(Material.FLINT, "§8Multiplicateur du drop de silex", "§bValeur : §a§l2")))), getValue("§cMultiplicateur du drop des pommes", 2, ""), getValue("§8Multiplicateur du drop du silex", 2, "")),
+    DIAMOND_LESS("DiamondLess", "§b§lDiamond§8§lLess", false, "Empêche le minage et la récupération de diamants.", DiamondLess.class),
+    VANILLA_PLUS("Vanilla+", "§a§lVanilla+", false, "Les pommes et les silex sont multipliés.", VanillaPlus.class, createConfigInv("§a§lVanilla+", 5, Arrays.asList(getEntry(0, new ItemsStack(Material.APPLE, "§cMultiplicateur du drop des pommes", "§bValeur : §a§lScenarioField./VanillaPlus.apples")), getEntry(1, new ItemsStack(Material.FLINT, "§8Multiplicateur du drop de silex", "§bValeur : §a§lScenarioField./VanillaPlus.flints")))), getValue("§cMultiplicateur du drop des pommes", "/VanillaPlus.apples", "", "apples"), getValue("§8Multiplicateur du drop du silex", "/VanillaPlus.flints", "", "flints")),
 
-    REWARDING_LONGSHOT("RewardingLongShot", "§e§lRewardingLongShot", false, "", RewardingLongShot.class),
-    ENCHANTED_DEATH("EnchantedDeath", "§5§lEnchanted§4§lDeath", false, "", EnchantedDeath.class),
+    REWARDING_LONGSHOT("RewardingLongShot", "§e§lRewardingLongShot", false, "Pour chaque enemi touché suite à un tir à longue distance, vous obtiendrez une récompense.", RewardingLongShot.class),
+    ENCHANTED_DEATH("EnchantedDeath", "§5§lEnchanted§4§lDeath", false, "La réalisation de table d'enchantement est impossible. Le seul moyen d'en obtenir est de la récupérer le corps d'un joueur.", EnchantedDeath.class),
 
-    TEAM_INVENTORY("TeamInventory", "§e§lTeamInventory", false, "", TeamInventory.class),
-    NINE_SLOTS("NineSlots", "§7§lNineSlots", false, "", NineSlots.class),
-    ORE_LIMITER("OreLimiter", "§f§lOre§c§lLimiter", false, "", OreLimiter.class, createConfigInv("§f§lOre§c§lLimiter", 5, Arrays.asList(getEntry(0, new ItemsStack(Material.DIAMOND_ORE, "§bLimite de Diamants", "§bValeur : §a§l20")), getEntry(1, new ItemsStack(Material.GOLD_ORE, "§eLimite d'Ors", "§bValeur : §a§l60")), getEntry(2, new ItemsStack(Material.IRON_ORE, "§fLimite de Fers", "§bValeur : §a§l120")))), getValue("§bLimite de Diamants", 20, ""), getValue("§eLimite d'Ors", 60, ""), getValue("§fLimite de Fers", 120, "")),
-    ARMOR_LIMITER("ArmorLimiter", "§7§lArmor§c§lLimiter", false, "", ArmorLimiter.class, createConfigInv("§7§lArmor§c§lLimiter", 5, Arrays.asList(getEntry(0, new ItemsStack(Material.DIAMOND_HELMET, "§2Limite du casque", "§bValeur : §b§lDiamant")), getEntry(1, new ItemsStack(Material.DIAMOND_CHESTPLATE, "§aLimite du plastron", "§bValeur : §b§lDiamant")), getEntry(2, new ItemsStack(Material.DIAMOND_LEGGINGS, "§bLimite du pantalon", "§bValeur : §b§lDiamant")), getEntry(3, new ItemsStack(Material.DIAMOND_BOOTS, "§1Limite des bottes", "§bValeur : §b§lDiamant")))), getValue("§2Limite du Casque", "§b§lDiamant", ""), getValue("§aLimite du Plastron", "§b§lDiamant", ""), getValue("§bLimite du Pantalon", "§b§lDiamant", ""), getValue("§1Limite des Bottes", "§b§lDiamant", "")),
-    ENCHANT_LIMITER("EnchantLimiter", "§d§lEnchant§c§lLimiter", false, "", EnchantLimiter.class, createConfigInv("§d§lEnchant§c§lLimiter", 9, Arrays.asList(getEntry(0, new ItemsStack(Material.DIAMOND_SWORD, "§4Limite du Tranchant", "§bValeur : §a§l5")), getEntry(1, new ItemsStack(Material.DIAMOND_CHESTPLATE, "§7Limite de Protection", "§bValeur : §a§l4")), getEntry(2, new ItemsStack(Material.GOLD_BOOTS, "§bLimite de Chute Amortie", "§bValeur : §a§l4")), getEntry(3, new ItemsStack(Material.CACTUS, "§2Limite de Épine", "§bValeur : §a§l3")), getEntry(4, new ItemsStack(Material.PISTON_STICKY_BASE, "§dLimite de Recul", "§bValeur : §a§l2")), getEntry(5, new ItemsStack(Material.BOW, "§cLimite de Puissance", "§bValeur : §a§l5")), getEntry(6, new ItemsStack(Material.PISTON_BASE, "§eLimite de Frappe", "§bValeur : §a§l2")), getEntry(7, new ItemsStack(Material.ARROW, "§fLimite de Infinité", "§bValeur : §a§l1")))), getValue("§4Limite de Tranchant", 5, ""), getValue("§7Limite de Protection", 4, ""), getValue("§bLimite de Chute Amortie", 4, ""), getValue("§2Limite de Épine", 3, ""), getValue("§dLimite de Recul", 2, ""), getValue("§cLimite de Puissance", 5, ""), getValue("§eLimite de Frappe", 2, ""), getValue("§fLimite de Infinité", 1, "")),
-    POTION_LIMITER("PotionLimiter", "§a§lPotion§c§lLimiter", false, "", PotionLimiter.class, createConfigInv("§a§lPotion§c§lLimiter", 18, Arrays.asList(getEntry(0, new ItemsStack(Material.NETHER_STALK, "§aPotions", "§bValeur : §aActivées")), getEntry(1, new ItemsStack(Material.GLOWSTONE_DUST, "§ePotions de Niveau II", "§bValeur : §aActivées")), getEntry(2, new ItemsStack(Material.REDSTONE, "§3Potions Allongées", "§bValeur : §aActivées")), getEntry(3, new ItemsStack(Material.SULPHUR, "§8Potions en Splash", "§bValeur : §aActivées")), getEntry(4, new ItemsStack(Material.BLAZE_POWDER, "§4Potions de Force", "§bValeur : §aActivées")), getEntry(5, new ItemsStack(Material.SUGAR, "§bPotions de Rapidité", "§bValeur : §aActivées")), getEntry(6, new ItemsStack(Material.GOLDEN_CARROT, "§9Potions de Vision Nocturne", "§bValeur : §aActivées")), getEntry(7, new ItemsStack(Material.RABBIT_FOOT, "§aPotions de Saut Amélioré", "§bValeur : §aActivées")), getEntry(8, new ItemsStack(Material.MAGMA_CREAM, "§6Potions de Résistance au Feu", "§bValeur : §aActivées")), getEntry(9, new ItemsStack(Material.RAW_FISH, "§1Potions de Respiration Aquatique", "§bValeur : §aActivées")), getEntry(10, new ItemsStack(Material.SPECKLED_MELON, "§cPotions de Soins Instantanés", "§bValeur : §aActivées")), getEntry(11, new ItemsStack(Material.SPIDER_EYE, "§2Potions de Poison", "§bValeur : §aActivées")), getEntry(12, new ItemsStack(Material.GHAST_TEAR, "§dPotions de Régénération", "§bValeur : §aActivées")))), getValue("§aPotions", true, ""), getValue("§ePotions de Niveau II", true, ""), getValue("§3Potions Allongées", true, ""), getValue("§8Potions en Splash", true, ""), getValue("§4Potions de Force", true, ""), getValue("§bPotins de Rapidité", true, ""), getValue("§9Potions de Vision Nocturne", true, ""), getValue("§aPotions de Saut Amélioré", true, ""), getValue("§6Potions de Résistance au Feu", true, ""), getValue("§1Potions de Respiration Aquatique", true, ""), getValue("§cPotions de Soins Instantanés", true, "")),
+    TEAM_INVENTORY("TeamInventory", "§e§lTeamInventory", false, "Ajoute une commande §b§l/uhc ti §7qui permet de stocker des objets pour l'équipe.", TeamInventory.class),
+    NINE_SLOTS("NineSlots", "§7§lNineSlots", false, "Oblige les joueurs à utiliser uniquement les 9 slots de leurs hotbar.", NineSlots.class),
+    ORE_LIMITER("OreLimiter", "§f§lOre§c§lLimiter", false, "Limite le nombre de minerais pouvant être minés.", OreLimiter.class, createConfigInv("§f§lOre§c§lLimiter", 5, Arrays.asList(getEntry(0, new ItemsStack(Material.DIAMOND_ORE, "§bLimite de Diamants", "§bValeur : §a§lScenarioField./OreLimiter.diamonds")), getEntry(1, new ItemsStack(Material.GOLD_ORE, "§eLimite d'Ors", "§bValeur : §a§lScenarioField./OreLimiter.golds")), getEntry(2, new ItemsStack(Material.IRON_ORE, "§fLimite de Fers", "§bValeur : §a§lScenarioField./OreLimiter.irons")))), getValue("§bLimite de Diamants", "/OreLimiter.diamonds", "", "diamonds"), getValue("§eLimite d'Ors", "/OreLimiter.golds", "", "golds"), getValue("§fLimite de Fers", "/OreLimiter.irons", "", "irons")),
+    ARMOR_LIMITER("ArmorLimiter", "§7§lArmor§c§lLimiter", false, "Limite l'armure pouvant être portée pour chaque pièce.", ArmorLimiter.class, createConfigInv("§7§lArmor§c§lLimiter", 9, Arrays.asList(getEntry(0, new ItemsStack(Material.LEATHER_HELMET, "§2Limite du Casque", "§bValeur : §b§lScenarioField./ArmorLimiter.helmetMax", "", "§a>>Clic gauche pour augmenter", "§c>>Clic droit pour retirer")), getEntry(1, new ItemsStack(Material.GOLD_CHESTPLATE, "§aLimite du Plastron", "§bValeur : §b§lScenarioField./ArmorLimiter.chestplateMax", "", "§a>>Clic gauche pour augmenter", "§c>>Clic droit pour retirer")), getEntry(2, new ItemsStack(Material.IRON_LEGGINGS, "§bLimite du Pantalon", "§bValeur : §b§lScenarioField./ArmorLimiter.leggingsMax", "", "§a>>Clic gauche pour augmenter", "§c>>Clic droit pour retirer")), getEntry(3, new ItemsStack(Material.DIAMOND_BOOTS, "§1Limite des Bottes", "§bValeur : §b§lScenarioField./ArmorLimiter.bootsMax", "", "§a>>Clic gauche pour augmenter", "§c>>Clic droit pour retirer")), getEntry(4, new ItemsStack(Material.DIAMOND_BLOCK, "§3Limite de pièces en Diamant", "§bValeur : §b§lScenarioField./ArmorLimiter.diamondMax")))), getValue("§2Limite du Casque", "/ArmorLimiter.helmetMax", "", "helmetMax"), getValue("§aLimite du Plastron", "/ArmorLimiter.chestplateMax", "", "chestplateMax"), getValue("§bLimite du Pantalon", "/ArmorLimiter.leggingsMax", "", "leggingsMax"), getValue("§1Limite des Bottes", "/ArmorLimiter.bootsMax", "", "bootsMax"), getValue("§3Limite de pièces en Diamant", "/ArmorLimiter.diamondMax", "", "diamondMax")),
+    ENCHANT_LIMITER("EnchantLimiter", "§d§lEnchant§c§lLimiter", false, "Limite les enchantements pouvant être mis sur les objets.", EnchantLimiter.class, createConfigInv("§d§lEnchant§c§lLimiter", 9, Arrays.asList(getEntry(0, new ItemsStack(Material.DIAMOND_SWORD, "§4Limite du Tranchant", "§bValeur : §a§lScenarioField./EnchantLimiter.sharpnessMax")), getEntry(1, new ItemsStack(Material.DIAMOND_CHESTPLATE, "§7Limite de Protection", "§bValeur : §a§lScenarioField./EnchantLimiter.protectionMax")), getEntry(2, new ItemsStack(Material.GOLD_BOOTS, "§bLimite de Chute Amortie", "§bValeur : §a§lScenarioField./EnchantLimiter.featherfallingMax")), getEntry(3, new ItemsStack(Material.CACTUS, "§2Limite de Épine", "§bValeur : §a§lScenarioField./EnchantLimiter.thornsMax")), getEntry(4, new ItemsStack(Material.PISTON_STICKY_BASE, "§dLimite de Recul", "§bValeur : §a§lScenarioField./EnchantLimiter.knockbackMax")), getEntry(5, new ItemsStack(Material.BOW, "§cLimite de Puissance", "§bValeur : §a§lScenarioField./EnchantLimiter.powerMax")), getEntry(6, new ItemsStack(Material.PISTON_BASE, "§eLimite de Frappe", "§bValeur : §a§lScenarioField./EnchantLimiter.punchMax")), getEntry(7, new ItemsStack(Material.ARROW, "§fLimite de Infinité", "§bValeur : §a§lScenarioField./EnchantLimiter.infinityMax")))), getValue("§4Limite de Tranchant", "/EnchantLimiter.sharpnessMax", "", "sharpnessMax"), getValue("§7Limite de Protection", "/EnchantLimiter.protectionMax", "", "protectionMax"), getValue("§bLimite de Chute Amortie", "/EnchantLimiter.featherfallingMax", "", "featherfallingMax"), getValue("§2Limite de Épine", "/EnchantLimiter.thornsMax", "", "thornsMax"), getValue("§dLimite de Recul", "/EnchantLimiter.knockbackMax", "", "knockbackMax"), getValue("§cLimite de Puissance", "/EnchantLimiter.powerMax", "", "powerMax"), getValue("§eLimite de Frappe", "/EnchantLimiter.punchMax", "", "punchMax"), getValue("§fLimite de Infinité", "/EnchantLimiter.infinityMax", "", "infinityMax")),
+    POTION_LIMITER("PotionLimiter", "§a§lPotion§c§lLimiter", false, "Empêche la réalisation de certaines potions.", PotionLimiter.class, createConfigInv("§a§lPotion§c§lLimiter", 18, Arrays.asList(getEntry(0, new ItemsStack(Material.NETHER_STALK, "§aPotions", "§bValeur : §a§lScenarioField./PotionLimiter.hasPotions")), getEntry(1, new ItemsStack(Material.GLOWSTONE_DUST, "§ePotions de Niveau II", "§bValeur : §a§lScenarioField./PotionLimiter.hasLevel2Potions")), getEntry(2, new ItemsStack(Material.REDSTONE, "§3Potions Allongées", "§bValeur : §a§lScenarioField./PotionLimiter.hasExtendedPotions")), getEntry(3, new ItemsStack(Material.SULPHUR, "§8Potions en Splash", "§bValeur : §a§lScenarioField./PotionLimiter.hasSplash")), getEntry(4, new ItemsStack(Material.BLAZE_POWDER, "§4Potions de Force", "§bValeur : §a§lScenarioField./PotionLimiter.hasStrength")), getEntry(5, new ItemsStack(Material.SUGAR, "§bPotions de Rapidité", "§bValeur : §a§lScenarioField./PotionLimiter.hasSpeed")), getEntry(6, new ItemsStack(Material.GOLDEN_CARROT, "§9Potions de Vision Nocturne", "§bValeur : §a§lScenarioField./PotionLimiter.hasNightVision")), getEntry(7, new ItemsStack(Material.RABBIT_FOOT, "§aPotions de Saut Amélioré", "§bValeur : §a§lScenarioField./PotionLimiter.hasJumpBoost")), getEntry(8, new ItemsStack(Material.MAGMA_CREAM, "§6Potions de Résistance au Feu", "§bValeur : §a§lScenarioField./PotionLimiter.hasFireResistance")), getEntry(9, new ItemsStack(Material.RAW_FISH, "§1Potions de Respiration Aquatique", "§bValeur : §a§lScenarioField./PotionLimiter.hasWaterBreathing")), getEntry(10, new ItemsStack(Material.SPECKLED_MELON, "§cPotions de Soins Instantanés", "§bValeur : §a§lScenarioField./PotionLimiter.hasHeal")), getEntry(11, new ItemsStack(Material.SPIDER_EYE, "§2Potions de Poison", "§bValeur : §a§lScenarioField./PotionLimiter.hasPoison")), getEntry(12, new ItemsStack(Material.GHAST_TEAR, "§dPotions de Régénération", "§bValeur : §a§lScenarioField./PotionLimiter.hasRegeneration")))), getValue("§aPotions", "/PotionLimiter.hasPotions", "", "hasPotions"), getValue("§ePotions de Niveau II", "/PotionLimiter.hasLevel2Potions", "", "hasLevel2Potions"), getValue("§3Potions Allongées", "/PotionLimiter.hasExtendedPotions", "", "hasExtendedPotions"), getValue("§8Potions en Splash", "/PotionLimiter.hasSplash", "", "hasSplash"), getValue("§4Potions de Force", "/PotionLimiter.hasStrength", "", "hasStrength"), getValue("§bPotins de Rapidité", "/PotionLimiter.hasSpeed", "", "hasSpeed"), getValue("§9Potions de Vision Nocturne", "/PotionLimiter.hasNightVision", "", "hasNightVision"), getValue("§aPotions de Saut Amélioré", "/PotionLimiter.hasJumpBoost", "", "hasJumpBoost"), getValue("§6Potions de Résistance au Feu", "/PotionLimiter.hasFireResistance", "", "hasFireResistance"), getValue("§1Potions de Respiration Aquatique", "/PotionLimiter.hasWaterBreathing", "", "hasWaterBreathing"), getValue("§cPotions de Soins Instantanés", "/PotionLimiter.hasHeal", "", "hasHeal"), getValue("§2Potions de Poison", "/PotionLimiter.hasPoison", "", "hasPoison"), getValue("§dPotions de Régénération", "/PotionLimiter.hasRegeneration", "", "hasRegeneration")),
 
-    MASTER_LEVEL("MasterLevel", "§a§lMasterLevel", false, "", MasterLevel.class),
-    GRAVE_ROBBERS("GraveRobbers", "§7§lGraveRobbers", false, "", GraveRobbers.class),
-    FLOWER_POWER("FlowerPower", "§2§lFlowerPower", false, "", FlowerPower.class),
+    MASTER_LEVEL("MasterLevel", "§a§lMasterLevel", false, "Chaque joueur commence la partie avec 10000 niveaux.", MasterLevel.class),
+    GRAVE_ROBBERS("GraveRobbers", "§7§lGraveRobbers", false, "A la mort d'un joueur, une tombe est créé avec son stuff dans un coffre à l'intérieur de celle-ci.", GraveRobbers.class),
+    FLOWER_POWER("FlowerPower", "§2§lFlowerPower", false, "Lorsqu'une fleur est cassée, le joueur qu'il l'a cassée reçoit un objet aléatoire.", FlowerPower.class),
 
-    BLOOD_ENCHANT("BloodEnchant", "§4§lBlood§5§lEnchant", false, "", BloodEnchant.class, createConfigInv("§4§lBlood§5§lEnchant", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.REDSTONE, "§4Nombre de coeurs perdus", "§bValeur : §4§l0.5" + Symbols.HEARTH))))),
-    ALONE_TOGETHER("AloneTogether", "§3§lAloneTogether", false, "", AloneTogether.class),
-    TEAM_HEALTH("TeamHealth", "§d§lTeamHealth", false, "", TeamHealth.class),
-    RED_ARROW("RedArrow", "§c§lRedArrow", false, "", RedArrow.class),
+    BLOOD_ENCHANT("BloodEnchant", "§4§lBlood§5§lEnchant", false, "Enchanter un objet fait perdre des coeurs.", BloodEnchant.class, createConfigInv("§4§lBlood§5§lEnchant", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.REDSTONE, "§4Nombre de coeurs perdus", "§bValeur : §4§lScenarioField./BloodEnchant.damage " + Symbols.HEARTH)))), getValue("§4Nombre de coeurs perdus", "/BloodEnchant.damage", Symbols.HEARTH, "damage")),
+    ALONE_TOGETHER("AloneTogether", "§3§lAloneTogether", false, "Il est impossible de voir ses coéquipiers.", AloneTogether.class),
+    TEAM_HEALTH("TeamHealth", "§d§lTeamHealth", false, "La vie au dessus des joueurs et dans le tab est remplacée par le nombre de coeurs de toute l'équipe.", TeamHealth.class),
+    RED_ARROW("RedArrow", "§c§lRedArrow", false, "Lorsque qu'un joueur meurt, une flèche apparaît dans le ciel, pointant le lieu de la mort.", RedArrow.class),
 
-    KINGS("Kings", "§e§lKings", false, "", Kings.class),
-    RANDOM_TEAM("Random Team", "§7§lRandom Teams", false, "", RandomTeam.class),
+    KINGS("Kings", "§e§lKings", false, "Un joueur dans chaque équipe sera aléatoirement désigné Roi. Il obtiendra force, résistance, vitesse, résistance au feu, hâte et double vie. S'il meurt tous les autres joueurs receveront un effet de poison puissant.", Kings.class),
+    RANDOM_TEAM("Random Team", "§7§lRandom Teams", false, "Toutes les équipes seront aléatoirement constituées de joueurs de la partie.", RandomTeam.class),
 
-    TRUE_LOVE("TrueLove", "§d§lTrueLove", true, "", TrueLove.class),
-    ASSAULT_AND_BATTERY("Assault & Battery", "§c§lAssault&Battery", true, "", AssaultAndBattery.class, createConfigInv("§c§lAssault&Battery", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.ENDER_PORTAL_FRAME, "§7Mode d'assignation automatique", "§bValeur : §aActivée"))))),
-    MOLES("TaupeGun", "§6§lTaupe Gun", true, "", Moles.class, createConfigInv("§6§lTaupe Gun", 9, Arrays.asList(getEntry(0, new ItemsStack(Material.WATCH, "§eTemps d'activation", "§bValeur : §a20 minutes")), getEntry(1, new ItemsStack(Material.RAW_FISH, (short)3, "§cNombre de taupes par équipe de taupes", "§bValeur : §a§l3")), getEntry(2, new ItemsStack(Material.BANNER, "§cNombre de teams de taupes", "§bValeur : §a§l2")), getEntry(3, new ItemsStack(Material.CHEST, "§fKits activés", "§bValeur : §aAlchimiste, Mineur, Pyromane, Support, Aerien")), getEntry(4, new ItemsStack(Material.ROTTEN_FLESH, "§6Mode §lAPOCALYPSE", "§bValeur : §cDésactivé"))))),
-    SWITCH("Switch", "§e§lSwitch", true, "", Switch.class, createConfigInv("§e§lSwitch", 9, Arrays.asList(getEntry(0, new ItemsStack(Material.PAPER, "§fTemps du premier Switch", "§bValeur : §a20 minutes")), getEntry(1, new ItemsStack(Material.WATCH, "§eFréquence des Switch", "§bValeur : §a15 minutes")), getEntry(2, new ItemsStack(Material.EYE_OF_ENDER, "§dDélai aléatoire", "§bValeur : §cDésactivé")), getEntry(3, new ItemsStack(Material.TRAPPED_CHEST, "§6Switch de l'inventaire", "§bValeur : §cDésactivé")), getEntry(4, new ItemsStack(Material.STRING, "§aSwitch des solos", "§bValeur : §aActivé")), getEntry(5, new ItemsStack(Material.TRIPWIRE_HOOK, "§2Équilibrage des équipes", "§bValeur : §cDésactivé")))));
+    TRUE_LOVE("TrueLove", "§d§lTrueLove", true, "Chaque joueur de la partie sera seul jusqu'à la rencontre d'un autre joueur avec lequel il fera équipe. Si un joueur d'une équipe meurt, le joueur restant redeviendra seul jusqu'à trouver un nouveau coéquipier.", TrueLove.class),
+    ASSAULT_AND_BATTERY("Assault & Battery", "§c§lAssault&Battery", true, "Mode de jeu en équipe de 2 dont un premier joueur de l'équipe sera obligé de jouer à l'épée et l'autre à l'arc. Si un joueur est seul, alors il peut utiliser les deux.", AssaultAndBattery.class, createConfigInv("§c§lAssault&Battery", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.ENDER_PORTAL_FRAME, "§7Mode d'assignation automatique", "§bValeur : §a§lScenarioField./@AssaultAndBattery.hasRandomChoice")))), getValue("§7Mode d'assignation automatique", "/@AssaultAndBattery.hasRandomChoice", "", "hasRandomChoice")),
+    SWITCH("Switch", "§e§lSwitch", true, "Tous les §e§lX §7temps, un joueur de chaque équipe sera échangé avec un autre joueur. L'inventaire (sauf la hotbar) peut également changer.", Switch.class, createConfigInv("§e§lSwitch", 9, Arrays.asList(getEntry(0, new ItemsStack(Material.PAPER, "§fTemps du premier Switch", "§bValeur : §a§lScenarioField./@Switch.firstSwitch minutes")), getEntry(1, new ItemsStack(Material.WATCH, "§eFréquence des Switch", "§bValeur : §a§lScenarioField./@Switch.switchFrequency minutes")), getEntry(2, new ItemsStack(Material.EYE_OF_ENDER, "§dDélai aléatoire", "§bValeur : §a§lScenarioField./@Switch.randomTimeLimit minutes")), getEntry(3, new ItemsStack(Material.TRAPPED_CHEST, "§6Switch de l'inventaire", "§bValeur : §a§lScenarioField./@Switch.hasInvSwitch")), getEntry(4, new ItemsStack(Material.STRING, "§aSwitch des solos", "§bValeur : §a§lScenarioField./@Switch.hasSoloSwitch")), getEntry(5, new ItemsStack(Material.TRIPWIRE_HOOK, "§2Équilibrage des équipes", "§bValeur : §a§lScenarioField./@Switch.hasTeamBalancing")))), getValue("§fTemps du premier Switch", "/@Switch.firstSwitch", "timer", "firstSwitch"), getValue("§eFréquence des Switch", "/@Switch.switchFrequency", "timer", "switchFrequency"), getValue("§dDélai aléatoire", "/@Switch.randomTimeLimit", "timer", "randomTimeLimit"), getValue("§6Switch de l'inventaire", "/@Switch.hasInvSwitch", "", "hasInvSwitch"), getValue("§aSwitch des solos", "/@Switch.hasSoloSwitch", "", "hasSoloSwitch"), getValue("§2Équilibrage des équipes", "/@Switch.hasTeamBalancing", "", "hasTeamBalancing")),
+    MOLES("TaupeGun", "§6§lTaupe Gun", true, "Au bout d'un certain temps, un joueur de chaque équipe sera désigné taupe. Il recevra un kit et devra gagner avec une nouvelle équipe composée de taupes d'autres équipes.", Moles.class, createConfigInv("§6§lTaupe Gun", 9, Arrays.asList(getEntry(0, new ItemsStack(Material.WATCH, "§eTemps d'activation", "§bValeur : §a§lScenarioField./@Moles.timer minutes")), getEntry(1, new ItemsStack(Material.RAW_FISH, (short)3, "§cNombre de taupes par équipe de taupes", "§bValeur : §a§lScenarioField./@Moles.moleTeamSize")), getEntry(2, new ItemsStack(Material.BANNER, "§cNombre de teams de taupes", "§bValeur : §a§lScenarioField./@Moles.moleTeams")), getEntry(3, new ItemsStack(Material.CHEST, "§fKits activés", "§bValeur : §a§lScenarioField./@Moles.activatedKits")), getEntry(4, new ItemsStack(Material.IRON_DOOR, "§4Super Taupes", "§bValeur : §a§lScenarioField./@Moles.superMoles")), getEntry(5, new ItemsStack(Material.ROTTEN_FLESH, "§6Mode §lAPOCALYPSE", "§bValeur : §a§lScenarioField./@Moles.hasApocalypse")))), getValue("§eTemps d'activation", "/@Moles.timer", "timer", "timer"), getValue("§cNombre de taupes par équipe de taupes", "/@Moles.moleTeamSize", "", "moleTeamSize"), getValue("§cNombre de teams de taupes", "/@Moles.moleTeams", " équipes", "moleTeams"), getValue("§fKits activés", "/@Moles.activatedKits", "", "activatedKits"), getValue("§4Super Taupes", "/@Moles.superMoles", "", "superMoles"), getValue("§6Mode §lAPOCALYPSE", "/@Moles.hasApocalypse", "", "hasApocalypse")),
+    SLAVE_MARKET("Slave Market", "§8§lSlave §a§lMarket", true, "Au début de la partie, certains joueurs deviendront des acheteurs. Ils recevront des diamants et devront gagner des coéquipiers dans une vente aux enchères. Les diamants restants seront donnés aux acheteurs au début de la partie.", SlaveMarket.class, createConfigInv("§8§lSlave §a§lMarket", 5, Arrays.asList(getEntry(0, new ItemsStack(Material.DIAMOND, "§bNombre de Diamants", "§bValeur : §a§lScenarioField./@SlaveMarket.diamonds diamants")), getEntry(1, new ItemsStack(Material.BANNER, (short)15, "§eNombre d'acheteurs", "§bValeur : §a§lScenarioField./@SlaveMarket.nOwners")), getEntry(2, new ItemsStack(Material.ENDER_PORTAL_FRAME, "§7Choix automatique des acheteurs", "§bValeur : §a§lScenarioField./@SlaveMarket.randomChoiceOwners")))), getValue("§bNombre de Diamants", "/@SlaveMarket.diamonds", " diamants", "diamonds"), getValue("§eNombre d'acheteurs", "/@SlaveMarket.nOwners", "", "nOwners"), getValue("§7Choix automatique des acheteurs", "/@SlaveMarket.randomChoiceOwners", "", "randomChoiceOwners"));
 
 
     private final String lore, displayName, name;
@@ -89,9 +91,9 @@ public enum Scenarios {
     private final boolean isModeScenario;
     private final Class<?> classe;
     private final Inventory configInv;
-    private final HashMap<String, HashMap<Object, String>> values = new HashMap<>();
+    private final HashMap<String, Map.Entry<String, String>> values = new HashMap<>();
 
-    Scenarios(String name, String displayName, boolean isModeScenario, String lore, Class<? extends Scenario> classe, Inventory configInv, Map.Entry<String, HashMap<Object, String>>... values){
+    Scenarios(String name, String displayName, boolean isModeScenario, String lore, Class<? extends Scenario> classe, Inventory configInv, Map.Entry<Map.Entry<String, String>, Map.Entry<String, String>>... values){
         this.name = name;
         this.displayName = displayName;
         this.isActivated = false;
@@ -100,8 +102,15 @@ public enum Scenarios {
         this.lore = lore;
         this.configInv = configInv;
         if (values != null)
-            for (Map.Entry<String, HashMap<Object, String>> o : values)
-                this.values.put(o.getKey(), o.getValue());
+            for (Map.Entry<Map.Entry<String, String>, Map.Entry<String, String>> o : values) {
+                this.values.put(o.getKey().getKey(), o.getValue());
+                try {
+                    classe.getMethod("addCache", String.class, String.class, Class.class).invoke(classe.newInstance(), o.getKey().getValue(), o.getKey().getKey(), classe);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
+                    e.printStackTrace();
+                    Bukkit.broadcastMessage(Index.getStaticPrefix() + "§4[§cErreur§4] §cEchec du chargement des scénarios.");
+                }
+            }
     }
 
     Scenarios(String name, String displayName, boolean isModeScenario, String lore, Class<? extends Scenario> classe){
@@ -147,20 +156,68 @@ public enum Scenarios {
     }
 
     public Inventory getConfigInv() {
-        return configInv;
+        Inventory inv = null;
+        if (configInv.getSize() != 5) inv = Bukkit.createInventory(configInv.getHolder(), configInv.getSize(), configInv.getName());
+        else inv = Bukkit.createInventory(configInv.getHolder(), InventoryType.HOPPER, configInv.getName());
+        int i = 0;
+        for (ItemStack ciit : configInv.getContents()) {
+            if (ciit != null && !ciit.getType().equals(Material.AIR)) {
+                ItemStack it = ciit.clone();
+                ItemMeta itm = it.getItemMeta();
+                List<String> lore = new ArrayList<>();
+                for (String s : itm.getLore())
+                    if (s.contains("ScenarioField")) {
+                        String ns = s;
+                        ns = s;
+                        ns = ns.replace("ScenarioField.", "");
+                        Class<? extends Scenario> sc;
+                        Object o = null;
+                        try {
+                            String getField = ns.split("\\.")[1].split(" ")[0];
+                            String getClass = ns.split("\\.")[0].substring(15).replace("/", "fr.neyuux.uhc.scenario.classes.").replace("@", "modes.");
+                            sc = (Class<? extends Scenario>) Class.forName(getClass);
+                            o = sc.getField(getField).get(sc.newInstance());
+                            if (ns.contains("minutes") && ns.split("\\.")[1].split(" ")[1].contains("minutes")) o = ((int)o) / 60;
+                            ns = ns.replace("/" + sc.getSimpleName() + ".", "").replace(sc.getField(getField).getName(), o.toString());
+                            ns = ns.replace("/@" + sc.getSimpleName() + ".", "").replace(sc.getField(getField).getName(), o.toString());
+                            ns = ns.replace("false", GameConfig.getOFF());
+                            ns = ns.replace("true", GameConfig.getON());
+                        } catch (IllegalAccessException | NoSuchFieldException | InstantiationException | ClassNotFoundException e) {
+                            e.printStackTrace();
+                            Bukkit.broadcastMessage(Index.getStaticPrefix() + "§4[§cErreur§4] §cEchec du chargement des valeurs du scénario " + this + " 2");
+                        }
+                        lore.add(ns);
+                    } else lore.add(s);
+                itm.setLore(lore);
+                it.setItemMeta(itm);
+                inv.setItem(i, it);
+            }
+            i++;
+        }
+        return inv;
     }
 
     public List<String> getValues() {
         List<String> l = new ArrayList<>();
-        for (Map.Entry<String, HashMap<Object, String>> en : values.entrySet()) {
+        for (Map.Entry<String, Map.Entry<String, String>> en : values.entrySet()) {
             StringBuilder sb = new StringBuilder("§bValeur " + en.getKey() + " §b: " + en.getKey().substring(0, 2) + "§l");
-            Object o = en.getValue().keySet().iterator().next();
+            Class<? extends Scenario> sc;
+            Object o = null;
+            try {
+                sc = (Class<? extends Scenario>) Class.forName(en.getValue().getKey().split("\\.")[0].replace("/", "fr.neyuux.uhc.scenario.classes.").replace("@", "modes."));
+                o = sc.getField(en.getValue().getKey().split("\\.")[1]).get(sc.newInstance());
+            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchFieldException e) {
+                e.printStackTrace();
+                Bukkit.broadcastMessage(Index.getStaticPrefix() + "§4[§cErreur§4] §cEchec du chargement des valeurs du scénario " + this);
+            }
             if (o instanceof Boolean)
                 sb.append(GameConfig.getStringBoolean((boolean)o));
-            else if (o instanceof Integer && en.getValue().get(o).equals("timer"))
+            else if (o instanceof Integer && en.getValue().getValue().equals("timer"))
                 sb.append(Index.getTimer((int)o));
+            else if (o instanceof List)
+                sb.append(o.toString().replace("[", "").replace("]", "").replace(",", en.getKey().substring(0, 2) + "§l,")).append(en.getValue().getValue().replace("[", "").replace("]", "").replace(",", en.getKey().substring(0, 2) + "§l,"));
             else
-                sb.append(o.toString()).append(en.getValue().get(o));
+                sb.append(o.toString()).append(en.getValue().getValue());
             l.add(sb.toString());
         }
         return l;
@@ -190,14 +247,26 @@ public enum Scenarios {
         return null;
     }
 
+    public static Scenarios getByName(String name) {
+        for (Scenarios sc : Scenarios.values())
+            if (sc.getName().equals(name))
+                return sc;
+        return null;
+    }
+
 
     private static Inventory createConfigInv(String dname, int slots, List<AbstractMap.SimpleEntry<Integer, ItemsStack>> items) {
         Inventory inv;
-        if (slots == 5) inv = Bukkit.createInventory(null, InventoryType.HOPPER, "§cConfig§6Scenario " + dname);
-        else inv = Bukkit.createInventory(null, slots, "§cConfig§6Scenario " + dname);
+        if (slots == 5) inv = Bukkit.createInventory(null, InventoryType.HOPPER, "§cConfig " + dname);
+        else inv = Bukkit.createInventory(null, slots, "§cConfig " + dname);
 
-        for (AbstractMap.SimpleEntry<Integer, ItemsStack> en : items)
+        for (AbstractMap.SimpleEntry<Integer, ItemsStack> en : items) {
+            ItemsStack it = en.getValue();
+            it.addItemFlag(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_UNBREAKABLE);
+            it.addLore("", "§b>>Cliquer pour modifier");
             inv.setItem(en.getKey(), en.getValue().toItemStack());
+        }
+        GameConfig.setReturnArrow(inv);
 
         return inv;
     }
@@ -206,10 +275,10 @@ public enum Scenarios {
         return new AbstractMap.SimpleEntry<>(o1, o2);
     }
 
-    private static AbstractMap.SimpleEntry<String, HashMap<Object, String>> getValue(String k, Object v, String type) {
-        HashMap<Object, String> hm = new HashMap<Object, String>();
-        hm.put(v, type);
-        return new AbstractMap.SimpleEntry<String, HashMap<Object, String>>(k, hm);
+    private static AbstractMap.SimpleEntry<Map.Entry<String, String>, Map.Entry<String, String>> getValue(String k, String v, String type, String varName) {
+        Map.Entry<String, String> hm = new AbstractMap.SimpleEntry<>(v, type);
+        AbstractMap.SimpleEntry<String, String> kv = new AbstractMap.SimpleEntry<>(k, varName);
+        return new AbstractMap.SimpleEntry<>(kv, hm);
     }
 
 }
