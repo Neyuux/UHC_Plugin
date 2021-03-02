@@ -33,6 +33,7 @@ public class DiamondLess extends Scenario implements Listener {
     @Override
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Scenario.handlers.add(this);
 
         VarsLoot.getBlocksLoots().put(Material.DIAMOND_ORE, new Loot(0, Lists.newArrayList(
                 new LootItem(new ItemStack(Material.COBBLESTONE), 100.0, new Interval<>(1, 1)))));
@@ -47,7 +48,7 @@ public class DiamondLess extends Scenario implements Listener {
     @EventHandler(priority= EventPriority.LOWEST)
     public void onBlockBreak(BlockBreakEvent e) {
         if(e.getBlock().getType() == Material.DIAMOND_ORE)
-            Index.sendActionBar(e.getPlayer(), Index.getStaticPrefix() + scenario.getDisplayName() + "§cDiamants désactivés !");
+            Index.sendActionBar(e.getPlayer(), Index.getStaticPrefix() + scenario.getDisplayName() + " §cDiamants désactivés !");
     }
 
     @EventHandler(priority=EventPriority.LOWEST)

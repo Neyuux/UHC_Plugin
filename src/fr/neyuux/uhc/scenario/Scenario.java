@@ -1,22 +1,27 @@
 package fr.neyuux.uhc.scenario;
 
 import fr.neyuux.uhc.Index;
-import fr.neyuux.uhc.util.ItemsStack;
 import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.util.ItemsStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public abstract class Scenario {
 
     public Scenarios scenario;
     public ItemStack menuItem;
     private static final HashMap<String, Field> cache = new HashMap<>();
+    protected static final List<Listener> handlers = new ArrayList<>();
     public Scenario(Scenarios scenario, ItemStack menuItem) {
         this.scenario = scenario;
         this.menuItem = menuItem;
@@ -82,6 +87,11 @@ public abstract class Scenario {
 
     public static HashMap<String, Field> getCache() {
         return cache;
+    }
+
+    public static void removeEvents() {
+        for (Listener l : handlers)
+            HandlerList.unregisterAll(l);
     }
     
     public void addCache(String field, String valueName, Class<? extends Scenario> c) {

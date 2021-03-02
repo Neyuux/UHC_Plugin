@@ -5,7 +5,6 @@ import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
-import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -95,12 +94,12 @@ public class UHCTeam {
     }
 
     public void leave(PlayerUHC pu) {
-        if(main.isState(Gstate.PLAYING) && !Scenarios.SWITCH.isActivated())
+        /*if(main.isState(Gstate.PLAYING) && !Scenarios.SWITCH.isActivated())
             if (alivePlayers.size() == 1 && alivePlayers.contains(pu))
-                main.getUHCTeamManager().removeTeam(this);
+                main.getUHCTeamManager().removeTeam(this);*/
         if (pu.getPlayer().isOnline()) {
             Player player = pu.getPlayer().getPlayer();
-            if (((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To") && player != null) {
+            if (((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To")) {
                 player.sendMessage(main.getPrefix() + prefix.color.getColor() + "Vous avez bien quitté l'équipe " + team.getDisplayName() + " !");
                 player.setDisplayName(player.getName());
                 player.setPlayerListName(player.getDisplayName());

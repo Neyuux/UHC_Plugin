@@ -564,10 +564,8 @@ public class GameConfig implements Listener {
                                 cp.setValue(getTeamTypeString((int) SLOTS.getValue(), Scenarios.RANDOM_TEAM.isActivated()));
 
                         main.getUHCTeamManager().clearTeams();
+                        int p = (int) SLOTS.getValue();
                         if (getTeamTypeInt((String)cp.getValue()) > 1) {
-                            int p = main.players.size();
-                            for (PlayerUHC puhc : main.players)
-                                if (puhc.isSpec()) p--;
                             int nt = BigDecimal.valueOf((double) p / getTeamTypeInt((String) cp.getValue())).setScale(0, RoundingMode.UP).toBigInteger().intValue();
                             if (nt == 0) nt = 1;
                             while (nt != 0) {
@@ -614,6 +612,10 @@ public class GameConfig implements Listener {
                 lore.add(0, "§bValeur : §d§l" + inv.getItem(4).getEnchantmentLevel(e));
                 itm.setLore(lore);
                 current.setItemMeta(itm);
+            } else if (current.getType().equals(Material.GOLD_AXE)) {
+                ItemMeta itm = inv.getItem(4).getItemMeta();
+                itm.spigot().setUnbreakable(!itm.spigot().isUnbreakable());
+                inv.getItem(4).setItemMeta(itm);
             }
         }
     }
@@ -1269,7 +1271,7 @@ public class GameConfig implements Listener {
         SCOREBOARD_LIFE("§dVie dans le Tab", ParamParts.PLAYERRULES, Material.APPLE, true, "§7Pourcentage de vie dans le tab"),
 
         INVINCIBILITY("§eInvincibilité", ParamParts.PvP, Material.DIAMOND_CHESTPLATE, 30, Integer.MAX_VALUE, 1, new int[]{1, 10, 30}),
-        PVP("§cPvP", ParamParts.PvP, Material.IRON_SWORD, 1800, Integer.MAX_VALUE, 1, new int[]{60, 900, 1800}),
+        PVP("§cPvP", ParamParts.PvP, Material.IRON_SWORD, 1800, Integer.MAX_VALUE, 60, new int[]{60, 900, 1800}),
 
         CRAFT_GOLDEN_HEAD("§eGolden Head", ParamParts.CUSTOMCRAFTS, Material.GOLDEN_APPLE, false),
         DOUBLE_ARROW("§cDouble Arrow", ParamParts.CUSTOMCRAFTS, Material.ARROW, false),
@@ -1290,12 +1292,12 @@ public class GameConfig implements Listener {
         BED$NOT_OVERWORLD("§cLits §4hors Overworld", ParamParts.WORLDRULES, Material.BED, false),
         QUARTZ_XP_NERF("§aNerf de l'XP du Quartz", ParamParts.WORLDRULES, Material.QUARTZ_ORE, false),
 
-        APPLE("§cPommes", ParamParts.DROPS, Material.APPLE, 1.0, 4.0, 0.1, new double[]{0.1, 0.5, 1.0}),
-        FLINT("§8Silex", ParamParts.DROPS, Material.FLINT, 10.0, 100.0, 1.0, new double[]{0.5, 1, 5, 15}),
+        APPLE("§cPommes", ParamParts.DROPS, Material.APPLE, 2.0, 100.0, 0.1, new double[]{0.1, 0.5, 1.0}),
+        FLINT("§8Silex", ParamParts.DROPS, Material.FLINT, 20.0, 100.0, 1.0, new double[]{0.5, 1, 5, 15}),
         FEATHER("§fPlumes", ParamParts.DROPS, Material.FEATHER, 40.0, 100.0, 1.0, new double[]{0.5, 1, 5, 15}),
         LEATHER("§6Cuirs", ParamParts.DROPS, Material.LEATHER, 40.0, 100.0, 1.0, new double[]{0.5, 1, 5, 15}),
 
-        BORDER_TIMER("§9Temps d'activation", ParamParts.BORDER, Material.WATCH, 3600, Integer.MAX_VALUE, 1, new int[]{60, 900, 1800}),
+        BORDER_TIMER("§9Temps d'activation", ParamParts.BORDER, Material.WATCH, 3600, Integer.MAX_VALUE, 60, new int[]{60, 900, 1800}),
         BORDERSIZE("§3Taille initiale", ParamParts.BORDER, Material.FENCE_GATE, 2000.0, 5000.0, 2.0, new double[]{1.0, 50.0, 100.0, 500.0}),
         FINAL_BORDERSIZE("§bTaille finale", ParamParts.BORDER, Material.DARK_OAK_FENCE, 100.0, 5000.0, 2.0, new double[]{1.0, 5.0, 15.0}),
         BORDERSPEED("§1Vitesse de bordure", ParamParts.BORDER, Material.LEASH, 1.0, 50.0, 0.1, new double[]{0.1, 0.5, 1.0, 5.0}),
@@ -1497,6 +1499,6 @@ public class GameConfig implements Listener {
     public static int getTeamTypeInt(String teamtype) {
         if (teamtype.equals("FFA")) return 1;
         else
-            return Integer.parseInt(teamtype.replace("Random", "").replace("To", ""));
+            return Integer.parseInt(teamtype.replace("Random ", "").replace("To", ""));
     }
 }

@@ -164,7 +164,7 @@ public class UHCWorld {
         for (Location l : spawns) {
             loadLocationChunks(l, true);
             d++;
-            Bukkit.broadcastMessage(main.getPrefix() + "§2Chargement du monde : §a§l" + df.format(d / (main.getAlivePlayers().size() + 1)) + "%§2.");
+            Bukkit.broadcastMessage(main.getPrefix() + "§2Chargement du monde : §a§l" + df.format(d / (main.getAlivePlayers().size() + 1) * 100) + "%§2.");
         }
         loadLocationChunks(new Location(world, 0, 70, 0), true);
         Bukkit.broadcastMessage(main.getPrefix() + "§2Chargement du monde : §a§l100%§2.");
@@ -315,6 +315,7 @@ public class UHCWorld {
             for (int y = location.getBlockY() - radius; y <= location.getBlockY() + radius; y++)
                 for (int z = location.getBlockZ() - radius; z <= location.getBlockZ() + radius; z++)
                     blocks.add(location.getWorld().getBlockAt(x, y, z));
+         System.out.println(blocks.toString());
         return blocks;
     }
 }

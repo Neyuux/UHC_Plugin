@@ -40,6 +40,7 @@ public class Kings extends Scenario implements Listener {
     @Override
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Scenario.handlers.add(this);
 
         Random random = new Random();
         new BukkitRunnable() {
@@ -57,8 +58,8 @@ public class Kings extends Scenario implements Listener {
                         PlayerUHC ku = Index.getInstance().getPlayerUHC(king);
                         king.setDisplayName(team.getPrefix().toString() + "§l" + king.getName());
                         king.setPlayerListName(king.getDisplayName());
-                        king.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§6Vous avez été désigné comme Roi de l'équipe " + team.getTeam().getDisplayName() + " §6. Vous obtenez donc les effets : force, rapidité, résistance, résistance au feu, hâte et double vie. Si vous mourrez, le reste de votre équipe aura un effet de poison puissant pendant quelques secondes.");
-                        team.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + team.getPrefix().color.getColor() + "Le roi de votre équipe est " + king.getDisplayName() + ".");
+                        king.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §6Vous avez été désigné comme Roi de l'équipe " + team.getTeam().getDisplayName() + " §6. Vous obtenez donc les effets : force, rapidité, résistance, résistance au feu, hâte et double vie. Si vous mourrez, le reste de votre équipe aura un effet de poison puissant pendant quelques secondes.");
+                        team.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + team.getPrefix().color.getColor() + " Le roi de votre équipe est " + king.getDisplayName() + ".");
 
                         king.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0, true, true));
                         king.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 0, true, true));
@@ -73,7 +74,7 @@ public class Kings extends Scenario implements Listener {
                     }
                 }
             }
-        }.runTaskLater(Index.getInstance(), 100L);
+        }.runTaskLater(Index.getInstance(), 101L);
     }
 
     @Override
@@ -98,7 +99,7 @@ public class Kings extends Scenario implements Listener {
             for (PlayerUHC u : team.getAlivePlayers()) {
                 Player p = u.getPlayer().getPlayer();
                 if (p != null) {
-                    p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVotre roi est Mort. Vous obtenez un effet de poison pendant 30 secondes.");
+                    p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVotre roi est Mort. Vous obtenez un effet de poison pendant 30 secondes.");
                     p.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 600, 3, true, true));
                 }
             }

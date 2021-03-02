@@ -25,6 +25,7 @@ public class NineSlots extends Scenario implements Listener {
     @Override
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Scenario.handlers.add(this);
 
         for (PlayerUHC pu : Index.getInstance().getAlivePlayers())
             for (int i = 8; i <= 35; i++) {

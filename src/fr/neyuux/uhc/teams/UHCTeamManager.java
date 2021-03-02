@@ -82,9 +82,8 @@ public class UHCTeamManager {
         for (int i = 0; i < teamSize; i++) {
             if (players.isEmpty())
                 break;
-            PlayerUHC player = players.get(0);
+            PlayerUHC player = players.remove(0);
             team.add(player.getPlayer().getPlayer());
-            players.remove(player);
         }
     }
 

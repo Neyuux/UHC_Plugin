@@ -36,6 +36,7 @@ public class EnchantLimiter extends Scenario implements Listener {
     @Override
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Scenario.handlers.add(this);
     }
 
     @Override
@@ -95,10 +96,13 @@ public class EnchantLimiter extends Scenario implements Listener {
                     if (en.getKey().equals(Enchantment.ARROW_KNOCKBACK) && en.getValue() > punchMax) i = punchMax;
                     if (en.getKey().equals(Enchantment.ARROW_INFINITE) && en.getValue() > infinityMax) i = infinityMax;
 
-                    p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais comme il dépassait le niveau maximal, il sera de niveau §6§l" + i + "§c.");
                     if (i != -1) {
                         result.removeEnchantment(en.getKey());
-                        if (i != 0) result.addEnchantment(en.getKey(), i);
+                        if (i != 0) {
+                            p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais comme il dépassait le niveau maximal, il sera de niveau §6§l" + i + "§c.");
+                            result.addEnchantment(en.getKey(), i);
+                        } else
+                            p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais cet enchantement est désactivé. Il a donc été supprimé");
                     }
                 }
             }

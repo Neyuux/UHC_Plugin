@@ -16,9 +16,12 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
 import java.util.Random;
 
+import static org.bukkit.Material.*;
+import static org.bukkit.Material.WRITTEN_BOOK;
+
 public class FlowerPower extends Scenario implements Listener {
     public FlowerPower() {
-        super(Scenarios.FLOWER_POWER, new ItemStack(Material.YELLOW_FLOWER));
+        super(Scenarios.FLOWER_POWER, new ItemStack(YELLOW_FLOWER));
     }
 
     @Override
@@ -29,6 +32,7 @@ public class FlowerPower extends Scenario implements Listener {
     @Override
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Scenario.handlers.add(this);
     }
 
     @Override
@@ -39,24 +43,24 @@ public class FlowerPower extends Scenario implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
-        if(e.getBlock().getType() == Material.YELLOW_FLOWER || e.getBlock().getType() == Material.RED_ROSE){
+        if(e.getBlock().getType() == YELLOW_FLOWER || e.getBlock().getType() == RED_ROSE || e.getBlock().getType().equals(DOUBLE_PLANT)){
             e.setCancelled(true);
             checkDrop(e.getBlock());
-            e.getBlock().setType(Material.AIR);
+            e.getBlock().setType(AIR);
         }
     }
 
     private void checkDrop(Block b){
-        Material randomMaterial = Material.values()[new Random().nextInt(Material.values().length)];
+        Material randomMaterial = values()[new Random().nextInt(values().length)];
         if(isAcceptedMaterial(randomMaterial))
             if (isRarity(randomMaterial)) {
                 int amount = 1;
-                if (randomMaterial == Material.GOLDEN_APPLE || randomMaterial == Material.DIAMOND)
+                if (randomMaterial == GOLDEN_APPLE || randomMaterial == DIAMOND)
                     amount = new Interval<>(1, 3).getAsRandomInt();
-                if (randomMaterial == Material.IRON_INGOT || randomMaterial == Material.GOLD_INGOT)
+                if (randomMaterial == IRON_INGOT || randomMaterial == GOLD_INGOT)
                     amount = new Interval<>(1, 16).getAsRandomInt();
                 ItemStack item = new ItemStack(randomMaterial, amount);
-                if (randomMaterial == Material.ENCHANTED_BOOK) {
+                if (randomMaterial == ENCHANTED_BOOK) {
                     EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
                     Random r = new Random();
                     Enchantment en = Enchantment.values()[r.nextInt(Enchantment.values().length)];
@@ -73,16 +77,16 @@ public class FlowerPower extends Scenario implements Listener {
 
 
     private boolean isAcceptedMaterial(Material type){
-        return type != Material.AIR && type != Material.ARMOR_STAND && type != Material.BEDROCK && type != Material.BED_BLOCK && type != Material.ACACIA_DOOR && type != Material.BIRCH_DOOR_ITEM && type != Material.BURNING_FURNACE && type != Material.CAKE_BLOCK && type != Material.CAULDRON && type != Material.COMMAND && type != Material.COMMAND_MINECART && type != Material.DARK_OAK_DOOR && type != Material.DIODE_BLOCK_OFF && type != Material.DIODE_BLOCK_ON && type != Material.ENDER_PORTAL && type != Material.ENDER_PORTAL_FRAME && type != Material.FLOWER_POT && type != Material.GLOWING_REDSTONE_ORE && type != Material.POWERED_MINECART && type != Material.HOPPER_MINECART && type != Material.PISTON_EXTENSION && type != Material.PISTON_MOVING_PIECE && type != Material.PORTAL && type != Material.STATIONARY_LAVA && type != Material.STATIONARY_WATER && type != Material.SUGAR_CANE_BLOCK && type != Material.WATER && type != Material.LAVA && type != Material.BARRIER && type != Material.MOB_SPAWNER && type != Material.MONSTER_EGG && type != Material.MONSTER_EGGS && type != Material.EXPLOSIVE_MINECART && type != Material.SOIL;
+        return type != AIR && type != WRITTEN_BOOK && type != ARMOR_STAND && type != BEDROCK && type != BED_BLOCK && type != ACACIA_DOOR && type != BIRCH_DOOR_ITEM && type != BURNING_FURNACE && type != CAKE_BLOCK && type != CAULDRON && type != COMMAND && type != COMMAND_MINECART && type != DARK_OAK_DOOR && type != DIODE_BLOCK_OFF && type != DIODE_BLOCK_ON && type != ENDER_PORTAL && type != ENDER_PORTAL_FRAME && type != FLOWER_POT && type != GLOWING_REDSTONE_ORE && type != POWERED_MINECART && type != HOPPER_MINECART && type != PISTON_EXTENSION && type != PISTON_MOVING_PIECE && type != PORTAL && type != STATIONARY_LAVA && type != STATIONARY_WATER && type != SUGAR_CANE_BLOCK && type != WATER && type != LAVA && type != BARRIER && type != MOB_SPAWNER && type != MONSTER_EGG && type != MONSTER_EGGS && type != EXPLOSIVE_MINECART && type != SOIL;
     }
 
     private boolean isRarity(Material type){
-        return type == Material.ANVIL || type == Material.BEACON || type == Material.BREWING_STAND_ITEM || type == Material.CHAINMAIL_BOOTS || type == Material.CHAINMAIL_CHESTPLATE || type == Material.CHAINMAIL_LEGGINGS || type == Material.CHAINMAIL_HELMET || type == Material.LEATHER_BOOTS || type == Material.LEATHER_CHESTPLATE || type == Material.LEATHER_LEGGINGS || type == Material.LEATHER_HELMET
-                || type == Material.DIAMOND || type == Material.DIAMOND_AXE || type == Material.DIAMOND_BARDING || type == Material.DIAMOND_BLOCK || type == Material.DIAMOND_BOOTS || type == Material.DIAMOND_CHESTPLATE || type == Material.DIAMOND_HELMET || type == Material.DIAMOND_HOE || type == Material.DIAMOND_LEGGINGS || type == Material.DIAMOND_ORE || type == Material.DIAMOND_PICKAXE || type == Material.DIAMOND_SPADE || type == Material.DIAMOND_SWORD
-                || type == Material.IRON_INGOT || type == Material.IRON_AXE || type == Material.IRON_BARDING || type == Material.IRON_BLOCK || type == Material.IRON_BOOTS || type == Material.IRON_CHESTPLATE || type == Material.IRON_HELMET || type == Material.IRON_HOE || type == Material.IRON_LEGGINGS || type == Material.IRON_ORE || type == Material.IRON_PICKAXE || type == Material.IRON_SPADE || type == Material.IRON_SWORD
-                || type == Material.GOLD_INGOT || type == Material.GOLD_AXE || type == Material.GOLD_BARDING || type == Material.GOLD_BLOCK || type == Material.GOLD_BOOTS || type == Material.GOLD_CHESTPLATE || type == Material.GOLD_HELMET || type == Material.GOLD_HOE || type == Material.GOLD_LEGGINGS || type == Material.GOLD_ORE || type == Material.GOLD_PICKAXE || type == Material.GOLD_SPADE || type == Material.GOLD_SWORD
-                || type == Material.DRAGON_EGG || type == Material.ENDER_PEARL || type == Material.FISHING_ROD || type == Material.LAVA_BUCKET || type == Material.WATER_BUCKET || type == Material.ENCHANTED_BOOK || type == Material.ENCHANTMENT_TABLE || type == Material.RECORD_10 || type == Material.RECORD_11 || type == Material.RECORD_12 || type == Material.RECORD_3 || type == Material.RECORD_4 || type == Material.RECORD_5 || type == Material.RECORD_6 || type == Material.RECORD_7 || type == Material.RECORD_8
-                || type == Material.RECORD_9 || type == Material.FLINT_AND_STEEL || type == Material.CAKE || type == Material.STONE_PICKAXE || type == Material.STONE_SPADE || type == Material.STONE_SWORD || type == Material.STONE_HOE || type == Material.STONE_AXE || type == Material.WOOD_PICKAXE || type == Material.WOOD_SPADE || type == Material.WOOD_SWORD || type == Material.WOOD_HOE || type == Material.WOOD_AXE || type == Material.RABBIT_STEW || type == Material.MUSHROOM_SOUP || type == Material.CARROT_STICK
-                || type == Material.MILK_BUCKET || type == Material.POTION || type == Material.GOLDEN_APPLE || type == Material.SADDLE || type == Material.BONE || type == Material.INK_SACK || type == Material.BOW || type == Material.BOWL;
+        return type == ANVIL || type == BEACON || type == BREWING_STAND_ITEM || type == CHAINMAIL_BOOTS || type == CHAINMAIL_CHESTPLATE || type == CHAINMAIL_LEGGINGS || type == CHAINMAIL_HELMET || type == LEATHER_BOOTS || type == LEATHER_CHESTPLATE || type == LEATHER_LEGGINGS || type == LEATHER_HELMET
+                || type == DIAMOND || type == DIAMOND_AXE || type == DIAMOND_BARDING || type == DIAMOND_BLOCK || type == DIAMOND_BOOTS || type == DIAMOND_CHESTPLATE || type == DIAMOND_HELMET || type == DIAMOND_HOE || type == DIAMOND_LEGGINGS || type == DIAMOND_ORE || type == DIAMOND_PICKAXE || type == DIAMOND_SPADE || type == DIAMOND_SWORD
+                || type == IRON_INGOT || type == IRON_AXE || type == IRON_BARDING || type == IRON_BLOCK || type == IRON_BOOTS || type == IRON_CHESTPLATE || type == IRON_HELMET || type == IRON_HOE || type == IRON_LEGGINGS || type == IRON_ORE || type == IRON_PICKAXE || type == IRON_SPADE || type == IRON_SWORD
+                || type == GOLD_INGOT || type == GOLD_AXE || type == GOLD_BARDING || type == GOLD_BLOCK || type == GOLD_BOOTS || type == GOLD_CHESTPLATE || type == GOLD_HELMET || type == GOLD_HOE || type == GOLD_LEGGINGS || type == GOLD_ORE || type == GOLD_PICKAXE || type == GOLD_SPADE || type == GOLD_SWORD
+                || type == DRAGON_EGG || type == ENDER_PEARL || type == FISHING_ROD || type == LAVA_BUCKET || type == WATER_BUCKET || type == ENCHANTED_BOOK || type == ENCHANTMENT_TABLE || type == RECORD_10 || type == RECORD_11 || type == RECORD_12 || type == RECORD_3 || type == RECORD_4 || type == RECORD_5 || type == RECORD_6 || type == RECORD_7 || type == RECORD_8
+                || type == RECORD_9 || type == FLINT_AND_STEEL || type == CAKE || type == STONE_PICKAXE || type == STONE_SPADE || type == STONE_SWORD || type == STONE_HOE || type == STONE_AXE || type == WOOD_PICKAXE || type == WOOD_SPADE || type == WOOD_SWORD || type == WOOD_HOE || type == WOOD_AXE || type == RABBIT_STEW || type == MUSHROOM_SOUP || type == CARROT_STICK
+                || type == MILK_BUCKET || type == POTION || type == GOLDEN_APPLE || type == SADDLE || type == BONE || type == INK_SACK || type == BOW || type == BOWL;
     }
 }

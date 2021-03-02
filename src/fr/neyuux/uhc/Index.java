@@ -9,6 +9,7 @@ import fr.neyuux.uhc.listeners.FightListener;
 import fr.neyuux.uhc.listeners.PlayerListener;
 import fr.neyuux.uhc.listeners.PreGameListener;
 import fr.neyuux.uhc.listeners.WorldListener;
+import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.tasks.UHCStart;
 import fr.neyuux.uhc.teams.TeamPrefix;
@@ -314,7 +315,7 @@ public class Index extends JavaPlugin {
 		String s;
 		switch (pet.getName()) {
 			case "ABSORPTION":
-				s = "Aborption";
+				s = "Absorption";
 				break;
 			case "BLINDNESS":
 				s = "Cécité";
@@ -422,6 +423,7 @@ public class Index extends JavaPlugin {
 				permissions.remove(player.getName());
 			}
 			player.getInventory().remove(Material.REDSTONE_COMPARATOR);
+			player.closeInventory();
 		}
 	}
 
@@ -465,6 +467,7 @@ public class Index extends JavaPlugin {
 		boards.clear();
 		InventoryManager = new InventoryManager();
 		uhcTeamManager = new UHCTeamManager(this);
+		Scenario.removeEvents();
 		HandlerList.unregisterAll(config);
 		config = new GameConfig(this, mode);
 		world.changePVP(false);

@@ -44,6 +44,7 @@ public class Anonymous extends Scenario implements Listener {
     @Override
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Scenario.handlers.add(this);
 
         List<PlayerUHC> choosable = new ArrayList<>();
         for (PlayerUHC pu : main.players) if (!pu.isSpec() && pu.getPlayer().isOnline())

@@ -67,12 +67,14 @@ public class InventoryManager {
     }
 
     public static void giveWaitInventory(PlayerUHC player) {
-        clearInventory(player.getPlayer().getPlayer());
-        player.getPlayer().getPlayer().getInventory().setItem(1, Index.getSpecTear());
-        if (((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To"))
-            give(player.getPlayer().getPlayer(), 4, GameConfig.getChooseTeamBanner());
-        if (player.isHost())
-            player.getPlayer().getPlayer().getInventory().setItem(6, new ItemsStack(Material.REDSTONE_COMPARATOR, "§c§lConfiguration de la partie", "§7Permet de configurer la partie", "§b>>Clique droit").toItemStack());
+        if (!player.getPlayer().getPlayer().equals(Index.getInstance().getGameConfig().deathInvModifier) && !player.getPlayer().getPlayer().equals(Index.getInstance().getGameConfig().starterModifier)) {
+            clearInventory(player.getPlayer().getPlayer());
+            player.getPlayer().getPlayer().getInventory().setItem(1, Index.getSpecTear());
+            if (((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To"))
+                give(player.getPlayer().getPlayer(), 4, GameConfig.getChooseTeamBanner());
+            if (player.isHost())
+                player.getPlayer().getPlayer().getInventory().setItem(6, new ItemsStack(Material.REDSTONE_COMPARATOR, "§c§lConfiguration de la partie", "§7Permet de configurer la partie", "§b>>Clique droit").toItemStack());
+        }
     }
 
     public void giveStartInventory(Player player) {
@@ -85,21 +87,21 @@ public class InventoryManager {
         player.getInventory().setContents(startInventory);
     }
 
-    public static void dropDeathStuff(Player player){
+    public static void dropDeathStuff(Player player, Location loc){
         for(ItemStack item : deathInventory) if (item != null && !item.getType().equals(Material.AIR))
-            player.getWorld().dropItem(player.getLocation(), item);
+            player.getWorld().dropItem(loc, item);
         for (ItemStack item : player.getInventory().getContents()) if (item != null && !item.getType().equals(Material.AIR))
-            player.getWorld().dropItem(player.getLocation(), item);
+            player.getWorld().dropItem(loc, item);
         for (ItemStack item : player.getInventory().getArmorContents()) if (item != null && !item.getType().equals(Material.AIR))
-            player.getWorld().dropItem(player.getLocation(), item);
+            player.getWorld().dropItem(loc, item);
 
         if ((boolean)GameConfig.ConfigurableParams.HEAD.getValue())
-            player.getWorld().dropItem(player.getLocation(), new ItemsStack(Material.SKULL_ITEM, (short)3).toItemStackwithSkullMeta(player.getName()));
+            player.getWorld().dropItem(loc, new ItemsStack(Material.SKULL_ITEM, (short)3).toItemStackwithSkullMeta(player.getName()));
         if ((boolean)GameConfig.ConfigurableParams.GOLDEN_HEAD.getValue())
-            player.getWorld().dropItem(player.getLocation(), Index.getGoldenHead(1));
+            player.getWorld().dropItem(loc, Index.getGoldenHead(1));
     }
 
-    public static void createChestInventory(PlayerUHC died, Chest chest, boolean explosion) {
+    public static void createChestInventory(PlayerUHC died, Chest chest, boolean explosion, int timer) {
         for (ItemStack i : died.getLastArmor().values())
             if (i != null && i.getType() != Material.AIR)
                 chest.getInventory().addItem(i);
@@ -108,15 +110,19 @@ public class InventoryManager {
             if (i != null && i.getType() != Material.AIR)
                 chest.getInventory().addItem(i);
 
-        chest.setMetadata("nobreak", new FixedMetadataValue(Index.getInstance(), "nobreak"));
+        for (ItemStack i : deathInventory)
+            if (i != null && i.getType() != Material.AIR)
+                chest.getInventory().addItem(i);
 
+        chest.setMetadata("nobreak", new FixedMetadataValue(Index.getInstance(), "nobreak"));
 
 
         if(!explosion) return;
 
         ArmorStand ar = UHCWorld.getArmorStand(new Location(chest.getWorld(), chest.getX(), chest.getY()+1, chest.getZ()));
+        ar.setSmall(true);
         new BukkitRunnable() {
-            Integer time = 30;
+            int time = timer;
             public void run() {
                 if (time > 0)
                     ar.setCustomName("§6Explosion dans §l" + time + " §6seconde" + (time > 1 ? "s" : ""));

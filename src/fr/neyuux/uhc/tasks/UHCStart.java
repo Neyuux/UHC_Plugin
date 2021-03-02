@@ -75,8 +75,8 @@ public class UHCStart extends BukkitRunnable {
 
         timer--;
 
-        if (timer == -1) {
-            for (Scenarios sc : Scenarios.getActivatedScenarios()) {
+        if (timer == 0) {
+            for (Scenarios sc : Scenarios.getActivatedScenarios())
                 try {
                     Class<?> c = sc.getScenarioClass();
                     boolean b = (boolean) c.getMethod("checkStart").invoke(c.newInstance());
@@ -84,13 +84,14 @@ public class UHCStart extends BukkitRunnable {
                     if (!b) {
                         Bukkit.broadcastMessage(main.getPrefix() + "§6Le Scénario " + sc.getDisplayName() + " §6empêche de lancer la partie à cause d'une mauvaise configuration.");
                         cancelStart();
+                        return;
                     }
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
                     e.printStackTrace();
                     Bukkit.broadcastMessage(main.getPrefix() + "§4[§cErreur§4] §cUne erreur s'est produite lors de la vérification pour start des scénarios, veuillez en informer Neyuux_ !");
                 }
-            }
-
+        }
+        if (timer == -1) {
             main.setState(Gstate.PLAYING);
             for (PlayerUHC p : main.players)
                 if (!p.isSpec())
@@ -346,9 +347,9 @@ public class UHCStart extends BukkitRunnable {
 
     private void sendStartTimerTitle(Player pls) {
         if (timer != 1)
-            main.sendTitle(pls, ChatColor.translateAlternateColorCodes('&', main.mode.getPrefix()), "§eLancement dans §6§l" + timer + " §eseondes.", 0, 20, 0);
+            main.sendTitle(pls, ChatColor.translateAlternateColorCodes('&', main.mode.getPrefix()), "§eLancement dans §6§l" + timer + " §esecondes.", 0, 20, 0);
         else
-            main.sendTitle(pls, ChatColor.translateAlternateColorCodes('&', main.mode.getPrefix()), "§eLancement dans §6§l" + timer + " §eseonde.", 0, 20, 0);
+            main.sendTitle(pls, ChatColor.translateAlternateColorCodes('&', main.mode.getPrefix()), "§eLancement dans §6§l" + timer + " §eseconde.", 0, 20, 0);
     }
 
     public void cancelStart() {

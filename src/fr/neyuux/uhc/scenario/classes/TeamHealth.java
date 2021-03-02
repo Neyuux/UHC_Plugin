@@ -1,5 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
+import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.Material;
@@ -22,6 +23,6 @@ public class TeamHealth extends Scenario {
 
     @Override
     public boolean checkStart() {
-        return true;
+        return !GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA");
     }
 }

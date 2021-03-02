@@ -38,6 +38,7 @@ public class GraveRobbers extends Scenario implements Listener {
     @Override
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Scenario.handlers.add(this);
     }
 
     @Override
@@ -112,7 +113,7 @@ public class GraveRobbers extends Scenario implements Listener {
 
         Chest chest = (Chest) chestLoc.getBlock().getState();
         chest.setMetadata("spawned", new FixedMetadataValue(Index.getInstance(), "true"));
-        InventoryManager.createChestInventory(p, chest, false);
+        InventoryManager.createChestInventory(p, chest, false, 0);
         chest.update(true);
     }
 

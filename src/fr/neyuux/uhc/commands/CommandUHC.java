@@ -9,6 +9,7 @@ import fr.neyuux.uhc.events.SlaveMarketCandidateEvent;
 import fr.neyuux.uhc.listeners.PlayerListener;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.scenario.classes.Anonymous;
+import fr.neyuux.uhc.scenario.classes.TeamInventory;
 import fr.neyuux.uhc.scenario.classes.modes.SlaveMarket;
 import fr.neyuux.uhc.teams.UHCTeam;
 import fr.neyuux.uhc.util.ItemsStack;
@@ -297,6 +298,10 @@ public class CommandUHC implements CommandExecutor {
                             Index.playPositiveSound(player);
                         } else player.sendMessage(main.getPrefix() + "§cUtilisation : §e/uhc am §a<pseudo>§c.");
                         break;
+                    case "ti":
+                        if (!Scenarios.TEAM_INVENTORY.isActivated()) return true;
+                        if (playerUHC.isAlive() && !playerUHC.isSpec())
+                            player.openInventory(TeamInventory.inventories.get(playerUHC.getTeam()));
                     case "chat":
                         final String helpchatmessage = "§6La commande chat gérer le chat de la partie.\nArgument possibles : " +
                                 "§eon §6: Actve le chat.\n" +

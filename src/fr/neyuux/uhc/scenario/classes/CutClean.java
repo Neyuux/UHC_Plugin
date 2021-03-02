@@ -30,6 +30,7 @@ public class CutClean extends Scenario implements Listener {
     @Override
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Scenario.handlers.add(this);
 
         VarsLoot.getBlocksLoots().put(Material.GOLD_ORE, new Loot(1.2, Lists.newArrayList(
                 new LootItem(new ItemStack(Material.GOLD_INGOT, 1), 100.0, new Interval<>(1, 1)))));

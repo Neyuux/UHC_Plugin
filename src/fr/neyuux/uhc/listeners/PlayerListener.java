@@ -188,7 +188,7 @@ public class PlayerListener implements Listener {
             }
 
             double abso = (double)GameConfig.ConfigurableParams.ABSORPTION.getValue() * 2;
-            if(abso != 2.0) if (abso != 0) {
+            if(abso != 4.0) if (abso != 0) {
                 ((CraftPlayer) p).getHandle().setAbsorptionHearts((float) abso);
                 main.getPlayerUHC(p).absorption = (float) abso;
             } else Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {

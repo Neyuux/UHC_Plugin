@@ -32,6 +32,7 @@ public class CommandEnchant implements CommandExecutor {
                 GameConfig.setInvCoin(inv, (short)6);
                 inv.setItem(4, player.getItemInHand());
 
+                inv.setItem(7, new ItemsStack(Material.GOLD_AXE, "§eMettre l'objet incassable", "§bValeur : " + GameConfig.getStringBoolean(player.getItemInHand().getItemMeta().spigot().isUnbreakable()), "", "§b>>Clique pour changer").toItemStack());
                 int ord = 0;
                 for (int i = 10; i <= 43; i++) {
                     if (ord + 1 > Enchantment.values().length) continue;

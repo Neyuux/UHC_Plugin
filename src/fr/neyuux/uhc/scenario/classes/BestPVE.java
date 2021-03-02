@@ -39,6 +39,7 @@ public class BestPVE extends Scenario implements Listener {
     @Override
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Scenario.handlers.add(this);
 
         bestpve.addAll(Index.getInstance().getAlivePlayers());
         final int[] timer = {BestPVE.timer};

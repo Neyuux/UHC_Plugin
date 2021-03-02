@@ -313,6 +313,11 @@ public class FightListener implements Listener {
             player.sendMessage(main.getPrefix() + "§6Votre mode de jeu à été établi en spectateur.");
         }
 
+        PlayerEliminationEvent ev;
+        if (killer != null) ev = new PlayerEliminationEvent(up, main.getPlayerUHC(killer), up.getLastLocation());
+        else ev = new PlayerEliminationEvent(up, null, up.getLastLocation());
+        Bukkit.getPluginManager().callEvent(ev);
+
         if ((boolean)GameConfig.ConfigurableParams.LIGHTNING.getValue())
             player.getWorld().strikeLightningEffect(player.getLocation());
         if(!Scenarios.TIME_BOMB.isActivated() && !Scenarios.GRAVE_ROBBERS.isActivated()) {
@@ -326,12 +331,10 @@ public class FightListener implements Listener {
                 skull.setRotation(BlockFace.NORTH);
                 skull.update(true);
             }
-            InventoryManager.dropDeathStuff(player);
+            InventoryManager.dropDeathStuff(player, ev.getStuffLocation());
             InventoryManager.clearInventory(player);
             player.updateInventory();
         }
-        if (killer != null)Bukkit.getPluginManager().callEvent(new PlayerEliminationEvent(up, main.getPlayerUHC(killer), main));
-        else Bukkit.getPluginManager().callEvent(new PlayerEliminationEvent(up, null, main));
 
         if (killer != null){
             PlayerUHC killerUHC = main.getPlayerUHC(killer);
@@ -352,13 +355,13 @@ public class FightListener implements Listener {
             UHCTeam team = up.getTeam();
             team.death(up);
             if (team.getAlivePlayers().size() == 0)
-                Bukkit.broadcastMessage(main.getPrefix() + "§6L'équipe " + team.getPrefix().toString() + " §6est éliminée...");
+                Bukkit.broadcastMessage(main.getPrefix() + "§6L'équipe " + team.getTeam().getDisplayName() + " §6est éliminée...");
         }
         for (Map.Entry<PlayerUHC, ScoreboardSign> en : main.boards.entrySet())
             if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA"))
                 en.getValue().setLine(3, "§7§lJoueurs §7: §f" + main.getAlivePlayers().size());
             else
-                en.getValue().setLine(3, "§7§lTeams : §f" + main.getUHCTeamManager().getTeams().size() + "§8/§7" + UHCTeamManager.baseteams + " §8(§7" + main.getAlivePlayers().size() + "§8 joueurs)");
+                en.getValue().setLine(3, "§7§lTeams : §f" + main.getUHCTeamManager().getAliveTeams().size() + "§8/§7" + UHCTeamManager.baseteams + " §8(§7" + main.getAlivePlayers().size() + "§8 joueurs)");
 
         if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && main.getAlivePlayers().size() < 2) {
             main.setState(Gstate.FINISHED);

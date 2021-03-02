@@ -2,8 +2,10 @@ package fr.neyuux.uhc.scenario.classes;
 
 import fr.neyuux.uhc.Index;
 import fr.neyuux.uhc.PlayerUHC;
+import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
+import fr.neyuux.uhc.tasks.UHCRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,6 +34,7 @@ public class BowSwap extends Scenario implements Listener {
     @Override
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Scenario.handlers.add(this);
     }
 
     @Override
@@ -49,13 +52,14 @@ public class BowSwap extends Scenario implements Listener {
             PlayerUHC pu2 = Index.getInstance().getPlayerUHC(p2);
             int r = new Random().nextInt(100) + 1;
             if (pu1.isAlive() && pu2.isAlive() && r <= percentage) {
+                System.out.println(UHCRunnable.timer + " bow swap");
                 Location l1 = p1.getLocation().clone();
                 Location l2 = p2.getLocation().clone();
                 p1.teleport(l2);
                 p2.teleport(l1);
 
-                p1.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §6Vous avez swappé avec " + p2.getDisplayName() +"§6.");
-                p2.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §6Vous avez swappé avec " + p1.getDisplayName() +"§6.");
+                p1.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §6Vous avez swappé avec " + p2.getDisplayName() +"§6.");
+                p2.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §6Vous avez swappé avec " + p1.getDisplayName() +"§6.");
             }
         }
     }

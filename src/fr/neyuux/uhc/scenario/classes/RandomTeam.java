@@ -1,5 +1,8 @@
 package fr.neyuux.uhc.scenario.classes;
 
+import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.InventoryManager;
+import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -14,6 +17,10 @@ public class RandomTeam extends Scenario {
     @Override
     protected void activate() {
         GameConfig.ConfigurableParams.TEAMTYPE.setValue(GameConfig.getTeamTypeString(GameConfig.getTeamTypeInt((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()), true));
+        for (PlayerUHC pu : Index.getInstance().players) {
+            if (pu.getTeam() != null) pu.getTeam().leave(pu);
+            InventoryManager.giveWaitInventory(pu);
+        }
     }
 
     @Override

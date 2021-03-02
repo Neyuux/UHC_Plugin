@@ -27,6 +27,7 @@ public class HasteyBoys extends Scenario implements Listener {
     @Override
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Scenario.handlers.add(this);
 
         for (PlayerUHC pu : Index.getInstance().getAlivePlayers())
             if (pu.getPlayer().isOnline())

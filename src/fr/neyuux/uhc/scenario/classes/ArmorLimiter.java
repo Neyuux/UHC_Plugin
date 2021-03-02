@@ -29,6 +29,7 @@ public class ArmorLimiter extends Scenario implements Listener {
     @Override
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Scenario.handlers.add(this);
     }
 
     @Override

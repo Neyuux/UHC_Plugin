@@ -5,7 +5,6 @@ import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.util.ItemsStack;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
@@ -23,8 +22,6 @@ public class GoneFishing extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
-
         for (PlayerUHC pu : Index.getInstance().getAlivePlayers()) {
             ItemsStack g = new ItemsStack(Material.FISHING_ROD, scenario.getDisplayName());
             g.addUnSafeEnchantement(Enchantment.LURE, 7);

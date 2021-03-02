@@ -17,8 +17,8 @@ public class LootItem {
 
     public ItemStack getLootItem() {
         double ran;
-        do ran = new Random().nextDouble() * (percent - 0.0) + 0.0; while (ran != 0.0);
-        if (ran <= percent) {
+        do ran = new Random().nextDouble(); while (ran == 0.0);
+        if (ran * 100 <= percent - 0.1) {
             item.setAmount(amounts.getAsRandomInt());
             return item.clone();
         } else

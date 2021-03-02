@@ -110,7 +110,7 @@ public class PreGameListener implements Listener {
         ItemStack current = player.getItemInHand();
 
         if (current.getType().equals(Material.BANNER) && current.hasItemMeta() && current.getItemMeta().hasDisplayName() && current.getItemMeta().getDisplayName().equals(GameConfig.getChooseTeamBanner().getItemMeta().getDisplayName()))
-            player.openInventory(getChangeTeamInv(player, 1));
+            player.openInventory(getChangeTeamInv(1));
     }
 
     @EventHandler
@@ -204,7 +204,7 @@ public class PreGameListener implements Listener {
 
 
 
-    private Inventory getChangeTeamInv(Player player, int page) {
+    private Inventory getChangeTeamInv(int page) {
         int maxpages = BigDecimal.valueOf((double) main.getUHCTeamManager().getTeams().size() / 28.0).setScale(0, RoundingMode.UP).toBigInteger().intValue();
         Inventory inv = Bukkit.createInventory(null, Index.adaptInvSizeForInt(main.getUHCTeamManager().getTeams().size(), 18), "§e§lChoix d'équipe " + " §8["+page+"/" + maxpages + "]");
         GameConfig.setInvCoin(inv, (short)4);
