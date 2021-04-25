@@ -1,47 +1,339 @@
 package fr.neyuux.uhc.scenario.classes.modes;
 
-import fr.neyuux.uhc.util.ItemsStack;
+import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.enums.Gstate;
+import fr.neyuux.uhc.enums.Symbols;
+import fr.neyuux.uhc.events.GameEndEvent;
+import fr.neyuux.uhc.events.PlayerEliminationEvent;
+import fr.neyuux.uhc.events.PluginReloadEvent;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
+import fr.neyuux.uhc.teams.TeamPrefix;
+import fr.neyuux.uhc.teams.UHCTeam;
+import fr.neyuux.uhc.teams.UHCTeamColors;
+import fr.neyuux.uhc.util.ItemsStack;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 import static org.bukkit.Material.*;
 
-public class Moles extends Scenario {
+public class Moles extends Scenario implements Listener {
     public Moles() {
         super(Scenarios.MOLES, new ItemStack(Material.DIAMOND_SWORD));
     }
 
-    public static int timer = 20 * 60, moleTeamSize = 3, moleTeams = 2;
+    public static int timer = 1200, molePerTeams = 1, moleTeams = 2;
     public static boolean hasApocalypse = false, superMoles = false;
     public static List<Kits> activatedKits = Kits.getActivatedKits();
 
+    public static int nOfApoMoles = 20;
+    public static boolean areSuperMolesTogether = false;
+
+    public static HashMap<PlayerUHC, UHCTeam> taupes = new HashMap<>();
+    public static HashMap<PlayerUHC, Kits> kits = new HashMap<>();
+    public static HashMap<PlayerUHC, UHCTeam> superTaupes = new HashMap<>();
+    public static ArrayList<PlayerUHC> alreadyUse = new ArrayList<>();
+    public static ArrayList<PlayerUHC> alreadyReveal = new ArrayList<>();
+    public static ArrayList<PlayerUHC> alreadySuperReveal = new ArrayList<>();
+    public static boolean hasChoosedMoles = false, hasChoosedSuperMoles = false;
+    public static final int[] IGtimers = {0, 0};
+
     @Override
     protected void activate() {
-
+        if (!(boolean)GameConfig.ConfigurableParams.FRIENDLY_FIRE.getValue())
+            Index.sendHostMessage(Index.getStaticPrefix() + "§cVeuillez activer le Friendly Fire pour que le plugin " + scenario.getDisplayName() + " §cpuisse fonctionner.");
+        if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA"))
+            Index.sendHostMessage(Index.getStaticPrefix() + "§cVeuillez ajouter des équipes pour que le plugin " + scenario.getDisplayName() + " §cpuisse fonctionner.");
+        Index.sendHostMessage(Index.getStaticPrefix() + "§eVous avez activé le mode de jeu Taupe Gun. Voici deux commandes pour modifier des options supplémentaires : ");
+        Index.sendHostMessage("§6§l - §a§l/uhc teamsupertaupe §e§l<on/off> §6: §ePermet de faire en sorte que les super taupes soient toutes dans une même équipe. §o(Par défaut : §c§oDésactivé§e§o)");
+        Index.sendHostMessage("§6§l - §a§l/uhc apotaupes §e§l<nombre> §6: §ePermet de modifier le nombre de taupes en mode Apocalypse. §o(Par défaut : §a§l§o20§e§o)");
     }
 
     @Override
     public void execute() {
+        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Scenario.handlers.add(this);
 
+        IGtimers[0] = Moles.timer;
+        IGtimers[1] = (int) (Moles.timer * 1.5) - Moles.timer;
+        System.out.println(IGtimers[0] + " " + IGtimers[1]);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!hasChoosedMoles) {
+                    if (IGtimers[0] == 900)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 15 minutes !");
+                    else if (IGtimers[0] == 600)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 10 minutes !");
+                    else if (IGtimers[0] == 300)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 5 minutes !");
+                    else if (IGtimers[0] == 60)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 1 minute !");
+                    else if (IGtimers[0] == 30)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 30 secondes !");
+                    else if (IGtimers[0] == 10)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 10 secondes !");
+                    else if (IGtimers[0] > 1 && IGtimers[0] < 5)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans " + IGtimers[0] + " secondes !");
+                    else if (IGtimers[0] == 1)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 1 seconde !");
+                    IGtimers[0]--;
+                    if (IGtimers[0] == -1) {
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes...");
+                        giveMoles();
+
+                        IGtimers[0] = Moles.timer;
+                        hasChoosedMoles = true;
+                    }
+                }
+                
+                
+                if (hasChoosedMoles && !hasChoosedSuperMoles && superMoles) {
+                    if (IGtimers[1] == 900)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 15 minutes !");
+                    else if (IGtimers[1] == 600)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 10 minutes !");
+                    else if (IGtimers[1] == 300)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 5 minutes !");
+                    else if (IGtimers[1] == 60)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 1 minute !");
+                    else if (IGtimers[1] == 30)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 30 secondes !");
+                    else if (IGtimers[1] == 10)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 10 secondes !");
+                    else if (IGtimers[1] > 1 && IGtimers[1] < 5)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans " + IGtimers[1] + " secondes !");
+                    else if (IGtimers[1] == 1)
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 1 seconde !");
+                    IGtimers[1]--;
+                    if (IGtimers[1] == -1) {
+                        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e...");
+                        giveSuperMoles();
+
+                        IGtimers[1] = (int) (Moles.timer * 1.5);
+                        hasChoosedSuperMoles = true;
+                        cancel();
+                    }
+                } else if (!superMoles && hasChoosedMoles) cancel();
+                
+                if (!Index.getInstance().isState(Gstate.PLAYING)) cancel();
+            }
+        }.runTaskTimer(Index.getInstance(), 0, 20);
     }
 
     @Override
     public boolean checkStart() {
-        return !GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA");
+        boolean canStart = true;
+        if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") ||
+                !(boolean) GameConfig.ConfigurableParams.FRIENDLY_FIRE.getValue()) {
+            canStart = false;
+        }
+        return canStart;
+    }
+
+
+    @EventHandler
+    public void removeCauseInDeathMessage(PlayerEliminationEvent ev) {
+        System.out.println(ev.getDeathMessage());
+        ev.setDeathMessage(ev.getPlayerUHC().getTeam().getTeam().getPrefix() + ev.getPlayerUHC().getPlayer().getName() + "§c est Mort.");
+    }
+
+    @EventHandler
+    public void onRel(PluginReloadEvent ev) {
+        nOfApoMoles = 20;
+        alreadyUse.clear();
+        alreadySuperReveal.clear();
+        alreadyReveal.clear();
+        hasChoosedMoles = false;
+        hasChoosedSuperMoles = false;
+        kits.clear();
+        taupes.clear();
+        superTaupes.clear();
+        TeamPrefix.taupeTeams = 0;
+    }
+
+    @EventHandler
+    public void onEndGame(GameEndEvent ev) {
+        boolean noMoreMoles = true;
+        boolean noMoreSuperMoles = true;
+        for (PlayerUHC pu : taupes.keySet())
+            if (pu.isAlive()) {
+                noMoreMoles = false;
+                break;
+            }
+        for (PlayerUHC pu : superTaupes.keySet())
+            if (pu.isAlive()) {
+                noMoreSuperMoles = false;
+                break;
+            }
+        if (Index.getInstance().getUHCTeamManager().getAliveTeams().size() == 1 && !noMoreMoles &&
+            !Index.getInstance().getUHCTeamManager().getAliveTeams().get(0).getPrefix().isTaupePrefix() &&
+            !Index.getInstance().getUHCTeamManager().getAliveTeams().get(0).getPrefix().isSuperTaupePrefix())
+            ev.setCancelled(true);
+
+        if (Index.getInstance().getUHCTeamManager().getAliveTeams().size() == 1 && !noMoreSuperMoles &&
+                !Index.getInstance().getUHCTeamManager().getAliveTeams().get(0).getPrefix().isSuperTaupePrefix())
+        ev.setCancelled(true);
+    }
+
+
+    public void giveMoles(){
+        List<PlayerUHC> moles = new ArrayList<>();
+        int teams = moleTeams;
+        if (!hasApocalypse) {
+            Random random = new Random();
+
+            for (UHCTeam team : Index.getInstance().getUHCTeamManager().getTeams())
+                if (team.getAlivePlayers().size() > 0) {
+                    List<PlayerUHC> players = new ArrayList<>();
+                    for (PlayerUHC u : team.getPlayers()) {
+                        if (!isTaupe(u) && !moles.contains(u))
+                            players.add(u);
+                    }
+                    for (int i = 0; i < molePerTeams; i++) moles.add(players.remove(random.nextInt(players.size())));
+                }
+
+            while(teams != 0) {
+                List<Kits> ks = new ArrayList<>(activatedKits);
+                UHCTeam t = Index.getInstance().getUHCTeamManager().createTeam(new TeamPrefix(Index.getInstance(), UHCTeamColors.getTaupeNext(), "").toTaupePrefix());
+                int maxplayers = BigDecimal.valueOf((double)moles.size() / teams).setScale(0, RoundingMode.UP).toBigInteger().intValue();
+                while (maxplayers != 0) {
+                    PlayerUHC pu = moles.remove(random.nextInt(moles.size()));
+                    if (ks.size() == 0) ks.addAll(new ArrayList<>(activatedKits));
+                    Kits kit = ks.remove(random.nextInt(ks.size()));
+                    taupes.put(pu, t);
+                    kits.put(pu, kit);
+                    if (pu.getPlayer().isOnline()) {
+                        Player p = pu.getPlayer().getPlayer();
+                        Index.getInstance().sendTitle(p, "§c§lVous êtes une taupe !", "§6Vous faites partie de l'équipe " + t.getTeam().getDisplayName(), 5, 80, 5);
+                        p.sendMessage("§8§l--------------------------------");
+                        p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous êtes une taupe de l'équipe " + pu.getTeam().getTeam().getDisplayName() + " §c!");
+                        p.sendMessage("§cDésormais, votre but est de gagner avec votre nouvelle équipe " + t.getTeam().getDisplayName() + "§c.");
+                        p.sendMessage("§cVoici la liste des commandes à votre disposition : ");
+                        p.sendMessage(" §8§l- §6§l/uhc reveal §8: §cVous permet de révéler votre véritable idendité en échange d'une pomme en or");
+                        p.sendMessage(" §8§l- §6§l/uhc t <message> §8: §cVous permet de communiquer avec vos coéquipiers taupe");
+                        p.sendMessage(" §8§l- §6§l/uhc claim §8: §cVous permet de recevoir le kit dont vous disposez pour vous aider à trahir");
+                        p.sendMessage("§cVotre kit : " + kit.getName());
+                        p.sendMessage("§8§l--------------------------------");
+                    }
+                    maxplayers--;
+                }
+                teams--;
+            }
+        } else {
+            int nOfTaupes = nOfApoMoles;
+            Random random = new Random();
+            List<PlayerUHC> players = new ArrayList<>();
+
+            for (PlayerUHC pu : Index.getInstance().players)
+                if (pu.getTeam() != null && !isTaupe(pu)) players.add(pu);
+            for (int i = 0; i < nOfTaupes; i++) moles.add(players.remove(random.nextInt(players.size())));
+
+            while(teams != 0) {
+                List<Kits> ks = new ArrayList<>(activatedKits);
+                UHCTeam t = Index.getInstance().getUHCTeamManager().createTeam(new TeamPrefix(Index.getInstance(), UHCTeamColors.getTaupeNext(), "").toTaupePrefix());
+                int maxplayers = BigDecimal.valueOf((double)moles.size() / teams).setScale(0, RoundingMode.UP).toBigInteger().intValue();
+                while (maxplayers != 0) {
+                    PlayerUHC pu = moles.remove(random.nextInt(moles.size()));
+                    if (ks.size() == 0) ks.addAll(new ArrayList<>(activatedKits));
+                    Kits kit = ks.remove(random.nextInt(ks.size()));
+                    taupes.put(pu, t);
+                    kits.put(pu, kit);
+                    if (pu.getPlayer().isOnline()) {
+                        Player p = pu.getPlayer().getPlayer();
+                        Index.getInstance().sendTitle(p, "§c§lVous êtes une taupe !", "§6Vous faites partie de l'équipe " + t.getTeam().getDisplayName(), 5, 80, 5);
+                        p.sendMessage("§8§l--------------------------------");
+                        p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous êtes une taupe de l'équipe " + pu.getTeam().getTeam().getDisplayName() + " §c!");
+                        p.sendMessage("§cDésormais, votre but est de gagner avec votre nouvelle équipe " + t.getTeam().getDisplayName() + "§c.");
+                        p.sendMessage("§cVoici la liste des commandes à votre disposition : ");
+                        p.sendMessage(" §8§l- §6§l/uhc reveal §8: §cVous permet de révéler votre véritable idendité en échange d'une pomme en or");
+                        p.sendMessage(" §8§l- §6§l/uhc <message> t §8: §cVous permet de communiquer avec vos coéquipiers taupe");
+                        p.sendMessage(" §8§l- §6§l/uhc claim §8: §cVous permet de recevoir le kit dont vous disposez pour vous aider à trahir");
+                        p.sendMessage("§cVotre kit : " + kit.getName());
+                        p.sendMessage("§8§l--------------------------------");
+                    }
+                    maxplayers--;
+                }
+                teams--;
+            }
+        }
+        Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§eLes taupes ont été annoncées !");
+        for (PlayerUHC pu : Index.getInstance().players)
+            if (pu.getPlayer().isOnline())
+                if (moles.contains(pu)) pu.getPlayer().getPlayer().playSound(pu.getPlayer().getPlayer().getLocation(), Sound.GHAST_SCREAM, 1, 1);
+                else Index.playNegativeSound(pu.getPlayer().getPlayer());
+    }
+
+    public void giveSuperMoles() {
+        List<PlayerUHC> moles = new ArrayList<>();
+        List<UHCTeam> teams = new ArrayList<>();
+
+        for (Map.Entry<PlayerUHC, UHCTeam> en : taupes.entrySet()) if (!teams.contains(en.getValue())) teams.add(en.getValue());
+
+        Random r = new Random();
+        for (UHCTeam t : teams) {
+            List<PlayerUHC> players = new ArrayList<>();
+            for (Map.Entry<PlayerUHC, UHCTeam> en : taupes.entrySet()) if (en.getValue().equals(t)) players.add(en.getKey());
+            moles.add(players.get(r.nextInt(players.size())));
+        }
+
+        if (areSuperMolesTogether) {
+            UHCTeam t = Index.getInstance().getUHCTeamManager().createTeam(new TeamPrefix(Index.getInstance(), UHCTeamColors.WHITE, "").toSuperTaupePrefix(null));
+            for (PlayerUHC playerUHC : moles) {
+                superTaupes.put(playerUHC, t);
+                if  (playerUHC.getPlayer().isOnline()) {
+                    Player p = playerUHC.getPlayer().getPlayer();
+                    Index.getInstance().sendTitle(p, "§c§lVous êtes une §f§lSuper Taupe §c§l!", "§6Vous faites partie de l'équipe " + t.getTeam().getDisplayName(), 5, 80, 5);
+                    p.sendMessage("§8§l--------------------------------");
+                    p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous êtes la super taupe de l'équipe " + taupes.get(playerUHC).getTeam().getDisplayName() + " §c!");
+                    p.sendMessage("§cDésormais, votre but est de gagner avec votre nouvelle équipe " + t.getTeam().getDisplayName() + "§c.");
+                    p.sendMessage("§cVoici la liste des commandes à votre disposition : ");
+                    p.sendMessage(" §8§l- §6§l/uhc superreveal §8: §cVous permet de révéler votre véritable idendité en échange d'une pomme en or");
+                    p.sendMessage(" §8§l- §6§l/uhc st <message> §8: §cVous permet de communiquer avec vos coéquipiers taupe");
+                    p.sendMessage("§8§l--------------------------------");
+                }
+            }
+        } else
+            for (PlayerUHC playerUHC : moles) {
+                UHCTeam t = Index.getInstance().getUHCTeamManager().createTeam(new TeamPrefix(Index.getInstance(), taupes.get(playerUHC).getPrefix().color, "").toSuperTaupePrefix(taupes.get(playerUHC)));
+                superTaupes.put(playerUHC, t);
+                if (playerUHC.getPlayer().isOnline()) {
+                    Player p = playerUHC.getPlayer().getPlayer();
+                    Index.getInstance().sendTitle(p, "§c§lVous êtes une §f§lSuper Taupe §c§l!", "§6Vous devez désormais gagner seul.", 5, 80, 5);
+                    p.sendMessage("§8§l--------------------------------");
+                    p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous êtes la super taupe de l'équipe " + taupes.get(playerUHC).getTeam().getDisplayName() + " §c!");
+                    p.sendMessage("§cDésormais, votre but est de gagner seul.");
+                    p.sendMessage("§cVoici la liste des commandes à votre disposition : ");
+                    p.sendMessage(" §8§l- §6§l/uhc superreveal §8: §cVous permet de révéler votre véritable idendité en échange de 3 pommes en or");
+                    p.sendMessage("§8§l--------------------------------");
+                }
+            }
+    }
+
+    public static boolean isTaupe(PlayerUHC p){
+        return taupes.containsKey(p);
+    }
+
+    public static boolean isSuperTaupe(PlayerUHC pu){
+        return superTaupes.containsKey(pu);
     }
 
 

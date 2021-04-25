@@ -1,20 +1,17 @@
 name: UHC
-version: Beta1.0
+version: Beta1.2
 author: Neyuux_
 main: fr.neyuux.uhc.Index
 softdepend: [NeyGin_Core]
 commands:
   uhc:
     description: Commande Principale
-    permission: uhc.*
   revive:
     description: Commande de Revive
     permission: uhc.*
   heal:
     description: Commande de Final Heal
     permission: uhc.*
-  inv:
-    description: Commande pour afficher le stuff de depart
   finish:
     description: Commande de finish de l'inv de depart
     permission: uhc.*
@@ -28,6 +25,8 @@ commands:
       description: Commande de question
       aliases:
         - question
+  #a:
+   # description: oui
 permissions:
    uhc.*:
      description: Gives access to all UHC commands

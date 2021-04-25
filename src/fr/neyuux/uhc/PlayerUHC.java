@@ -13,6 +13,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +22,7 @@ import java.util.Map;
 
 public class PlayerUHC {
 
-    private final OfflinePlayer player;
+    private OfflinePlayer player;
     private final Index main;
     private int kills;
     private int diamonds;
@@ -108,6 +110,10 @@ public class PlayerUHC {
         return lastLocation;
     }
 
+    public void setPlayer(OfflinePlayer p) {
+        this.player = p;
+    }
+
     public void setTeam(UHCTeam team) {
         this.team = team;
     }
@@ -138,15 +144,15 @@ public class PlayerUHC {
     }
 
     public void addDiamonds(int added) {
-        this.diamonds += diamonds;
+        this.diamonds += added;
     }
 
     public void addGolds(int added) {
-        this.golds += golds;
+        this.golds += added;
     }
 
     public void addIrons(int added) {
-        this.irons += irons;
+        this.irons += added;
     }
 
     public void addAnimal() {
@@ -187,30 +193,39 @@ public class PlayerUHC {
 
 
     public String getDirectionArrow(Location targetLoc) {
-        if (!player.isOnline()) return "";
-        Vector vector = targetLoc.toVector().subtract(player.getPlayer().getLocation().toVector());
-        Vector playerDirection = targetLoc.getDirection();
-        double angle = vector.angle(playerDirection);
-        angle = angle * 180 / Math.PI;
+        if (!player.isOnline()) return Symbols.CROSS;
+        Location pl = getPlayer().getPlayer().getLocation();
+        if (!pl.getWorld().equals(targetLoc.getWorld())) return Symbols.CROSS;
+        Vector a = (targetLoc).toVector().subtract(pl.toVector()).normalize();
+        Vector b = getPlayer().getPlayer().getLocation().getDirection();
+        double angle;
+        angle = Math.acos(a.dot(b));
+        angle = Math.toDegrees(angle);
+        if(a.getX()*b.getZ() - a.getZ()*b.getX() < 0) angle = -angle;
 
-        if (angle > 67.5 && angle < 112.5) return Symbols.WEST_ARROW;
-        else if (angle > 112.5 && angle < 157.5) return Symbols.SOUTHWEST_ARROW;
-        else if (angle > 157.5 && angle < 202.5) return Symbols.SOUTH_ARROW;
-        else if (angle > 202.5 && angle < 247.5) return Symbols.SOUTHEAST_ARROW;
-        else if (angle > 247.5 && angle < 292.5) return Symbols.EAST_ARROW;
-        else if (angle > 292.5 && angle < 337.5) return Symbols.NORTHEAST_ARROW;
+        if (angle < 22.5 && angle > -22.5) return Symbols.NORTH_ARROW;
         else if (angle > 22.5 && angle < 67.5) return Symbols.NORTHWEST_ARROW;
-        else if (angle > 337.5 || angle < 22.5) return Symbols.NORTH_ARROW;
+        else if (angle > 67.5 && angle < 112.5) return Symbols.WEST_ARROW;
+        else if (angle > 112.5 && angle < 157.5) return Symbols.SOUTHWEST_ARROW;
+        else if (angle > 157.5 || angle < -157.5) return Symbols.SOUTH_ARROW;
+        else if (angle > -157.5 && angle < -112.5) return Symbols.SOUTHEAST_ARROW;
+        else if (angle > -112.5 && angle < -67.5) return Symbols.EAST_ARROW;
+        else if (angle > -67.5 && angle < -22.5) return Symbols.NORTHEAST_ARROW;
 
         return Symbols.CROSS;
     }
 
     public Inventory getSpecInfosInventory(List<String> moreInfos) {
         Inventory inv = Bukkit.createInventory(null, 54, "§7Stuff §6" + player.getName());
+        List<String> infos = new ArrayList<>(moreInfos);
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(1);
         for (int i = 9; i < 18; i++)
             inv.setItem(i, new ItemsStack(Material.BEDROCK, " ").toItemStack());
-        inv.setItem(8, new ItemsStack(Material.PAPER, "§7Informations supplémentaires", moreInfos.toArray(new String[0])).toItemStack());
-        inv.setItem(7, new ItemsStack(Material.INK_SACK, (short)1, "§cVie du joueur", "§c§lVie : §4" + health + Symbols.HEARTH, "§e§lAbso : §6" + ((CraftPlayer)player.getPlayer().getPlayer()).getHandle().getAbsorptionHearts(), "§d§lSaturation : §5" + foodLevel).toItemStack());
+        infos.add(" §8- §c§lKills §c: §l" + kills);
+        if (team != null) infos.add("§e§lTeam §e: " + team.getTeam().getDisplayName());
+        inv.setItem(8, new ItemsStack(Material.PAPER, "§7Informations supplémentaires", infos.toArray(new String[0])).toItemStack());
+        inv.setItem(7, new ItemsStack(Material.INK_SACK, (short)1, "§cVie du joueur", "§c§lVie : §4" + df.format(player.getPlayer().getHealth()) + Symbols.HEARTH, "§e§lAbso : §6" + df.format(((CraftPlayer)player.getPlayer().getPlayer()).getHandle().getAbsorptionHearts()), "§d§lSaturation : §5" + foodLevel).toItemStack());
         ItemsStack food = new ItemsStack(Material.BREWING_STAND_ITEM, "§5Effets de potion du joueur");
         for (PotionEffect pe : player.getPlayer().getActivePotionEffects())
             food.addLore("§e" + Index.translatePotionEffect(pe.getType()) + "§l" + (pe.getAmplifier() - 1) + "§7: §6" + Index.getTimer(pe.getDuration() / 20));
@@ -221,19 +236,18 @@ public class PlayerUHC {
         inv.setItem(10, player.getPlayer().getInventory().getChestplate());
         inv.setItem(11, player.getPlayer().getInventory().getLeggings());
         inv.setItem(12, player.getPlayer().getInventory().getBoots());
-        HashMap<Integer, ItemStack> pinv = new HashMap<>();
-        int ii;
+        int i = 9;
         for (ItemStack it : player.getPlayer().getInventory().getContents()) {
-            if (it == null)continue;
-            int slot = 0;
-            ii = 0;
-            for (ItemStack iit : player.getPlayer().getInventory().getContents()) {
-                if (iit != null && iit.equals(it)) slot = ii;
-                ii++;
-            }
-            pinv.put(slot, it);
+            inv.setItem(i, it);
+            i++;
         }
-        for (Map.Entry<Integer, ItemStack> en : pinv.entrySet()) {
+        HashMap<Integer, ItemStack> si = new HashMap<>();
+        i = 0;
+        for (ItemStack it : InventoryManager.startInventory) {
+            si.put(i, it);
+            i++;
+        }
+        for (Map.Entry<Integer, ItemStack> en : si.entrySet()) {
             int k = en.getKey();
             if (k >= 9 && k <= 17) k += 18;
             else if (k >= 27 && k <= 35) k -= 18;

@@ -9,11 +9,13 @@ public class PlayerEliminationEvent extends Event {
     final PlayerUHC playerUHC;
     final PlayerUHC killer;
     Location stuffLocation;
+    String deathmessage;
 
-    public PlayerEliminationEvent(PlayerUHC playerUHC, PlayerUHC killer, Location stuffLocation) {
+    public PlayerEliminationEvent(PlayerUHC playerUHC, PlayerUHC killer, Location stuffLocation, String deathmessage) {
         this.playerUHC = playerUHC;
         this.killer = killer;
         this.stuffLocation = stuffLocation;
+        this.deathmessage = deathmessage;
     }
 
     public PlayerUHC getPlayerUHC() {
@@ -30,6 +32,14 @@ public class PlayerEliminationEvent extends Event {
 
     public void setStuffLocation(Location stuffLocation) {
         this.stuffLocation = stuffLocation;
+    }
+
+    public String getDeathMessage()  {
+        return deathmessage;
+    }
+
+    public void setDeathMessage(String deathMessage) {
+        this.deathmessage = deathMessage;
     }
 
     private static final HandlerList handlers = new HandlerList();

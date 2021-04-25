@@ -5,6 +5,9 @@ import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
+import fr.neyuux.uhc.events.TeamChangeEvent;
+import fr.neyuux.uhc.scenario.Scenarios;
+import fr.neyuux.uhc.scenario.classes.modes.Moles;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -19,10 +22,7 @@ import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.bukkit.DyeColor.*;
 import static org.bukkit.block.banner.PatternType.*;
@@ -49,8 +49,23 @@ public class UHCTeam {
 
     private void setupTeam() {
         Scoreboard scoreboard = main.getUHCTeamManager().getScoreboard();
-        team = scoreboard.registerNewTeam(prefix.toString() + prefix.color.getName());
-        team.setDisplayName(prefix.toString() + prefix.color.getDisplayName());
+        if (!prefix.isTaupePrefix()) {
+            team = scoreboard.registerNewTeam(prefix.toString() + prefix.color.getName());
+            team.setDisplayName(prefix.toString() + prefix.color.getDisplayName());
+        } else {
+            if (!prefix.isSuperTaupePrefix()) {
+                team = scoreboard.registerNewTeam("AB" + prefix.color.getColor() + "Taupe " + prefix.symbol.charAt(8));
+                team.setDisplayName(prefix.color.getColor() + "Taupe " + prefix.symbol.charAt(8));
+            } else {
+                if (!Moles.areSuperMolesTogether) {
+                    team = scoreboard.registerNewTeam("AASuper Taupe " + prefix.symbol.charAt(12));
+                    team.setDisplayName(prefix.color.getColor() + "Super Taupe " + prefix.symbol.charAt(12));
+                } else {
+                    team = scoreboard.registerNewTeam("AAßlSuper Taupes");
+                    team.setDisplayName("ßfßlSuper Taupes");
+                }
+            }
+        }
         team.setPrefix(prefix.toString());
         team.setSuffix("ßr");
         team.setAllowFriendlyFire(((boolean)GameConfig.ConfigurableParams.FRIENDLY_FIRE.getValue()));
@@ -60,17 +75,17 @@ public class UHCTeam {
 
     public void sendMessage(String msg) {
         for (PlayerUHC pu : players) {
-            Player player = pu.getPlayer().getPlayer();
-            if (player != null)
-                player.sendMessage(msg);
+            if (pu.getPlayer().isOnline())
+                pu.getPlayer().getPlayer().sendMessage(msg);
         }
     }
 
     public void add(Player player) {
-        if (((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To") && players.size() >= Integer.parseInt(((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).substring(2))) {
+        if (((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To") && players.size() >= GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) && !prefix.isTaupePrefix() && !(main.isState(Gstate.PLAYING) && (Scenarios.SWITCH.isActivated() || Scenarios.TRUE_LOVE.isActivated()))) {
             player.sendMessage(main.getPrefix() + "ßcL'Èquipe " + team.getDisplayName() + " ßcest pleine !");
             return;
         }
+        if (hasPlayer(main.getPlayerUHC(player))) return;
         team.addEntry(player.getName());
 
         if (((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To")) {
@@ -82,9 +97,13 @@ public class UHCTeam {
         main.getPlayerUHC(player).setTeam(this);
 
         player.setDisplayName(prefix.toString() + player.getName());
-        if (main.getPlayerUHC(player).isHost())
+        if (main.getPlayerUHC(player).isHost() && !main.isState(Gstate.PLAYING))
             player.setDisplayName(TeamPrefix.getHostPrefix() + player.getDisplayName());
         player.setPlayerListName(player.getDisplayName());
+        if (!Scenarios.SLAVE_MARKET.isActivated() || main.isState(Gstate.PLAYING))main.boards.get(main.getPlayerUHC(player)).setLine(2, "ßeßl…quipe ße: " + team.getDisplayName());
+        main.boards.get(main.getPlayerUHC(player)).setLine(0, player.getDisplayName());
+
+        Bukkit.getPluginManager().callEvent(new TeamChangeEvent(main.getPlayerUHC(player), this));
     }
 
     public void reconnect(Player player) {
@@ -103,8 +122,14 @@ public class UHCTeam {
                 player.sendMessage(main.getPrefix() + prefix.color.getColor() + "Vous avez bien quittÈ l'Èquipe " + team.getDisplayName() + " !");
                 player.setDisplayName(player.getName());
                 player.setPlayerListName(player.getDisplayName());
+                if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) {
+                    BannerMeta bm = (BannerMeta) player.getInventory().getItem(4).getItemMeta();
+                    bm.setPatterns(Collections.emptyList());
+                    bm.setBaseColor(DyeColor.WHITE);
+                    player.getInventory().getItem(4).setItemMeta(bm);
+                }
             }
-            team.removeEntry(main.getPlayerUHC(player).getPlayer().getName());
+            team.removeEntry(pu.getPlayer().getName());
             if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) {
                 if (pu.isHost())
                     Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Host").addEntry(pu.getPlayer().getName());
@@ -113,11 +138,12 @@ public class UHCTeam {
                 player.setDisplayName(Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(player.getName()).getPrefix() + player.getName());
                 player.setPlayerListName(player.getDisplayName());
             }
-            players.remove(main.getPlayerUHC(player));
-            alivePlayers.remove(main.getPlayerUHC(player));
+            players.remove(pu);
+            alivePlayers.remove(pu);
+            main.boards.get(pu).setLine(2, "ßeßl…quipe ße: ßcAucune");
         } else {
             OfflinePlayer player = pu.getPlayer();
-            team.removeEntry(main.getPlayerUHC(player).getPlayer().getName());
+            team.removeEntry(pu.getPlayer().getName());
             if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) if (pu.isHost())
                 Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Host").addEntry(player.getName());
             else
@@ -126,6 +152,8 @@ public class UHCTeam {
             alivePlayers.remove(main.getPlayerUHC(player));
         }
         pu.setTeam(null);
+
+        Bukkit.getPluginManager().callEvent(new TeamChangeEvent(pu, this));
     }
 
     public void leaveInGame(PlayerUHC pu) {
@@ -166,8 +194,10 @@ public class UHCTeam {
                 player.setDisplayName(player.getName());
         }
 
-        if (team != null)
-            team.unregister();
+        try {
+            if (team != null)
+                team.unregister();
+        } catch (IllegalStateException ignored) {}
     }
 
     public ItemStack getBanner() {

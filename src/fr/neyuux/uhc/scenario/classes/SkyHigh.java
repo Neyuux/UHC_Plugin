@@ -25,6 +25,7 @@ public class SkyHigh extends Scenario implements Listener {
     public static int timer = 3600, highMin = 150, enderpearlGives = 0;
     public static double damage = 0.5;
     public static boolean hasStuffDropOnKiller = false;
+    public static final int[] IGtimers = {0, 30, 120};
 
     @Override
     public void activate() {
@@ -36,19 +37,19 @@ public class SkyHigh extends Scenario implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
         Scenario.handlers.add(this);
 
-        final int[] timer = {SkyHigh.timer, 30, 120};
+        IGtimers[0] = SkyHigh.timer;
         new BukkitRunnable() {
             @Override
             public void run() {
-                timer[0]--;
-                if (timer[0] == 0) {
+                IGtimers[0]--;
+                if (IGtimers[0] == 0) {
                     Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cActivation du Scénario ! §cTous les joueurs qui ne sont pas au dessus de la couche "+highMin+" recevront §4§l" + damage + Symbols.HEARTH + " §6de dégâts toutes les 30 secondes à compter de maintenant.");
-                    timer[0] = SkyHigh.timer;
+                    IGtimers[0] = SkyHigh.timer;
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            timer[1]--;
-                            if (timer[1] == 0) {
+                            IGtimers[1]--;
+                            if (IGtimers[1] == 0) {
                                 for (PlayerUHC pu : Index.getInstance().getAlivePlayers())
                                     if (pu.getPlayer().isOnline() && pu.getPlayer().getPlayer().getLocation().getY() < highMin) {
                                         Player p = pu.getPlayer().getPlayer();
@@ -57,7 +58,7 @@ public class SkyHigh extends Scenario implements Listener {
                                         else new FightListener(Index.getInstance()).eliminate(p, true, null, p.getDisplayName() + " §dest resté trop longtemps en dessous de la couche "+highMin+".");
                                         Index.sendActionBar(p, Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§4Vous perdez " + damage + Symbols.HEARTH + "  en étant en dessous de la couche "+highMin+".");
                                     }
-                                timer[1] = 30;
+                                IGtimers[1] = 30;
                             }
                             if (!Index.getInstance().isState(Gstate.PLAYING)) cancel();
                         }
@@ -65,13 +66,13 @@ public class SkyHigh extends Scenario implements Listener {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            timer[2]--;
-                            if (timer[2] == 0 && enderpearlGives != 0) {
+                            IGtimers[2]--;
+                            if (IGtimers[2] == 0 && enderpearlGives != 0) {
                                 for (PlayerUHC pu : Index.getInstance().getAlivePlayers())
                                     if (pu.getPlayer().isOnline())
                                         InventoryManager.give(pu.getPlayer().getPlayer(), null, new ItemStack(Material.ENDER_PEARL));
                                     enderpearlGives--;
-                                timer[2] = 120;
+                                IGtimers[2] = 120;
                             }
                             if (!Index.getInstance().isState(Gstate.PLAYING)) cancel();
                         }
@@ -91,7 +92,7 @@ public class SkyHigh extends Scenario implements Listener {
     
     @EventHandler
     public void onElimination(PlayerEliminationEvent ev) {
-        if (ev.getKiller() != null)
+        if (ev.getKiller() != null && hasStuffDropOnKiller)
             if (ev.getKiller().getPlayer().isOnline())
                 ev.setStuffLocation(ev.getKiller().getPlayer().getPlayer().getLocation());
             else ev.setStuffLocation(ev.getKiller().getLastLocation());

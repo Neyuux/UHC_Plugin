@@ -6,9 +6,13 @@ import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
+import fr.neyuux.uhc.events.PlayerEliminationEvent;
+import fr.neyuux.uhc.scenario.Scenarios;
+import fr.neyuux.uhc.scenario.classes.Anonymous;
 import fr.neyuux.uhc.tasks.UHCRunnable;
 import fr.neyuux.uhc.util.Loot;
 import fr.neyuux.uhc.util.LootItem;
+import fr.neyuux.uhc.util.ScoreboardSign;
 import fr.neyuux.uhc.util.VarsLoot;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -27,16 +31,14 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class PlayerListener implements Listener {
 
@@ -78,22 +80,33 @@ public class PlayerListener implements Listener {
         playerUHC.maxHealth = player.getMaxHealth();
 
         main.boards.remove(playerUHC);
+
+        int onlines = Bukkit.getOnlinePlayers().size() - 1;
+        int maxonlines = (int) GameConfig.ConfigurableParams.SLOTS.getValue();
+        String joinmessage = "§a" + onlines;
+        if (onlines >= (maxonlines / 4)) joinmessage = "§3" + onlines;
+        if (onlines >= (maxonlines / 3)) joinmessage = "§2" + onlines;
+        if (onlines >= (maxonlines / 2)) joinmessage = "§e" + onlines;
+        if (onlines >= (maxonlines / 1.3)) joinmessage = "§c" + onlines;
+        if (onlines >= maxonlines) joinmessage = "§4" + onlines;
+        String name = player.getName();
+        if (Scenarios.ANONYMOUS.isActivated()) name = "§k" + Anonymous.usedName;
+        ev.setQuitMessage("§8[§c§l-§r§8] §e§o" + name + " §8(" + joinmessage + "§8/§c§l" + maxonlines + "§8)");
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent ev) {
+        if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) return;
         Player player = ev.getPlayer();
         PlayerUHC pt = null;
         for (PlayerUHC pu : main.players) if (pu.getPlayer().getUniqueId().equals(player.getUniqueId())) pt = pu;
         if (pt == null) main.players.add(new PlayerUHC(player, main));
         pt = main.getPlayerUHC(player);
         PlayerUHC playerUHC = pt;
-
-        if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) return;
+        playerUHC.setPlayer(player);
 
         if (!main.getAlivePlayers().contains(playerUHC)) {
             main.spectators.add(player);
-            main.players.remove(main.getPlayerUHC(player));
             player.setGameMode(GameMode.SPECTATOR);
             player.teleport(new Location(Bukkit.getWorld(main.world.getSeed() + ""), 0, 100, 0));
             InventoryManager.clearInventory(player);
@@ -132,25 +145,32 @@ public class PlayerListener implements Listener {
         if (onlines >= (maxonlines / 2)) joinmessage = "§e" + onlines;
         if (onlines >= (maxonlines / 1.3)) joinmessage = "§c" + onlines;
         if (onlines >= maxonlines) joinmessage = "§4" + onlines;
-        ev.setJoinMessage("§8[§a§l+§r§8] §e§o" + player.getName() + " §8(" + joinmessage + "§8/§c§l" + maxonlines + "§8)");
+        String name = player.getName();
+        if (Scenarios.ANONYMOUS.isActivated()) name = "§k" + Anonymous.usedName;
+        ev.setJoinMessage("§8[§a§l+§r§8] §e§o" + name + " §8(" + joinmessage + "§8/§c§l" + maxonlines + "§8)");
     }
 
     @EventHandler
     public void onPlayerCraft(CraftItemEvent e){
         ItemStack result = e.getRecipe().getResult();
         Player player = (Player)e.getWhoClicked();
-        if(result == null) return;
-        if(result.getType() == null) return;
+        System.out.println(e + " " + UHCRunnable.timer + " " + e.getRecipe().getResult().getAmount() + " " + e.getCurrentItem().getAmount());
+        if (result == null || result.getType() == null) return;
 
         if (e.getCurrentItem().isSimilar(new ItemStack(Material.GOLDEN_APPLE, 1, (short) 1))) {
             e.setCancelled(true);
             player.sendMessage(main.getPrefix() + "§cCe craft est interdit !");
             Index.playNegativeSound(player);
         }
+    }
 
-        if((boolean) GameConfig.ConfigurableParams.DOUBLE_ARROW.getValue())
-            if (e.getCurrentItem().getType() == result.getType() && result.getType() == Material.ARROW && e.getSlot() == 0)
-                e.setCurrentItem(new ItemStack(Material.ARROW, 8));
+    @EventHandler
+    public void onDoubleArrowCraft(PrepareItemCraftEvent ev) {
+        if ((boolean)GameConfig.ConfigurableParams.DOUBLE_ARROW.getValue()) {
+            ItemStack result = ev.getRecipe().getResult();
+            if (result == null || result.getType() != Material.ARROW) return;
+            ev.getInventory().setResult(new ItemStack(result.getType(), result.getAmount() * 2));
+        }
     }
 
     @EventHandler
@@ -213,6 +233,14 @@ public class PlayerListener implements Listener {
     public void onPlayerHealth(EntityRegainHealthEvent e) {
         if (e.getEntityType().equals(EntityType.PLAYER) && main.isState(Gstate.PLAYING))
             main.getPlayerUHC((Player)e.getEntity()).health = ((Player) e.getEntity()).getHealth() + e.getAmount();
+    }
+
+    @EventHandler
+    public void killScoreboardLineUpdater(PlayerEliminationEvent ev) {
+        if (!GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA")) {
+            for (Map.Entry<PlayerUHC, ScoreboardSign> en : main.boards.entrySet()) if (en.getKey().getTeam() != null)
+                en.getValue().setLine(4, "§c§lKills §c: §l" + en.getKey().getKills() + " §4("+en.getKey().getTeam().getAlivePlayersKills()+")");
+        }
     }
 
     @EventHandler
@@ -322,7 +350,11 @@ public class PlayerListener implements Listener {
         if (msg == null) return;
 
         if (main.isState(Gstate.PLAYING) || main.isState(Gstate.FINISHED)) {
-            if (canChat) {
+            if (!canChat && !playerUHC.isHost()) {
+                player.sendMessage(main.getPrefix() + "§cLe chat est désactivé !");
+                Index.playNegativeSound(player);
+                ev.setCancelled(true);
+            } else {
                 if (playerUHC.getTeam() == null) {
                     if (playerUHC.isSpec() || !playerUHC.isAlive()) {
                         ev.setCancelled(true);
@@ -336,14 +368,16 @@ public class PlayerListener implements Listener {
                     else {
                         format = "§8[" + playerUHC.getTeam().getPrefix().color.getColor() + "Team" + "§8] " + player.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §f" + msg;
                         ev.setCancelled(true);
-                        for (PlayerUHC pu : playerUHC.getTeam().getAlivePlayers())
-                            pu.getPlayer().getPlayer().sendMessage(format);
+                        playerUHC.getTeam().sendMessage(format);
                     }
-            } else {
+            }
+        } else {
+            if (!canChat && !playerUHC.isHost()) {
                 player.sendMessage(main.getPrefix() + "§cLe chat est désactivé !");
                 Index.playNegativeSound(player);
-            }
-        } else format = player.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §f" + msg;
+                ev.setCancelled(true);
+            } else format = player.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §f" + msg;
+        }
 
         if (!ev.isCancelled()) ev.setFormat(format);
     }
@@ -357,13 +391,21 @@ public class PlayerListener implements Listener {
         if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING))
             if (playings.size() >= (int) GameConfig.ConfigurableParams.SLOTS.getValue()) if (!p.isOp()) {
                 e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-                e.setKickMessage(ChatColor.RED + "Le serveur est plein ... \n" + "§7Slots : §8[§e" + playings.size() + "§7/§c" + GameConfig.ConfigurableParams.SLOTS.getValue() + "§8]");
+                e.setKickMessage(main.getPrefixWithoutArrow() + "\n" + "§cLe serveur est plein ... \n" + "§7Slots : §8[§e" + playings.size() + "§7/§c" + GameConfig.ConfigurableParams.SLOTS.getValue() + "§8]");
                 return;
             }
+        playings.clear();
+        for (PlayerUHC pu : main.players) if (pu.isAlive()) playings.add(pu);
 
-        if (main.isState(Gstate.PLAYING) && !(boolean)GameConfig.ConfigurableParams.SPECTATORS.getValue()) {
+        if (main.isState(Gstate.PLAYING) && !(boolean)GameConfig.ConfigurableParams.SPECTATORS.getValue() && !playings.contains(main.getPlayerUHC(p))) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            e.setKickMessage("§cLes spectateurs ne sont pas autorisés !");
+            e.setKickMessage(main.getPrefixWithoutArrow() + "\n" + " §cLes spectateurs ne sont pas autorisés !");
+            return;
+        }
+
+        if (main.hasWhitelist && !main.getWhitelist().contains(p)) {
+            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+            e.setKickMessage(main.getPrefixWithoutArrow() + "\n" + "§cVous n'êtes pas whitelisté !");
             return;
         }
 

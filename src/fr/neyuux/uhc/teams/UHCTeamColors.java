@@ -17,9 +17,11 @@ public enum UHCTeamColors {
     DARK_BLUE("Dark Blue", "Bleu Foncé", "§1", DyeColor.BLUE),
     DARK_GREEN("Dark Green", "Vert Foncé", "§2", DyeColor.GREEN),
     DARK_AQUA("Cyan", "Cyan", "§3", DyeColor.CYAN),
-    DARK_GRAY("Dark Gray", "Gris Foncé", "§8", DyeColor.GRAY);
+    DARK_GRAY("Dark Gray", "Gris Foncé", "§8", DyeColor.GRAY),
+    WHITE("White", "Blanc", "§f", DyeColor.WHITE);
 
     public static int used;
+    public static int taupeused;
 
     UHCTeamColors(String name, String displayName, String color, DyeColor dc) {
         this.name = name;
@@ -53,8 +55,15 @@ public enum UHCTeamColors {
 
     public static UHCTeamColors getNext() {
         used++;
-        if (used == 14)
+        if (used == UHCTeamColors.values().length)
             used = 1;
         return UHCTeamColors.values()[used - 1];
+    }
+
+    public static UHCTeamColors getTaupeNext() {
+        taupeused++;
+        if (taupeused == 7)
+            taupeused = 1;
+        return new UHCTeamColors[]{DARK_RED, DARK_PURPLE, DARK_AQUA, DARK_GRAY, DARK_GREEN, DARK_BLUE}[taupeused - 1];
     }
 }

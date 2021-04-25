@@ -6,9 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class UHCStop extends BukkitRunnable {
 
     private final Index main;
@@ -18,7 +15,6 @@ public class UHCStop extends BukkitRunnable {
     }
 
     public static int timer = 30;
-    private final List<String> lines = new ArrayList<>();
 
 
     @Override

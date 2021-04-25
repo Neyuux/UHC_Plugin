@@ -13,6 +13,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class EnchantedDeath extends Scenario implements Listener {
     public EnchantedDeath() {
         super(Scenarios.ENCHANTED_DEATH, new ItemStack(Material.ENCHANTMENT_TABLE));
@@ -46,7 +49,9 @@ public class EnchantedDeath extends Scenario implements Listener {
 
     @EventHandler
     public void onDeath(PlayerEliminationEvent ev) {
-        ev.getPlayerUHC().getLastLocation().getWorld().dropItem(ev.getPlayerUHC().getLastLocation(), new ItemStack(Material.ENCHANTMENT_TABLE));
+        ArrayList<ItemStack> l = new ArrayList<>(Arrays.asList(ev.getPlayerUHC().getLastInv()));
+        l.add(new ItemStack(Material.ENCHANTMENT_TABLE));
+        ev.getPlayerUHC().setLastInv(l.toArray(new ItemStack[0]));
     }
 
 }

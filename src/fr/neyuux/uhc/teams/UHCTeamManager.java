@@ -21,6 +21,10 @@ public class UHCTeamManager {
     public UHCTeamManager(Index main) {
         this.main = main;
         teams = new ArrayList<>();
+        UHCTeamColors.used = 0;
+        UHCTeamColors.taupeused = 0;
+        baseplayers = null;
+        baseteams = 0;
     }
 
     public UHCTeam createTeam() {
@@ -44,8 +48,12 @@ public class UHCTeamManager {
     }
 
     public void clearTeams() {
-        for (UHCTeam t : teams)
+        for (UHCTeam t : teams) {
+            try {
+                for (PlayerUHC p : t.getPlayers()) t.leave(p);
+            } catch (ConcurrentModificationException ignored) {}
             t.removeTeam();
+        }
         teams.clear();
         UHCTeamColors.used = 0;
     }
@@ -67,8 +75,9 @@ public class UHCTeamManager {
 
     public void randomTeams() {
         int max = Integer.parseInt(((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).substring("Random To".length()));
-        List<PlayerUHC> players = new ArrayList<>(main.players);
+        List<PlayerUHC> players = new ArrayList<>(main.getAlivePlayers());
 
+        clearTeams();
         int nbTeams = players.size() / max;
         if ((players.size() % max) != 0)
             nbTeams++;

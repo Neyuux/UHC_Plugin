@@ -5,6 +5,8 @@ import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
+import fr.neyuux.uhc.scenario.Scenarios;
+import fr.neyuux.uhc.scenario.classes.modes.Moles;
 import fr.neyuux.uhc.util.ScoreboardSign;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -59,7 +61,43 @@ public class UHCRunnable extends BukkitRunnable {
                         }
                     } else cancel();
                 }
-            }.runTaskTimer(main, 0, 1L);
+            }.runTaskTimer(main, 0, 3L);
+            new BukkitRunnable() {
+                public void run() {
+                    if (!main.isState(Gstate.PLAYING) || (Scenarios.MOLES.isActivated() && timer == Moles.timer)) {
+                        // ajouter mysteryteams
+                        cancel();
+                        return;
+                    }
+                    if (!GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA")) {
+                        for (PlayerUHC pu : main.getAlivePlayers())
+                            if (pu.getPlayer().isOnline() && pu.getTeam() != null && pu.getTeam().getAlivePlayers().size() != 1) {
+                                Location l = pu.getPlayer().getPlayer().getLocation();
+                                DecimalFormat df = new DecimalFormat();
+                                df.setMaximumFractionDigits(1);
+                                StringBuilder tm = new StringBuilder();
+                                for (PlayerUHC tu : pu.getTeam().getAlivePlayers())
+                                    if (!tu.equals(pu)) {
+                                        String shealth = "§b";
+                                        double h = tu.getPlayer().getPlayer().getHealth() * (100 / tu.getPlayer().getPlayer().getMaxHealth());
+                                        if (h <= 80) shealth = "§a";
+                                        if (h <= 60) shealth = "§e";
+                                        if (h <= 40) shealth = "§6";
+                                        if (h <= 20) shealth = "§c";
+
+                                        String sdist = "§b";
+                                        double d = l.distance(tu.getPlayer().getPlayer().getLocation());
+                                        if (d <= 180) sdist = "§c";
+                                        if (d <= 120) sdist = "§6";
+                                        if (d <= 70) sdist = "§e";
+                                        if (d <= 30) sdist = "§a";
+                                        tm.append(shealth).append(tu.getPlayer().getName()).append(" ").append(sdist).append(pu.getDirectionArrow(new Location(tu.getPlayer().getPlayer().getWorld(), tu.getPlayer().getPlayer().getLocation().getX(), pu.getPlayer().getPlayer().getLocation().getY(), tu.getPlayer().getPlayer().getLocation().getZ()))).append("§7(").append(df.format(d)).append(" b) | ");
+                                    }
+                                Index.sendActionBar(pu.getPlayer().getPlayer(), tm.substring(0, tm.length() - 3));
+                            }
+                    }
+                }
+            }.runTaskTimer(main, 0 , 5);
         }
 
         if (pvpTimer == 900) Bukkit.broadcastMessage(main.getPrefix() + "§cActivation du §lPvP§c dans §615 minutes§c.");
@@ -129,6 +167,7 @@ public class UHCRunnable extends BukkitRunnable {
         if ((boolean)GameConfig.ConfigurableParams.EPISODS.getValue()) {
             if (episodTimer == 300) Bukkit.broadcastMessage(main.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e5 minutes§6.");
             else if (episodTimer == 60) Bukkit.broadcastMessage(main.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e1 minute§6.");
+            else if (episodTimer == 30) Bukkit.broadcastMessage(main.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e30 secondes§6.");
             else if (episodTimer > 1 && episodTimer <= 5) Bukkit.broadcastMessage(main.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e"+episodTimer+" secondes§6.");
             else if (episodTimer == 1) Bukkit.broadcastMessage(main.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e1 seconde§6.");
             else if (episodTimer == 0) {

@@ -25,7 +25,7 @@ public class CommandFinish implements CommandExecutor {
             Player player = (Player)commandSender;
             if (main.getGameConfig().starterModifier != null && main.getGameConfig().starterModifier.equals(player)) {
                 main.getGameConfig().starterModifier = null;
-                main.getInventoryManager().startInventory = new ItemStack[]{};
+                InventoryManager.startInventory = new ItemStack[]{};
                 main.getInventoryManager().getStartArmor().clear();
                 PlayerInventory pi = player.getInventory();
                 if (pi.getHelmet() != null)main.getInventoryManager().getStartArmor().put(0, pi.getHelmet());
@@ -33,7 +33,7 @@ public class CommandFinish implements CommandExecutor {
                 if (pi.getLeggings() != null)main.getInventoryManager().getStartArmor().put(2, pi.getLeggings());
                 if (pi.getBoots() != null)main.getInventoryManager().getStartArmor().put(3, pi.getBoots());
 
-                main.getInventoryManager().startInventory = pi.getContents();
+                InventoryManager.startInventory = pi.getContents();
                 player.sendMessage(main.getPrefix() + "§dVous avez enregistré l'inventaire de Départ !");
                 Index.playPositiveSound(player);
             } else if (main.getGameConfig().deathInvModifier != null && main.getGameConfig().deathInvModifier.equals(player)) {

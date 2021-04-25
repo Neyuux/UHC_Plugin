@@ -1,17 +1,18 @@
 package fr.neyuux.uhc.events;
 
-import fr.neyuux.uhc.Index;
 import fr.neyuux.uhc.PlayerUHC;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class SlaveMarketCandidateEvent extends Event {
-
+public class PlayerReviveEvent extends Event implements Cancellable {
     final PlayerUHC playerUHC;
-    public final Index main;
-    public SlaveMarketCandidateEvent(PlayerUHC playerUHC, Index main) {
+
+    private boolean isCancelled = false;
+
+
+    public PlayerReviveEvent(PlayerUHC playerUHC) {
         this.playerUHC = playerUHC;
-        this.main = main;
     }
 
     public PlayerUHC getPlayerUHC() {
@@ -26,5 +27,15 @@ public class SlaveMarketCandidateEvent extends Event {
 
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return isCancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean isCancelled) {
+        this.isCancelled = isCancelled;
     }
 }

@@ -1,15 +1,19 @@
 package fr.neyuux.uhc;
 
 import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.scenario.Scenarios;
+import fr.neyuux.uhc.scenario.classes.Anonymous;
 import fr.neyuux.uhc.util.ItemsStack;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -17,10 +21,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InventoryManager {
 
-    public ItemStack[] startInventory = new ItemStack[] {};
+    public static ItemStack[] startInventory = new ItemStack[] {};
     private static final HashMap<Integer, ItemStack> startArmor = new HashMap<>();
     private static final List<ItemStack> deathInventory = new ArrayList<>();
 
@@ -59,6 +64,16 @@ public class InventoryManager {
     }
 
     public static void give(Player p, Integer slot, ItemStack it) {
+        if (it.getType().equals(Material.ENCHANTED_BOOK)) {
+            HashMap<Enchantment, Integer> map = new HashMap<>(it.getEnchantments());
+            for (Enchantment en : map.keySet()) it.removeEnchantment(en);
+            for (Map.Entry<Enchantment, Integer> en : map.entrySet()) {
+                EnchantmentStorageMeta em = (EnchantmentStorageMeta) it.getItemMeta();
+                em.addStoredEnchant(en.getKey(), en.getValue(), true);
+                it.setItemMeta(em);
+            }
+        }
+
         if (p.getInventory().firstEmpty() != -1)
             if (slot == null) p.getInventory().addItem(it);
             else p.getInventory().setItem(slot, it);
@@ -71,7 +86,7 @@ public class InventoryManager {
             clearInventory(player.getPlayer().getPlayer());
             player.getPlayer().getPlayer().getInventory().setItem(1, Index.getSpecTear());
             if (((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To"))
-                give(player.getPlayer().getPlayer(), 4, GameConfig.getChooseTeamBanner());
+                give(player.getPlayer().getPlayer(), 4, GameConfig.getChooseTeamBanner(player));
             if (player.isHost())
                 player.getPlayer().getPlayer().getInventory().setItem(6, new ItemsStack(Material.REDSTONE_COMPARATOR, "§c§lConfiguration de la partie", "§7Permet de configurer la partie", "§b>>Clique droit").toItemStack());
         }
@@ -95,8 +110,11 @@ public class InventoryManager {
         for (ItemStack item : player.getInventory().getArmorContents()) if (item != null && !item.getType().equals(Material.AIR))
             player.getWorld().dropItem(loc, item);
 
-        if ((boolean)GameConfig.ConfigurableParams.HEAD.getValue())
-            player.getWorld().dropItem(loc, new ItemsStack(Material.SKULL_ITEM, (short)3).toItemStackwithSkullMeta(player.getName()));
+        if ((boolean)GameConfig.ConfigurableParams.HEAD.getValue()) {
+            String name = player.getName();
+            if (Scenarios.ANONYMOUS.isActivated()) name = Anonymous.usedName;
+            player.getWorld().dropItem(loc, new ItemsStack(Material.SKULL_ITEM, (short)3).toItemStackwithSkullMeta(name));
+        }
         if ((boolean)GameConfig.ConfigurableParams.GOLDEN_HEAD.getValue())
             player.getWorld().dropItem(loc, Index.getGoldenHead(1));
     }
@@ -113,6 +131,10 @@ public class InventoryManager {
         for (ItemStack i : deathInventory)
             if (i != null && i.getType() != Material.AIR)
                 chest.getInventory().addItem(i);
+        if ((boolean)GameConfig.ConfigurableParams.HEAD.getValue())
+            chest.getInventory().addItem(new ItemsStack(Material.SKULL_ITEM, (short)3).toItemStackwithSkullMeta(died.getPlayer().getName()));
+        if ((boolean)GameConfig.ConfigurableParams.GOLDEN_HEAD.getValue())
+            chest.getInventory().addItem(Index.getGoldenHead(1));
 
         chest.setMetadata("nobreak", new FixedMetadataValue(Index.getInstance(), "nobreak"));
 

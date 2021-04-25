@@ -6,6 +6,7 @@ import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
+import fr.neyuux.uhc.events.GameEndEvent;
 import fr.neyuux.uhc.events.PlayerEliminationEvent;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.tasks.UHCStop;
@@ -82,7 +83,7 @@ public class FightListener implements Listener {
                         deathmessage = player.getDisplayName() + "§c s'est LAVÉ hahahaha";
                         break;
                     case DROWNING:
-                        deathmessage = player.getDisplayName() + "§c s'est suicidé... Enfin il est mort de noyage, qui meurt comme ça sérieux ?";
+                        deathmessage = player.getDisplayName() + "§c s'est suicidé... Enfin il est mort de noyade, qui meurt comme ça sérieux ?";
                         break;
                     case BLOCK_EXPLOSION:
                         deathmessage = player.getDisplayName() + "§c s'est fait pété par un block.";
@@ -140,7 +141,7 @@ public class FightListener implements Listener {
                     formattedPlayerHealth = format.format(playerUHC.getTeam().getHealth() - ev.getFinalDamage());
                     dp.sendMessage(main.getPrefix() + "§fL'équipe " + playerUHC.getTeam().getTeam().getDisplayName() + " §fpossède en tout §4§l" + formattedPlayerHealth + Symbols.HEARTH + "§f.");
                 } else {
-                    formattedPlayerHealth = format.format(Bukkit.getScoreboardManager().getMainScoreboard().getObjective("health").getScore(player.getName()).getScore() - ev.getFinalDamage());
+                    formattedPlayerHealth = format.format(playerUHC.health + playerUHC.absorption - ev.getFinalDamage());
                     dp.sendMessage(main.getPrefix() + player.getDisplayName() + " §fpossède en actuellement §4§l" + formattedPlayerHealth + Symbols.HEARTH + "§f.");
                 }
             }
@@ -152,9 +153,11 @@ public class FightListener implements Listener {
                     case ARROW:
                         Arrow a = (Arrow)d;
                         if (a.getShooter() instanceof Player) {
-                            Player killer = (Player)a.getShooter();
+                            Player killer = (Player) a.getShooter();
                             eliminate(player, true, killer, player.getDisplayName() + "§c a été tué par la flèche de " + killer.getDisplayName() + "§c.");
-                        } else
+                        } else if (a.getShooter() instanceof Skeleton)
+                            eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un squelette.");
+                        else
                             eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une flèche.");
                         break;
                     case FIREBALL:
@@ -261,6 +264,22 @@ public class FightListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onDeathAfterFinish(EntityDamageEvent ev) {
+        Entity e = ev.getEntity();
+        double fdamage = ev.getFinalDamage();
+
+        if (e.getType().equals(EntityType.PLAYER) && ((Player)e).getHealth() <= fdamage && main.isState(Gstate.FINISHED)) {
+            Player player = (Player)e;
+            player.setGameMode(GameMode.SPECTATOR);
+            main.spectators.add(player);
+            player.setDisplayName("§8[§7Spectateur§8] §7" + player.getName());
+            player.setPlayerListName(player.getDisplayName());
+            main.getPlayerUHC(player).heal();
+            player.sendMessage(main.getPrefix() + "§6Votre mode de jeu à été établi en spectateur.");
+        }
+    }
+
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onNerfStrength(EntityDamageByEntityEvent e) {
@@ -314,8 +333,8 @@ public class FightListener implements Listener {
         }
 
         PlayerEliminationEvent ev;
-        if (killer != null) ev = new PlayerEliminationEvent(up, main.getPlayerUHC(killer), up.getLastLocation());
-        else ev = new PlayerEliminationEvent(up, null, up.getLastLocation());
+        if (killer != null) ev = new PlayerEliminationEvent(up, main.getPlayerUHC(killer), up.getLastLocation(), deathMessage);
+        else ev = new PlayerEliminationEvent(up, null, up.getLastLocation(), deathMessage);
         Bukkit.getPluginManager().callEvent(ev);
 
         if ((boolean)GameConfig.ConfigurableParams.LIGHTNING.getValue())
@@ -340,14 +359,12 @@ public class FightListener implements Listener {
             PlayerUHC killerUHC = main.getPlayerUHC(killer);
             killerUHC.addKill();
             if (killerUHC.getTeam() != null)
-                for (PlayerUHC pu : killerUHC.getTeam().getPlayers()) {
-                    if (killerUHC.getTeam() != null)
-                        main.boards.get(pu).setLine(4, "§c§lKills §c: §l" + killerUHC.getKills() + " §4(" + killerUHC.getTeam().getAlivePlayersKills() + ")");
-                    else main.boards.get(pu).setLine(4, "§c§lKills §c: §l" + killerUHC.getKills());
-                }
+                for (PlayerUHC pu : killerUHC.getTeam().getAlivePlayers())
+                    main.boards.get(pu).setLine(4, "§c§lKills §c: §l" + pu.getKills() + " §4(" + killerUHC.getTeam().getAlivePlayersKills() + ")");
+            else main.boards.get(killerUHC).setLine(4, "§c§lKills §c: §l" + killerUHC.getKills());
         }
 
-        Bukkit.broadcastMessage(main.getPrefix() + deathMessage);
+        Bukkit.broadcastMessage(main.getPrefix() + ev.getDeathMessage());
         for (Player p : Bukkit.getOnlinePlayers())
             p.playSound(p.getLocation(), Sound.WITHER_DEATH, 3, 1);
 
@@ -362,47 +379,65 @@ public class FightListener implements Listener {
                 en.getValue().setLine(3, "§7§lJoueurs §7: §f" + main.getAlivePlayers().size());
             else
                 en.getValue().setLine(3, "§7§lTeams : §f" + main.getUHCTeamManager().getAliveTeams().size() + "§8/§7" + UHCTeamManager.baseteams + " §8(§7" + main.getAlivePlayers().size() + "§8 joueurs)");
-
-        if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && main.getAlivePlayers().size() < 2) {
-            main.setState(Gstate.FINISHED);
-            new UHCStop(main).runTaskTimer(main, 0, 20);
-            if (main.getAlivePlayers().size() == 1) {
-                PlayerUHC winner = main.getAlivePlayers().get(0);
-                Bukkit.broadcastMessage("");
-                Bukkit.broadcastMessage(main.getPrefix() + winner.getPlayer().getPlayer().getDisplayName() + " §6remporte la partie !");
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.playSound(p.getLocation(), Sound.ZOMBIE_REMEDY, 9, 1);
-                    main.sendTitle(p, "§c§l§n§kaa§r §e§l§nVictoire§e§l §nde§e§l " +winner.getPlayer().getPlayer().getDisplayName()+ " §c§l§n§kaa", "§6§l§nNombre de Kills §7§l: §f" + winner.getKills(), 20, 180, 20);
-                }
-            } else {
-                Bukkit.broadcastMessage("");
-                Bukkit.broadcastMessage(main.getPrefix() + "§6Aucun joueur ne s'en est sorti vivant. §cÉGALITÉE PARFAITE.");
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.playSound(p.getLocation(), Sound.ZOMBIE_REMEDY, 8, 1);
-                    main.sendTitle(p, "§5§kaa §c§l§nÉgalité§r §5§kaa", "§cAucun survivant.", 20, 120, 20);
-                }
-            }
-        } else if (!GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && main.getUHCTeamManager().getAliveTeams().size() < 2) {
-            main.setState(Gstate.FINISHED);
-            new UHCStop(main).runTaskTimer(main, 0, 20);
-            if (main.getUHCTeamManager().getAliveTeams().size() == 1) {
-                UHCTeam team = main.getUHCTeamManager().getAliveTeams().get(0);
-                Bukkit.broadcastMessage(main.getPrefix() + "§6La Team " + team.getTeam().getDisplayName() + " §6a gagné !");
-                Bukkit.broadcastMessage(main.getPrefix() + "§eNombre de gagnants : " + team.getAlivePlayers().size() + " §7:");
-                for (PlayerUHC pu : team.getAlivePlayers())
-                    Bukkit.broadcastMessage(main.getPrefix() + pu.getPlayer().getPlayer().getDisplayName() + " §8(§c" + pu.getKills() + " kills§8)");
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.playSound(p.getLocation(), Sound.ZOMBIE_REMEDY, 9, 1);
-                    main.sendTitle(p, "§c§l§n§kaa§r §e§l§nVictoire de la team " + team.getTeam().getDisplayName() + " §c§l§n§kaa", "§6§l§nNombre de Survivants §7§l: §f" + team.getAlivePlayers().size(), 20, 180, 20);
-                }
-            } else if (main.getUHCTeamManager().getAliveTeams().size() == 0) {
-                Bukkit.broadcastMessage(main.getPrefix() + "§6Aucune Team ne s'en est sortie vivante. §cÉGALITÉE PARFAITE.");
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.playSound(p.getLocation(), Sound.ZOMBIE_REMEDY, 8, 1);
-                    main.sendTitle(p, "§5§kaa §c§l§nÉgalité§r §5§kaa", "§cAucun survivant.", 20, 120, 20);
+        
+        checkWin();
+    }
+    
+    public static boolean checkWin() {
+        boolean win = false;
+        if (Scenarios.ANONYMOUS.isActivated()) {
+            System.out.println(Index.getInstance().getAlivePlayers().toString());
+            System.out.println(Index.getInstance().getUHCTeamManager().getAliveTeams().toString());
+        }
+        if ((GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && Index.getInstance().getAlivePlayers().size() < 2) || (!GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && Index.getInstance().getUHCTeamManager().getAliveTeams().size() < 2)) {
+            GameEndEvent gameEndEvent = new GameEndEvent();
+            Bukkit.getPluginManager().callEvent(gameEndEvent);
+            if (!gameEndEvent.isCancelled()) {
+                win = true;
+                Index.stopInfiniteActionBarForAllPlayers();
+                if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && Index.getInstance().getAlivePlayers().size() < 2) {
+                    Index.getInstance().setState(Gstate.FINISHED);
+                    new UHCStop(Index.getInstance()).runTaskTimer(Index.getInstance(), 0, 20);
+                    if (Index.getInstance().getAlivePlayers().size() == 1) {
+                        PlayerUHC winner = Index.getInstance().getAlivePlayers().get(0);
+                        Bukkit.broadcastMessage("");
+                        Bukkit.broadcastMessage(Index.getInstance().getPrefix() + winner.getPlayer().getPlayer().getDisplayName() + " §6remporte la partie !");
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            p.playSound(p.getLocation(), Sound.ZOMBIE_REMEDY, 9, 1);
+                            Index.getInstance().sendTitle(p, "§c§l§n§kaa§r §e§l§nVictoire§e§l §nde§e§l " + winner.getPlayer().getPlayer().getDisplayName() + " §c§l§n§kaa", "§6§l§nNombre de Kills §7§l: §f" + winner.getKills(), 20, 180, 20);
+                        }
+                    } else {
+                        Bukkit.broadcastMessage("");
+                        Bukkit.broadcastMessage(Index.getInstance().getPrefix() + "§6Aucun joueur ne s'en est sorti vivant. §cÉGALITÉE PARFAITE.");
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            p.playSound(p.getLocation(), Sound.ZOMBIE_REMEDY, 8, 1);
+                            Index.getInstance().sendTitle(p, "§5§kaa§r §c§l§nÉgalité§r §5§kaa", "§cAucun survivant.", 20, 120, 20);
+                        }
+                    }
+                } else if (!GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && Index.getInstance().getUHCTeamManager().getAliveTeams().size() < 2) {
+                    Index.getInstance().setState(Gstate.FINISHED);
+                    new UHCStop(Index.getInstance()).runTaskTimer(Index.getInstance(), 0, 20);
+                    if (Index.getInstance().getUHCTeamManager().getAliveTeams().size() == 1) {
+                        UHCTeam team = Index.getInstance().getUHCTeamManager().getAliveTeams().get(0);
+                        Bukkit.broadcastMessage(Index.getInstance().getPrefix() + "§6La Team " + team.getTeam().getDisplayName() + " §6a gagné !");
+                        Bukkit.broadcastMessage(Index.getInstance().getPrefix() + "§eNombre de gagnants : " + team.getAlivePlayers().size() + " §7:");
+                        for (PlayerUHC pu : team.getAlivePlayers())
+                            Bukkit.broadcastMessage(Index.getInstance().getPrefix() + pu.getPlayer().getPlayer().getDisplayName() + " §8(§c" + pu.getKills() + " kills§8)");
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            p.playSound(p.getLocation(), Sound.ZOMBIE_REMEDY, 9, 1);
+                            Index.getInstance().sendTitle(p, "§c§l§n§kaa§r §e§l§nVictoire de la team§r " + team.getTeam().getDisplayName() + " §c§l§n§kaa", "§6§l§nNombre de Survivants§r §7§l: §f" + team.getAlivePlayers().size(), 20, 180, 20);
+                        }
+                    } else if (Index.getInstance().getUHCTeamManager().getAliveTeams().size() == 0) {
+                        Bukkit.broadcastMessage(Index.getInstance().getPrefix() + "§6Aucune Team ne s'en est sortie vivante. §cÉGALITÉE PARFAITE.");
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            p.playSound(p.getLocation(), Sound.ZOMBIE_REMEDY, 8, 1);
+                            Index.getInstance().sendTitle(p, "§5§kaa§r §c§l§nÉgalité§r §5§kaa", "§cAucun survivant.", 20, 120, 20);
+                        }
+                    }
                 }
             }
         }
+        return win;
     }
 
 }

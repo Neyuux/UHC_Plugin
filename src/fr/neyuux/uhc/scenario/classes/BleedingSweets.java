@@ -10,9 +10,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-public class BareBones extends Scenario implements Listener {
-    public BareBones() {
-        super(Scenarios.BAREBONES, new ItemStack(Material.STRING));
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class BleedingSweets extends Scenario implements Listener {
+    public BleedingSweets() {
+        super(Scenarios.BLEEDING_SWEETS, new ItemStack(Material.STRING));
     }
 
     public static int diamonds = 1;
@@ -40,10 +43,12 @@ public class BareBones extends Scenario implements Listener {
     @EventHandler
     public void onKill(PlayerEliminationEvent ev) {
         if (ev.getKiller() != null) {
-            ev.getPlayerUHC().getLastLocation().getWorld().dropItem(ev.getPlayerUHC().getLastLocation(), new ItemStack(Material.DIAMOND, diamonds));
-            ev.getPlayerUHC().getLastLocation().getWorld().dropItem(ev.getPlayerUHC().getLastLocation(), new ItemStack(Material.GOLDEN_APPLE, gApples));
-            ev.getPlayerUHC().getLastLocation().getWorld().dropItem(ev.getPlayerUHC().getLastLocation(), new ItemStack(Material.ARROW, arrows));
-            ev.getPlayerUHC().getLastLocation().getWorld().dropItem(ev.getPlayerUHC().getLastLocation(), new ItemStack(Material.STRING, strings));
+            ArrayList<ItemStack> l = new ArrayList<>(Arrays.asList(ev.getPlayerUHC().getLastInv()));
+            if (diamonds != 0) l.add(new ItemStack(Material.DIAMOND, diamonds));
+            if (gApples != 0) l.add(new ItemStack(Material.GOLDEN_APPLE, gApples));
+            if (arrows != 0) l.add(new ItemStack(Material.ARROW, arrows));
+            if (strings != 0) l.add(new ItemStack(Material.STRING, strings));
+            ev.getPlayerUHC().setLastInv(l.toArray(new ItemStack[0]));
         }
     }
 }

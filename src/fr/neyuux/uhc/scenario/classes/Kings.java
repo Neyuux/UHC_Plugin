@@ -18,7 +18,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,38 +42,35 @@ public class Kings extends Scenario implements Listener {
         Scenario.handlers.add(this);
 
         Random random = new Random();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (UHCTeam team : Index.getInstance().getUHCTeamManager().getTeams()) {
-                    if (team.getAlivePlayers().size() > 0) {
-                        List<Player> players = new ArrayList<>();
-                        for (PlayerUHC u : team.getAlivePlayers()) {
-                            Player p = u.getPlayer().getPlayer();
-                            if (p != null)
-                                players.add(p);
-                        }
-                        Player king = players.get(random.nextInt(players.size()));
-                        PlayerUHC ku = Index.getInstance().getPlayerUHC(king);
-                        king.setDisplayName(team.getPrefix().toString() + "§l" + king.getName());
-                        king.setPlayerListName(king.getDisplayName());
-                        king.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §6Vous avez été désigné comme Roi de l'équipe " + team.getTeam().getDisplayName() + " §6. Vous obtenez donc les effets : force, rapidité, résistance, résistance au feu, hâte et double vie. Si vous mourrez, le reste de votre équipe aura un effet de poison puissant pendant quelques secondes.");
-                        team.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + team.getPrefix().color.getColor() + " Le roi de votre équipe est " + king.getDisplayName() + ".");
-
-                        king.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0, true, true));
-                        king.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 0, true, true));
-                        king.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0, true, true));
-                        king.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 0, true, true));
-                        king.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0, true, true));
-                        ku.maxHealth *= 2.0;
-                        king.setMaxHealth(ku.maxHealth);
-                        ku.heal();
-
-                        kings.add(ku);
+        Bukkit.getScheduler().runTaskLater(Index.getInstance(), () -> {
+            for (UHCTeam team : Index.getInstance().getUHCTeamManager().getTeams()) {
+                if (team.getAlivePlayers().size() > 0) {
+                    List<Player> players = new ArrayList<>();
+                    for (PlayerUHC u : team.getAlivePlayers()) {
+                        Player p = u.getPlayer().getPlayer();
+                        if (p != null)
+                            players.add(p);
                     }
+                    Player king = players.get(random.nextInt(players.size()));
+                    PlayerUHC ku = Index.getInstance().getPlayerUHC(king);
+                    king.setDisplayName(team.getPrefix().toString() + "§l" + king.getName());
+                    king.setPlayerListName(king.getDisplayName());
+                    king.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §6Vous avez été désigné comme Roi de l'équipe " + team.getTeam().getDisplayName() + " §6. Vous obtenez donc les effets : force, rapidité, résistance, résistance au feu, hâte et double vie. Si vous mourrez, le reste de votre équipe aura un effet de poison puissant pendant quelques secondes.");
+                    team.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + team.getPrefix().color.getColor() + " Le roi de votre équipe est " + king.getDisplayName() + ".");
+
+                    king.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0, true, true));
+                    king.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 0, true, true));
+                    king.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0, true, true));
+                    king.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 0, true, true));
+                    king.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0, true, true));
+                    ku.maxHealth *= 2.0;
+                    king.setMaxHealth(ku.maxHealth);
+                    ku.heal();
+
+                    kings.add(ku);
                 }
             }
-        }.runTaskLater(Index.getInstance(), 101L);
+        }, 101L);
     }
 
     @Override

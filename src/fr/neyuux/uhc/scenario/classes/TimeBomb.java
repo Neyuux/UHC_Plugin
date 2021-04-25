@@ -41,7 +41,7 @@ public class TimeBomb extends Scenario implements Listener {
 
     @Override
     public boolean checkStart() {
-        return (boolean)GameConfig.ConfigurableParams.BARRIER_HEAD.getValue();
+        return !(boolean)GameConfig.ConfigurableParams.BARRIER_HEAD.getValue();
     }
 
 

@@ -1,10 +1,12 @@
 package fr.neyuux.uhc.config;
 
 import fr.neyuux.uhc.*;
+import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.scenario.classes.ArmorLimiter;
 import fr.neyuux.uhc.scenario.classes.modes.Moles;
+import fr.neyuux.uhc.scenario.classes.modes.TrueLove;
 import fr.neyuux.uhc.teams.UHCTeam;
 import fr.neyuux.uhc.teams.UHCTeamManager;
 import fr.neyuux.uhc.util.ItemsStack;
@@ -273,6 +275,7 @@ public class GameConfig implements Listener {
                             int i = Integer.parseInt(si);
                             if (inv.getItem(4).getItemMeta().getLore().get(0).contains("minutes")) i *= 60;
                             int value = Scenario.getCache().get(inv.getItem(4).getItemMeta().getDisplayName()).getInt(sc.getScenarioClass().newInstance()) + i;
+                            if (value < 1 && inv.getItem(4).getItemMeta().getLore().get(0).contains("minutes")) value = 60;
                             if (value < 1) value = 1;
                             Scenario.setCache(sc.getName(), inv.getItem(4).getItemMeta().getDisplayName(), value);
                             ItemsStack it = new ItemsStack(Material.AIR);
@@ -303,6 +306,28 @@ public class GameConfig implements Listener {
                         } catch (Exception e) {
                             Bukkit.broadcastMessage(main.getPrefix() + "§4[§cErreur§4] §cErreur lors de la modification de la valeur du scenario");
                             e.printStackTrace();
+                        }
+                    }
+                    if (sc.equals(Scenarios.TRUE_LOVE)) {
+                        int teamSize = getTeamTypeInt(TEAMTYPE.getValue().toString());
+                        if (((String)TEAMTYPE.getValue()).startsWith("To") || (Scenarios.TRUE_LOVE.isActivated() && teamSize > 1))
+                            for (PlayerUHC pl : main.players)
+                                pl.getPlayer().getPlayer().getInventory().setItem(4, getChooseTeamBanner(pl));
+                        else {
+                            for (PlayerUHC pl : main.players)
+                                pl.getPlayer().getPlayer().getInventory().remove(Material.BANNER);
+                        }
+
+                        main.getUHCTeamManager().clearTeams();
+                        int p = (int) SLOTS.getValue();
+                        if (teamSize > 1) {
+                            int nt = BigDecimal.valueOf((double) p / teamSize).setScale(0, RoundingMode.UP).toBigInteger().intValue();
+                            if (nt == 0) nt = 1;
+                            while (nt != 0) {
+                                if (nt < 0) throw new IllegalArgumentException("nt est inferieur a 0");
+                                main.getUHCTeamManager().createTeam();
+                                nt--;
+                            }
                         }
                     }
                 } else {
@@ -389,7 +414,7 @@ public class GameConfig implements Listener {
                         }
                         HashMap<Integer, ItemStack> si = new HashMap<>();
                         i = 0;
-                        for (ItemStack it : main.getInventoryManager().startInventory) {
+                        for (ItemStack it : InventoryManager.startInventory) {
                             si.put(i, it);
                             i++;
                         }
@@ -531,6 +556,7 @@ public class GameConfig implements Listener {
                     player.closeInventory();
                 } else if (current.getType().equals(Material.BANNER) && ((BannerMeta)current.getItemMeta()).getBaseColor().equals(DyeColor.WHITE) && !current.getItemMeta().getDisplayName().equals("§eTaille des équipes")) {
                     Object value = cp.getValue();
+                    int teamSize = getTeamTypeInt(TEAMTYPE.getValue().toString());
 
                     if (value instanceof Integer) {
                         int i = Integer.parseInt(current.getItemMeta().getDisplayName().replace("§a+ ", "").replace("§l", "").replace("§c- ", "-"));
@@ -563,10 +589,18 @@ public class GameConfig implements Listener {
                             else if (tti + i >= 1)
                                 cp.setValue(getTeamTypeString((int) SLOTS.getValue(), Scenarios.RANDOM_TEAM.isActivated()));
 
+                        if (((String)TEAMTYPE.getValue()).startsWith("To") || (Scenarios.TRUE_LOVE.isActivated() && teamSize > 1))
+                            for (PlayerUHC pl : main.players)
+                                pl.getPlayer().getPlayer().getInventory().setItem(4, getChooseTeamBanner(pl));
+                        else
+                            for (PlayerUHC pl : main.players)
+                                pl.getPlayer().getPlayer().getInventory().remove(Material.BANNER);
+                    }
+                    if (cp.equals(TEAMTYPE) || cp.equals(SLOTS)) {
                         main.getUHCTeamManager().clearTeams();
                         int p = (int) SLOTS.getValue();
-                        if (getTeamTypeInt((String)cp.getValue()) > 1) {
-                            int nt = BigDecimal.valueOf((double) p / getTeamTypeInt((String) cp.getValue())).setScale(0, RoundingMode.UP).toBigInteger().intValue();
+                        if (teamSize > 1) {
+                            int nt = BigDecimal.valueOf((double) p / teamSize).setScale(0, RoundingMode.UP).toBigInteger().intValue();
                             if (nt == 0) nt = 1;
                             while (nt != 0) {
                                 if (nt < 0) throw new IllegalArgumentException("nt est inferieur a 0");
@@ -574,12 +608,6 @@ public class GameConfig implements Listener {
                                 nt--;
                             }
                         }
-                        if (((String)TEAMTYPE.getValue()).startsWith("To"))
-                            for (PlayerUHC pl : main.players)
-                                pl.getPlayer().getPlayer().getInventory().setItem(4, getChooseTeamBanner());
-                        else
-                            for (PlayerUHC pl : main.players)
-                                pl.getPlayer().getPlayer().getInventory().remove(Material.BANNER);
                     }
                     ItemMeta itm = inv.getItem(4).getItemMeta();
                     itm.setLore(Collections.singletonList("§bValeur : " + cp.getName().substring(0, 2) + "§l" + cp.getVisibleValue()));
@@ -613,9 +641,15 @@ public class GameConfig implements Listener {
                 itm.setLore(lore);
                 current.setItemMeta(itm);
             } else if (current.getType().equals(Material.GOLD_AXE)) {
-                ItemMeta itm = inv.getItem(4).getItemMeta();
-                itm.spigot().setUnbreakable(!itm.spigot().isUnbreakable());
-                inv.getItem(4).setItemMeta(itm);
+                ItemMeta itm = current.getItemMeta();
+                ItemMeta qtm = inv.getItem(4).getItemMeta();
+                List<String> lore = itm.getLore();
+                qtm.spigot().setUnbreakable(!inv.getItem(4).getItemMeta().spigot().isUnbreakable());
+                lore.remove(0);
+                lore.add(0, "§bValeur : §d§l" + getStringBoolean(inv.getItem(4).getItemMeta().spigot().isUnbreakable()));
+                itm.setLore(lore);
+                current.setItemMeta(itm);
+                inv.getItem(4).setItemMeta(qtm);
             }
         }
     }
@@ -642,10 +676,7 @@ public class GameConfig implements Listener {
                 ItemStack ic = current.clone();
                 ItemMeta icm = ic.getItemMeta();
                 List<String> l = icm.getLore();
-                l.remove(l.size() - 1);
-                l.remove(l.size() - 1);
-                l.remove(l.size() - 1);
-                l.remove(l.size() - 1);
+                for (int i = 0; i < 4; i++) l.remove(l.size() - 1);
                 icm.setLore(l);
                 ic.setItemMeta(icm);
                 player.openInventory(getPlayerInv(Bukkit.getPlayer(((SkullMeta) current.getItemMeta()).getOwner()), ic));
@@ -667,17 +698,20 @@ public class GameConfig implements Listener {
             } else if (current.getType().equals(Material.DIODE)) {
                 main.setPlayerHost(p, !puhc.isHost());
                 if (puhc.isHost()) Bukkit.broadcastMessage(main.getPrefix() + player.getDisplayName() + " §6a mit §a§l" + p.getName() + " §6§lHost§6 de la partie.");
-                else Bukkit.broadcastMessage(main.getPrefix() + player.getDisplayName() + "§6 a retiré la fontion de §lHost§6 à §c§l" + p.getName());
+                else Bukkit.broadcastMessage(main.getPrefix() + player.getDisplayName() + "§6 a retiré la fonction de §lHost§6 à §c§l" + p.getName());
                 Index.playPositiveSound(p);
                 Index.playPositiveSound(player);
                 player.closeInventory();
             } else if (current.getType().equals(Material.GHAST_TEAR)) {
                 if (puhc.isSpec()) {
                     main.spectators.remove(p);
-                    main.players.add(main.getPlayerUHC(p));
                     p.setGameMode(GameMode.ADVENTURE);
-                    p.setDisplayName(p.getName());
-                    p.setPlayerListName(player.getDisplayName());
+                    if (puhc.isHost())
+                        Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Host").addEntry(p.getName());
+                    else
+                        Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Joueur").addEntry(p.getName());
+                    p.setDisplayName(Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(p.getName()).getPrefix() + p.getName());
+                    p.setPlayerListName(p.getDisplayName());
                     InventoryManager.giveWaitInventory(puhc);
 
                     p.sendMessage(main.getPrefix() + player.getDisplayName() + "§6 vous a retiré du mode Spectateur");
@@ -731,9 +765,11 @@ public class GameConfig implements Listener {
                         Index.playPositiveSound(p);
                         puhc.getTeam().leave(puhc);
                         BannerMeta bm = (BannerMeta)p.getInventory().getItem(4).getItemMeta();
-                        bm.setPatterns(null);
-                        bm.setBaseColor(DyeColor.WHITE);
-                        p.getInventory().getItem(4).setItemMeta(bm);
+                        if (bm != null) {
+                            bm.setPatterns(null);
+                            bm.setBaseColor(DyeColor.WHITE);
+                            p.getInventory().getItem(4).setItemMeta(bm);
+                        }
                         player.openInventory(getModifTeamPlayerInv(p, Integer.parseInt(sp), inv.getItem(4)));
                     }
                 } else {
@@ -1011,7 +1047,7 @@ public class GameConfig implements Listener {
     }
 
     private Inventory getModifTeamPlayerInv(Player player, int page, ItemStack current) {
-        int maxpages = BigDecimal.valueOf((double) main.getUHCTeamManager().getTeams().size() / 28.0).setScale(0, RoundingMode.UP).toBigInteger().intValue();
+        int maxpages = BigDecimal.valueOf((double) main.getUHCTeamManager().getTeams().size() / 21.0).setScale(0, RoundingMode.UP).toBigInteger().intValue();
         Inventory inv = Bukkit.createInventory(null, Index.adaptInvSizeForInt(main.getUHCTeamManager().getTeams().size(), 18), "§e§lTeam " + player.getName() + " §8["+page+"/" + maxpages + "]");
         setInvCoin(inv, (short)4);
         setReturnArrow(inv);
@@ -1022,7 +1058,7 @@ public class GameConfig implements Listener {
             inv.setItem(inv.getSize() - 18, getPreviousPaper());
         inv.setItem(inv.getSize() - 5, new ItemsStack(Material.BANNER, (short)15, "§fRéinitialiser l'équipe de §b" + player.getName(), "", "§b>>Clique").toItemStackwithItemFlag(ItemFlag.HIDE_POTION_EFFECTS));
 
-        int ord = 28 * (page - 1);
+        int ord = 21 * (page - 1);
         for (int i = 10; i < inv.getSize() - 10; i++) {
             if (ord >= main.getUHCTeamManager().getTeams().size()) continue;
             UHCTeam t = main.getUHCTeamManager().getTeams().toArray(new UHCTeam[0])[ord];
@@ -1072,8 +1108,15 @@ public class GameConfig implements Listener {
         inv.setItem(inv.getSize() - 9, getPreviousPaper());
     }
 
-    public static ItemStack getChooseTeamBanner() {
-        return new ItemsStack(Material.BANNER, (short)15, "§e§lChanger d'Équipe", "", "§b>>Clique").toItemStackwithItemFlag(ItemFlag.HIDE_POTION_EFFECTS);
+    public static ItemStack getChooseTeamBanner(PlayerUHC pu) {
+        ItemStack it = new ItemsStack(Material.BANNER, (short)15, "§e§lChanger d'Équipe", "", "§b>>Clique").toItemStackwithItemFlag(ItemFlag.HIDE_POTION_EFFECTS);
+        if (pu.getTeam() != null && pu.getPlayer().isOnline()) {
+            BannerMeta bm = (BannerMeta)it.getItemMeta();
+            bm.setPatterns(((BannerMeta)pu.getTeam().getBanner().getItemMeta()).getPatterns());
+            bm.setBaseColor(((BannerMeta)pu.getTeam().getBanner().getItemMeta()).getBaseColor());
+            it.setItemMeta(bm);
+        }
+        return it;
     }
 
     private ItemStack getNumberAddOrRemoveBanner(double nbmoinsplus, List<String> lore) {
@@ -1303,7 +1346,7 @@ public class GameConfig implements Listener {
         BORDERSPEED("§1Vitesse de bordure", ParamParts.BORDER, Material.LEASH, 1.0, 50.0, 0.1, new double[]{0.1, 0.5, 1.0, 5.0}),
 
         EPISODS("§e§lActivation des Épisodes", ParamParts.EPISOD, Material.WOOL, (short)5, false, "§7Activation des épisodes"),
-        EPISODS_TIMER("§eDurée des Épisodes", ParamParts.EPISOD, Material.WATCH, 1200, Integer.MAX_VALUE, 1, new int[]{60, 300, 900}),
+        EPISODS_TIMER("§eDurée des Épisodes", ParamParts.EPISOD, Material.WATCH, 1200, Integer.MAX_VALUE, 60, new int[]{60, 300, 900}),
 
         TEAMTYPE("§eTaille des équipes", ParamParts.TEAMS, Material.BANNER, "FFA"),
         SLOTS("§7Slots", ParamParts.TEAMS, Material.DIODE, Math.min(Bukkit.getServer().getMaxPlayers(), 50), Bukkit.getServer().getMaxPlayers(), 2, new int[]{1, 5, 10});
@@ -1421,6 +1464,8 @@ public class GameConfig implements Listener {
                 }
             } else if (value instanceof Boolean) return getStringBoolean(((boolean) value));
             if (this.getPart().equals(ParamParts.DROPS) || this.equals(STRENGTH_NERF)) return value.toString() + '%';
+            if (this.equals(ABSORPTION)) return value.toString() + " " + Symbols.HEARTH;
+            if (this.equals(BORDERSPEED)) return value.toString() + " blocs par secondes";
             return value.toString();
         }
 
@@ -1488,7 +1533,8 @@ public class GameConfig implements Listener {
 
     public static String getTeamTypeString(int size, boolean random) {
         if (Scenarios.SLAVE_MARKET.isActivated()) return "SlaveMarket";
-        if (size == 1) return "FFA";
+        if (Scenarios.TRUE_LOVE.isActivated()) return "TrueLove";
+        if (size <= 1) return "FFA";
         else
         if (random)
             return "Random To" + size;
@@ -1498,6 +1544,8 @@ public class GameConfig implements Listener {
 
     public static int getTeamTypeInt(String teamtype) {
         if (teamtype.equals("FFA")) return 1;
+        else if (teamtype.equals("SlaveMarket")) return 0;
+        else if (teamtype.equals("TrueLove")) return TrueLove.teamSize;
         else
             return Integer.parseInt(teamtype.replace("Random ", "").replace("To", ""));
     }

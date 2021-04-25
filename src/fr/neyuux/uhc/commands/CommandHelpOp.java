@@ -21,11 +21,13 @@ public class CommandHelpOp implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
         for (PlayerUHC pu : main.players)
-            if (pu.isHost() && pu.getPlayer().isOnline())
+            if (pu.isHost() && pu.getPlayer().isOnline() && !pu.getPlayer().getName().equals(sender.getName())) {
                 if (pu.isSpec() || !main.getState().equals(Gstate.PLAYING)) {
                     pu.getPlayer().getPlayer().sendMessage(main.getPrefix() + "§5§lHelp-Op §8" + Symbols.DOUBLE_ARROW + " §b" + sender.getName() + " §8" + Symbols.DOUBLE_ARROW + " §d" + Arrays.stream(args).map(part -> part + " ").collect(Collectors.joining()));
                 } else
                     pu.getPlayer().getPlayer().sendMessage(main.getPrefix() + "§5§lHelp-Op §8" + Symbols.DOUBLE_ARROW + " §d" + Arrays.stream(args).map(part -> part + " ").collect(Collectors.joining()));
+            }
+        sender.sendMessage(main.getPrefix() + "§5§lHelp-Op §8" + Symbols.DOUBLE_ARROW + " §b" + sender.getName() + " §8" + Symbols.DOUBLE_ARROW + " §d" + Arrays.stream(args).map(part -> part + " ").collect(Collectors.joining()));
         return true;
     }
 }

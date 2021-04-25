@@ -39,40 +39,42 @@ public class RedArrow extends Scenario implements Listener {
     public void onDeath(PlayerEliminationEvent e) {
         PlayerUHC pu = e.getPlayerUHC();
 
-        createRedArrow(pu.getLastLocation().getWorld().getHighestBlockAt(pu.getLastLocation()).getLocation().add(0, 30, 0));
+        createRedArrow(pu.getLastLocation().getWorld().getHighestBlockAt(pu.getLastLocation()).getLocation().add(0, 30, 0), pu);
     }
 
-    public static void createRedArrow(Location loc) {
-        changeRedWool(loc.getBlock());
+    public static void createRedArrow(Location loc, PlayerUHC pu) {
+        changeRedWool(loc.getBlock(), pu);
 
         int x = loc.getBlockX(); int y = loc.getBlockY();
         int z = loc.getBlockZ(); World w = loc.getWorld();
 
-        changeRedWool(new Location(w, x, y + 1, z).getBlock());
-        changeRedWool(new Location(w, x, y + 1, z+1).getBlock());
-        changeRedWool(new Location(w, x, y + 1, z-1).getBlock());
+        changeRedWool(new Location(w, x, y + 1, z).getBlock(), pu);
+        changeRedWool(new Location(w, x, y + 1, z+1).getBlock(), pu);
+        changeRedWool(new Location(w, x, y + 1, z-1).getBlock(), pu);
 
         for(int i = 0; i < 18; i++) {
-            changeRedWool(new Location(w, x, y + 2 + i, z).getBlock());
-            changeRedWool(new Location(w, x, y + 2 + i, z+1).getBlock());
-            changeRedWool(new Location(w, x, y + 2 + i, z+2).getBlock());
-            changeRedWool(new Location(w, x, y + 2 + i, z-1).getBlock());
-            changeRedWool(new Location(w, x, y + 2 + i, z-2).getBlock());
+            changeRedWool(new Location(w, x, y + 2 + i, z).getBlock(), pu);
+            changeRedWool(new Location(w, x, y + 2 + i, z+1).getBlock(), pu);
+            changeRedWool(new Location(w, x, y + 2 + i, z+2).getBlock(), pu);
+            changeRedWool(new Location(w, x, y + 2 + i, z-1).getBlock(), pu);
+            changeRedWool(new Location(w, x, y + 2 + i, z-2).getBlock(), pu);
         }
 
-        changeRedWool(new Location(w, x, y + 3, z+3).getBlock());
-        changeRedWool(new Location(w, x, y + 3, z-3).getBlock());
+        changeRedWool(new Location(w, x, y + 3, z+3).getBlock(), pu);
+        changeRedWool(new Location(w, x, y + 3, z-3).getBlock(), pu);
 
-        changeRedWool(new Location(w, x, y + 4, z+3).getBlock());
-        changeRedWool(new Location(w, x, y + 4, z-3).getBlock());
-        changeRedWool(new Location(w, x, y + 4, z+4).getBlock());
-        changeRedWool(new Location(w, x, y + 4, z-4).getBlock());
+        changeRedWool(new Location(w, x, y + 4, z+3).getBlock(), pu);
+        changeRedWool(new Location(w, x, y + 4, z-3).getBlock(), pu);
+        changeRedWool(new Location(w, x, y + 4, z+4).getBlock(), pu);
+        changeRedWool(new Location(w, x, y + 4, z-4).getBlock(), pu);
     }
 
-    private static void changeRedWool(Block block) {
+    private static void changeRedWool(Block block, PlayerUHC pu) {
         block.setType(Material.WOOL);
         BlockState state = block.getState();
-        state.setData(new Wool(DyeColor.RED));
+        DyeColor dc = DyeColor.RED;
+        if (pu.getTeam() != null) dc = pu.getTeam().getPrefix().color.getDyecolor();
+        state.setData(new Wool(dc));
         state.update();
     }
 }

@@ -12,8 +12,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -45,7 +49,10 @@ public class UHCWorld {
             seed = yconfig.getLongList("lg_maps").get(new Random().nextInt(yconfig.getLongList("lg_maps").size()));
         Bukkit.broadcastMessage(main.getPrefix() + "§2Création du monde §a\"§l" + seed + "§a\"§2...");
 
+        System.out.println(world);
         world = Bukkit.createWorld(new WorldCreator(seed.toString()).seed(seed));
+        System.out.println(world);
+        spawns.clear();
         return this;
     }
 
@@ -80,29 +87,16 @@ public class UHCWorld {
 
     public void delete() {
         if (world == null) return;
+        for (Player p : world.getPlayers())
+            p.teleport(new Location(Bukkit.getWorld("Core"), -565, 23.2, 850));
         long seed = world.getSeed();
         world.setAutoSave(false);
-        try {
-            MinecraftServer.getServer().worlds.removeIf(ws -> ws.getSeed() == seed);
-        } catch (Exception ignored) {}
-        for (Chunk c : world.getLoadedChunks())
-            c.unload(false);
-        File session = new File(Bukkit.getWorldContainer(), seed + "/session.lock");
-        session.delete();
-        try {
-            session.createNewFile();
-
-            try (DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(session))) {
-                dataoutputstream.writeLong(System.currentTimeMillis());
-            }
-        } catch (IOException ignored) {
-        }
+        loaded = false;
+        Bukkit.unloadWorld(Long.toString(seed), false);
         try {
             FileUtils.deleteDirectory(world.getWorldFolder());
         } catch (IOException ignored) { }
         world = null;
-        loaded = false;
-        Bukkit.unloadWorld(Long.toString(seed), false);
     }
 
     /*public boolean isLoaded() {
@@ -295,7 +289,7 @@ public class UHCWorld {
         double speed = Math.round((double)GameConfig.ConfigurableParams.BORDERSPEED.getValue());
         World world = Bukkit.getWorld("" + getSeed());
         WorldBorder border = world.getWorldBorder();
-        border.setSize(fsize, (long) ((size - fsize) / speed));
+        border.setSize(fsize, (long) (((size - fsize) / speed)) / 2);
     }
 
     public static ArmorStand getArmorStand(Location loc) {

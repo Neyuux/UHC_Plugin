@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 public class CommandHeal implements CommandExecutor {
 
@@ -18,10 +20,12 @@ public class CommandHeal implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
 
-        if (main.isState(Gstate.PLAYING)) {
-            healAll();
-            Bukkit.broadcastMessage(main.getPrefix() + "§b" + sender.getName() +" §6a soigné tout le monde !");
-        } else sender.sendMessage(main.getPrefix() + "§cLa partie n'est pas démarrée !");
+        if (sender instanceof ConsoleCommandSender || (sender instanceof Player && main.getPlayerUHC((Player)sender).isHost())) {
+            if (main.isState(Gstate.PLAYING)) {
+                healAll();
+                Bukkit.broadcastMessage(main.getPrefix() + "§b" + sender.getName() + " §6a soigné tout le monde !");
+            } else sender.sendMessage(main.getPrefix() + "§cLa partie n'est pas démarrée !");
+        } else sender.sendMessage(main.getPrefix() + "§cVous n'avez pas la permission d'utiliser cette commande.");
 
         return true;
     }

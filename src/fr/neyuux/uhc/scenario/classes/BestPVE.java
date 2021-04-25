@@ -30,6 +30,7 @@ public class BestPVE extends Scenario implements Listener {
     public static int timer = 15 * 60;
 
     private static final List<PlayerUHC> bestpve = new ArrayList<>();
+    public static final int[] IGtimers = {0};
 
     @Override
     protected void activate() {
@@ -42,12 +43,12 @@ public class BestPVE extends Scenario implements Listener {
         Scenario.handlers.add(this);
 
         bestpve.addAll(Index.getInstance().getAlivePlayers());
-        final int[] timer = {BestPVE.timer};
+        IGtimers[0] = timer;
         new BukkitRunnable() {
             @Override
             public void run() {
-                timer[0]--;
-                if (timer[0] == 0) {
+                IGtimers[0]--;
+                if (IGtimers[0] == 0) {
                     for (PlayerUHC pu : bestpve) {
                         pu.maxHealth += 2.0;
                         if (pu.getPlayer().isOnline()) {
@@ -55,7 +56,7 @@ public class BestPVE extends Scenario implements Listener {
                             pu.getPlayer().getPlayer().setMaxHealth(pu.maxHealth);
                         }
                     }
-                    timer[0] = BestPVE.timer;
+                    IGtimers[0] = BestPVE.timer;
                     cancel();
                 }
                 if (!Index.getInstance().isState(Gstate.PLAYING)) cancel();

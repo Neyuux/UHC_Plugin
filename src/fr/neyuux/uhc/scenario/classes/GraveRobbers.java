@@ -32,7 +32,7 @@ public class GraveRobbers extends Scenario implements Listener {
 
     @Override
     protected void activate() {
-        if ((boolean) GameConfig.ConfigurableParams.BARRIER_HEAD.getValue())Bukkit.broadcastMessage(Index.getStaticPrefix() + "§cVeuillez désactiver l'apparition d'un poteau au kill pour que " + scenario.getDisplayName() + " §cpuisse fonctionner.");
+        if ((boolean) GameConfig.ConfigurableParams.BARRIER_HEAD.getValue())Index.sendHostMessage(Index.getStaticPrefix() + "§cVeuillez désactiver l'apparition d'un poteau au kill pour que " + scenario.getDisplayName() + " §cpuisse fonctionner.");
     }
 
     @Override
@@ -43,7 +43,7 @@ public class GraveRobbers extends Scenario implements Listener {
 
     @Override
     public boolean checkStart() {
-        return (boolean)GameConfig.ConfigurableParams.BARRIER_HEAD.getValue();
+        return !(boolean)GameConfig.ConfigurableParams.BARRIER_HEAD.getValue();
     }
 
 

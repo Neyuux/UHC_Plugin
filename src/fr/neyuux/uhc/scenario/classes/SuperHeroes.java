@@ -18,9 +18,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
 public class SuperHeroes extends Scenario implements Listener {
     public SuperHeroes() {
@@ -42,29 +43,26 @@ public class SuperHeroes extends Scenario implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
         Scenario.handlers.add(this);
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                ArrayList<PotionEffectType> p = new ArrayList<>(setPowerList());
-                if (Index.getInstance().getUHCTeamManager().getAliveTeams().size() != 0) {
-                    for (UHCTeam t : Index.getInstance().getUHCTeamManager().getAliveTeams()) {
-                        p.clear(); p.addAll(setPowerList());
-                        for (PlayerUHC pu : t.getPlayers()) {
-                            if (p.isEmpty()) p.addAll(setPowerList());
-                            addPower(pu, p.remove(new Random().nextInt(p.size())));
-                        }
+        Bukkit.getScheduler().runTaskLater(Index.getInstance(), () -> {
+            ArrayList<PotionEffectType> p = new ArrayList<>(setPowerList());
+            if (Index.getInstance().getUHCTeamManager().getAliveTeams().size() != 0) {
+                for (UHCTeam t : Index.getInstance().getUHCTeamManager().getAliveTeams()) {
+                    p.clear(); p.addAll(setPowerList());
+                    for (PlayerUHC pu : t.getPlayers()) {
+                        if (p.isEmpty()) p.addAll(setPowerList());
+                        addPower(pu, p.remove(new Random().nextInt(p.size())));
                     }
-                } else {
-                    for (PlayerUHC pu : Index.getInstance().getAlivePlayers())
-                        addPower(pu, p.get(new Random().nextInt(p.size())));
                 }
+            } else {
+                for (PlayerUHC pu : Index.getInstance().getAlivePlayers())
+                    addPower(pu, p.get(new Random().nextInt(p.size())));
             }
-        }.runTaskLater(Index.getInstance(), 100L);
+        }, 100L);
     }
 
     @Override
     public boolean checkStart() {
-        return (boolean)GameConfig.ConfigurableParams.MILK.getValue();
+        return !(boolean)GameConfig.ConfigurableParams.MILK.getValue();
     }
 
 

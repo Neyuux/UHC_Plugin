@@ -7,10 +7,11 @@ import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.UHCWorld;
 import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
+import fr.neyuux.uhc.enums.Symbols;
+import fr.neyuux.uhc.events.GameStartEvent;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.scenario.classes.modes.SlaveMarket;
 import fr.neyuux.uhc.teams.UHCTeam;
-import fr.neyuux.uhc.teams.UHCTeamColors;
 import fr.neyuux.uhc.teams.UHCTeamManager;
 import fr.neyuux.uhc.util.Interval;
 import fr.neyuux.uhc.util.Loot;
@@ -22,18 +23,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Random;
+import java.util.ConcurrentModificationException;
 
 public class UHCStart extends BukkitRunnable {
 
     private static int timer = 11;
-    public static BukkitTask waitTask;
-    private static int id = 0;
     private final Index main;
     public UHCStart(Index main) {
         this.main = main;
@@ -92,101 +90,40 @@ public class UHCStart extends BukkitRunnable {
                 }
         }
         if (timer == -1) {
+            GameStartEvent ev = new GameStartEvent();
+            Bukkit.getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                cancelStart();
+                return;
+            }
+            if (Scenarios.SLAVE_MARKET.isActivated() && !SlaveMarket.canStart) {
+                cancel();
+                timer = 11;
+                main.uhcStart = null;
+                return;
+            }
+
             main.setState(Gstate.PLAYING);
             for (PlayerUHC p : main.players)
                 if (!p.isSpec())
                     p.setAlive(true);
             if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString().startsWith("Random"))
                 main.getUHCTeamManager().randomTeams();
-            UHCTeamManager.baseteams = main.getUHCTeamManager().getTeams().size();
             UHCTeamManager.baseplayers = main.getAlivePlayers();
             for (PlayerUHC playerUHC : main.getAlivePlayers()) {
-                if (!GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && playerUHC.getTeam() == null)
+                if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) != 1 && playerUHC.getTeam() == null) {
                     for (UHCTeam t : main.getUHCTeamManager().getTeams())
-                        if (playerUHC.getTeam() == null && (!((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To") || t.getPlayers().size() < Integer.parseInt(((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue()).substring(2))))
+                        if (playerUHC.getTeam() == null && t.getPlayers().size() < GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()))
                             t.add(playerUHC.getPlayer().getPlayer());
+                }
                 InventoryManager.clearInventory(playerUHC.getPlayer().getPlayer());
             }
-
-            if (Scenarios.SLAVE_MARKET.isActivated()) {
-                if (SlaveMarket.nOwners == 1) SlaveMarket.nOwners = 2;
-                if (SlaveMarket.nOwners > UHCTeamColors.values().length) SlaveMarket.nOwners = UHCTeamColors.values().length;
-                if (!SlaveMarket.randomChoiceOwners) {
-                    Bukkit.broadcastMessage(main.getPrefix() + "§6Veuillez choisir les acheteurs de la partie. Pour ce faire, les joueurs voulant l'être doivent effectuer la commande §b§l/uhc sm candidate §6et les hosts doivent accepter les joueurs.");
-                    for (PlayerUHC playerUHC : main.players)
-                        if (playerUHC.isHost())
-                            playerUHC.getPlayer().getPlayer().sendMessage(main.getPrefix() + "§6Pour ouvrir l'inventaire des joueurs candidats, effectuez la commande §b§l/uhc sm view§6.");
-                    final int[] waitTicks = {6000};
-                    waitTask = new BukkitRunnable() {
-                        public void run() {
-                            InventoryManager.setAllPlayersLevels((short) (Math.floorDiv(waitTicks[0], 20) + 1), waitTicks[0] / 6000f);
-                            if (waitTicks[0] == 0) {
-                                cancel();
-                                main.uhcStart = null;
-                                waitTask = null;
-                                Bukkit.broadcastMessage(main.getPrefix() + "§cVous avez mit trop de temps à choisir les acheteurs.");
-                                main.rel();
-                            }
-                            waitTicks[0]--;
-                        }
-                    }.runTaskTimer(main, 0L, 1L);
-                } else
-                    while (SlaveMarket.owners.size() != SlaveMarket.nOwners)
-                        SlaveMarket.owners.add(main.players.get(new Random().nextInt(main.players.size())));
-
-                new BukkitRunnable() {
-                    final int[] i = {0, 0};
-                    public void run() {
-                        if (SlaveMarket.owners.size() == SlaveMarket.nOwners) {
-                            if (i[1] == 0) {
-                                Bukkit.broadcastMessage(main.getPrefix() + "§aIl est temps d'annoncer les acheteurs de la partie.");
-                                InventoryManager.setAllPlayersLevels(0, 0f);
-                                i[1] = 1;
-                                main.getUHCTeamManager().clearTeams();
-                                for (int i = 1; i <= SlaveMarket.nOwners; i++)
-                                    main.getUHCTeamManager().createTeam();
-                                BukkitRunnable ownersPresentation = new BukkitRunnable() {
-                                    public void run() {
-                                        if (id == 0) {
-                                            cancel();
-                                            main.uhcStart = null;
-                                            return;
-                                        }
-                                        UHCTeam t = main.getUHCTeamManager().getTeams().get(i[0]);
-                                        PlayerUHC owner = SlaveMarket.owners.get(i[0]);
-                                        Player p = owner.getPlayer().getPlayer();
-
-                                        Bukkit.broadcastMessage(main.getPrefix() + t.getPrefix().color.getColor() + "L'acheteur de l'équipe " + t.getTeam().getDisplayName() + " sera §f" + p.getName() + t.getPrefix().color.getColor() +".");
-                                        for (Player player : Bukkit.getOnlinePlayers())
-                                            player.playSound(p.getLocation(), Sound.FIREWORK_LAUNCH, 8, 1);
-                                        t.add(p);
-                                        //tp p
-                                        p.setDisplayName(p.getDisplayName().substring(0, 2) + "§l" + p.getDisplayName().substring(2));
-                                        p.setPlayerListName(p.getDisplayName());
-
-                                        i[0]++;
-                                        if (i[0] == main.getUHCTeamManager().getTeams().size()) {
-                                            id = 0;
-                                            i[1] = 2;
-                                            cancel();
-                                            main.uhcStart = null;
-                                        }
-                                    }
-                                };
-                                ownersPresentation.runTaskTimer(main, 40L, 60L);
-                                id = ownersPresentation.getTaskId();
-                            } else if (i[1] == 2) {
-                                cancel();
-                                main.uhcStart = null;
-                            }
-                        } else
-                            if (waitTask == null) {
-                                cancel();
-                                main.uhcStart = null;
-                            }
-                    }
-                }.runTaskTimer(main, 0L, 20L);
-            }
+            try {
+                for (UHCTeam t : main.getUHCTeamManager().getTeams())
+                    if (t.getPlayers().size() == 0) main.getUHCTeamManager().removeTeam(t);
+                    else System.out.println(t.getTeam().getDisplayName() + " / " + t.getPlayers());
+            } catch (ConcurrentModificationException ignored) {}
+            UHCTeamManager.baseteams = main.getUHCTeamManager().getTeams().size();
 
             InventoryManager.clearAllPlayersEffects();
             for (Player p : Bukkit.getOnlinePlayers())
@@ -197,8 +134,9 @@ public class UHCStart extends BukkitRunnable {
                 if (Scenarios.TEAM_HEALTH.isActivated()) {
                     health.unregister();
                     healthBelow.unregister();
-                    health = Bukkit.getScoreboardManager().getMainScoreboard().registerNewObjective("healthBelow", "dummy");
+                    health = Bukkit.getScoreboardManager().getMainScoreboard().registerNewObjective("health", "dummy");
                     healthBelow = Bukkit.getScoreboardManager().getMainScoreboard().registerNewObjective("healthBelow", "dummy");
+                    healthBelow.setDisplayName("§4" + Symbols.HEARTH);
                 }
                 health.setDisplaySlot(DisplaySlot.PLAYER_LIST);
                 healthBelow.setDisplaySlot(DisplaySlot.BELOW_NAME);
@@ -208,15 +146,18 @@ public class UHCStart extends BukkitRunnable {
             }
             Bukkit.broadcastMessage(main.getPrefix() + "§2Lancement de la Pré-Génération du monde...");
             for (PlayerUHC p : main.getAlivePlayers()) {
-                main.world.addSpawnLoad();
+                if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) == 1) main.world.addSpawnLoad();
                 Index.setF3(p.getPlayer().getPlayer(), !(boolean)GameConfig.ConfigurableParams.COORDS_F3.getValue());
                 if (Scenarios.TEAM_HEALTH.isActivated()) {
                     health.getScore(p.getPlayer().getName()).setScore((int)p.getTeam().getHealth());
                     healthBelow.getScore(p.getPlayer().getName()).setScore((int)p.getTeam().getHealth());
                 }
-                if (p.isSpec() && !(boolean)GameConfig.ConfigurableParams.SPECTATORS.getValue())
+                if (p.isSpec() && !p.isHost() && !(boolean)GameConfig.ConfigurableParams.SPECTATORS.getValue())
                     p.getPlayer().getPlayer().kickPlayer(main.getPrefix() + "§cLes spectateurs se sont pas autorisés.");
             }
+            if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) != 1)
+                for (int i = 0; i < main.getUHCTeamManager().getTeams().size(); i++)
+                    main.world.addSpawnLoad();
             main.world.loadChunks();
             main.world.setTime(0);
             main.world.setDayCycle((Boolean)GameConfig.ConfigurableParams.DAY_CYCLE.getValue());
@@ -310,7 +251,7 @@ public class UHCStart extends BukkitRunnable {
                 player.updateInventory();
             }
             UHCWorld.setAchievements((Boolean)GameConfig.ConfigurableParams.ACHIEVEMENTS.getValue());
-            if (main.getUHCTeamManager().getTeams().isEmpty()) for (PlayerUHC p : main.getAlivePlayers()) {
+            if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) == 1) for (PlayerUHC p : main.getAlivePlayers()) {
                 p.getPlayer().getPlayer().teleport(main.world.getSpawns().remove(0));
                 for (Player pl : Bukkit.getOnlinePlayers())
                     pl.playSound(pl.getLocation(), Sound.CHICKEN_EGG_POP, 7f ,2f);
@@ -322,6 +263,10 @@ public class UHCStart extends BukkitRunnable {
                     Location l = main.world.getSpawns().remove(0);
                     for (PlayerUHC playerUHC : t.getPlayers()) {
                         playerUHC.getPlayer().getPlayer().teleport(l);
+                        playerUHC.getPlayer().getPlayer().setDisplayName(t.getPrefix().toString() + playerUHC.getPlayer().getPlayer().getName());
+                        if (Scenarios.SLAVE_MARKET.isActivated() && SlaveMarket.owners.contains(playerUHC))
+                            playerUHC.getPlayer().getPlayer().setDisplayName(t.getPrefix().toString() + "§l" + playerUHC.getPlayer().getPlayer().getName());
+                        playerUHC.getPlayer().getPlayer().setPlayerListName(playerUHC.getPlayer().getPlayer().getDisplayName());
                         for (Player pl : Bukkit.getOnlinePlayers())
                             pl.playSound(pl.getLocation(), Sound.CHICKEN_EGG_POP, 7f ,2f);
                         Bukkit.broadcastMessage(main.getPrefix() + playerUHC.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");

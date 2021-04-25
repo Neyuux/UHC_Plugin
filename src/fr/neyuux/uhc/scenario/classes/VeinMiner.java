@@ -85,6 +85,10 @@ public class VeinMiner extends Scenario implements Listener {
         for(Block b : filon)
             if (b.getType() != Material.AIR) if (checkBlock(b, e, filon.size())) {
                 e.setCancelled(true);
+                PlayerUHC up = Index.getInstance().getPlayerUHC(p);
+                if(b.getType() == Material.DIAMOND_ORE) up.addDiamonds(1);
+                else if(b.getType() == Material.GOLD_ORE) up.addGolds(1);
+                else if(b.getType() == Material.IRON_ORE) up.addIrons(1);
                 b.setType(Material.AIR);
                 if (b != e.getBlock()) Bukkit.getPluginManager().callEvent(new BlockBreakEvent(b, p));
                 ItemStack item = p.getItemInHand();
@@ -96,10 +100,6 @@ public class VeinMiner extends Scenario implements Listener {
                     } else
                         item.setDurability((short) (item.getDurability() + 1));
                 }
-                PlayerUHC up = Index.getInstance().getPlayerUHC(p);
-                if(e.getBlock().getType() == Material.DIAMOND_ORE) up.addDiamonds(1);
-                else if(e.getBlock().getType() == Material.GOLD_ORE) up.addGolds(1);
-                else if(e.getBlock().getType() == Material.IRON_ORE) up.addIrons(1);
             }
         check.clear();
     }
@@ -110,9 +110,9 @@ public class VeinMiner extends Scenario implements Listener {
         boolean ol = true;
         if (Scenarios.ORE_LIMITER.isActivated()) {
             PlayerUHC pu = Index.getInstance().getPlayerUHC(event.getPlayer());
-            if (mat.equals(Material.GOLD_ORE) && pu.getGolds() > OreLimiter.golds) ol = false;
-            if (mat.equals(Material.DIAMOND_ORE) && pu.getDiamonds() > OreLimiter.diamonds) ol = false;
-            if (mat.equals(Material.IRON_ORE) && pu.getIrons() > OreLimiter.irons) ol = false;
+            if (mat.equals(Material.GOLD_ORE) && pu.getGolds() >= OreLimiter.golds) ol = false;
+            if (mat.equals(Material.DIAMOND_ORE) && pu.getDiamonds() >= OreLimiter.diamonds) ol = false;
+            if (mat.equals(Material.IRON_ORE) && pu.getIrons() >= OreLimiter.irons) ol = false;
         }
 
         if (loots.containsKey(mat) && ol) {

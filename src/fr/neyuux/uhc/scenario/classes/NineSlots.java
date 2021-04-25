@@ -28,7 +28,7 @@ public class NineSlots extends Scenario implements Listener {
         Scenario.handlers.add(this);
 
         for (PlayerUHC pu : Index.getInstance().getAlivePlayers())
-            for (int i = 8; i <= 35; i++) {
+            for (int i = 9; i <= 35; i++) {
                 ItemStack it = pu.getPlayer().getPlayer().getInventory().getItem(i);
                 if (it != null && !it.getType().equals(Material.AIR)) pu.getPlayer().getPlayer().getWorld().dropItem(pu.getPlayer().getPlayer().getLocation(), it);
                 pu.getPlayer().getPlayer().getInventory().setItem(i, new ItemsStack(Material.STAINED_GLASS_PANE, (short)7, scenario.getDisplayName()).toItemStack());

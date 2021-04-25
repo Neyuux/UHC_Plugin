@@ -18,6 +18,8 @@ public class FinalHeal extends Scenario {
 
     public static int timer = 600;
 
+    public static final int[] IGtimers = {0};
+
     @Override
     protected void activate() {
 
@@ -25,16 +27,15 @@ public class FinalHeal extends Scenario {
 
     @Override
     public void execute() {
-
-        final int[] timer = {FinalHeal.timer};
+        IGtimers[0] = timer;
         new BukkitRunnable() {
             @Override
             public void run() {
-                timer[0]--;
-                if (timer[0] == 0) {
+                IGtimers[0]--;
+                if (IGtimers[0] == 0) {
                     Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §dActivation du Scénario !");
                     CommandHeal.healAll();
-                    timer[0] = FinalHeal.timer;
+                    IGtimers[0] = FinalHeal.timer;
                     cancel();
                 }
                 if (!Index.getInstance().isState(Gstate.PLAYING)) cancel();

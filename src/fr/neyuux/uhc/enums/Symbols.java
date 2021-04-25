@@ -35,7 +35,7 @@ public enum Symbols {
         Symbols.PLUS_MINUS = "\u00B1";
         Symbols.WEST_ARROW = "\u2B05";
         Symbols.NORTHWEST_ARROW = "\u2B09";
-        Symbols.EAST_ARROW = "\u2B95";
+        Symbols.EAST_ARROW = "\u27A1";
         Symbols.NORTHEAST_ARROW = "\u2B08";
         Symbols.SOUTH_ARROW = "\u2B07";
         Symbols.SOUTHWEST_ARROW = "\u2B0B";

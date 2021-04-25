@@ -23,6 +23,8 @@ public class Netheribus extends Scenario {
     public static int timer = 3600;
     public static double damage = 0.5;
 
+    public static final int[] IGtimers = {0, 30};
+
     @Override
     protected void activate() {
         if (!(boolean)GameConfig.ConfigurableParams.NETHER.getValue())
@@ -31,19 +33,19 @@ public class Netheribus extends Scenario {
 
     @Override
     public void execute() {
-        final int[] timer = {Netheribus.timer, 30};
+        IGtimers[0] = timer;
         new BukkitRunnable() {
             @Override
             public void run() {
-                timer[0]--;
-                if (timer[0] == 0) {
+                IGtimers[0]--;
+                if (IGtimers[0] == 0) {
                     Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cActivation du Scénario ! §cTous les joueurs qui ne sont pas dans le Nether recevront §4§l" + damage + Symbols.HEARTH + " §6de dégâts toutes les 30 secondes à compter de maintenant.");
-                    timer[0] = Netheribus.timer;
+                    IGtimers[0] = Netheribus.timer;
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            timer[1]--;
-                            if (timer[1] == 0) {
+                            IGtimers[1]--;
+                            if (IGtimers[1] == 0) {
                                 for (PlayerUHC pu : Index.getInstance().getAlivePlayers())
                                     if (pu.getPlayer().isOnline() && !pu.getPlayer().getPlayer().getLocation().getWorld().getEnvironment().equals(World.Environment.NETHER)) {
                                         Player p = pu.getPlayer().getPlayer();
@@ -52,7 +54,7 @@ public class Netheribus extends Scenario {
                                         else new FightListener(Index.getInstance()).eliminate(p, true, null, p.getDisplayName() + " §dest resté trop longtemps hors du Nether.");
                                         Index.sendActionBar(p, Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§4Vous perdez " + damage + Symbols.HEARTH + "  en n'étant pas dans le Nether.");
                                     }
-                                timer[1] = 30;
+                                IGtimers[1] = 30;
                             }
                             if (!Index.getInstance().isState(Gstate.PLAYING)) cancel();
                         }

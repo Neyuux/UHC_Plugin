@@ -15,6 +15,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
+
 public class RewardingLongShot extends Scenario implements Listener {
     public RewardingLongShot() {
         super(Scenarios.REWARDING_LONGSHOT, new ItemStack(Material.GOLD_NUGGET));
@@ -53,25 +55,27 @@ public class RewardingLongShot extends Scenario implements Listener {
         Player shooter = (Player) a.getShooter();
         Location lp = e.getEntity().getLocation();
         Location ls = shooter.getLocation();
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(1);
         double distance = ls.distance(lp);
 
-        if (distance >= 30 && distance < 49) {
+        if (distance >= 30 && distance < 50) {
             InventoryManager.give(shooter, null, new ItemStack(Material.IRON_INGOT, 1));
-            shooter.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§bVous avez touché à " + distance + " blocks ! Vous obtenez donc 1 lingot de fer.");
+            shooter.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §bVous avez touché à " + df.format(distance) + " blocks ! Vous obtenez donc 1 lingot de fer.");
         } else if (distance >= 50 && distance < 70) {
             InventoryManager.give(shooter, null, new ItemStack(Material.IRON_INGOT, 1));
             InventoryManager.give(shooter, null, new ItemStack(Material.GOLD_INGOT, 1));
-            shooter.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§bVous avez touché à " + distance + " blocks ! Vous obtenez donc 1 lingot de fer et 1 lingot d'or.");
+            shooter.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §bVous avez touché à " + df.format(distance) + " blocks ! Vous obtenez donc 1 lingot de fer et 1 lingot d'or.");
         } else if (distance >= 70 && distance < 150) {
             InventoryManager.give(shooter, null, new ItemStack(Material.DIAMOND, 1));
             InventoryManager.give(shooter, null, new ItemStack(Material.GOLD_INGOT, 2));
             InventoryManager.give(shooter, null, new ItemStack(Material.IRON_INGOT, 2));
-            shooter.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§bVous avez touché à " + distance + " blocks ! Vous obtenez donc 2 lingots de fer, 2 lingots d'or et 1 diamant.");
+            shooter.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §bVous avez touché à " + df.format(distance) + " blocks ! Vous obtenez donc 2 lingots de fer, 2 lingots d'or et 1 diamant.");
         } else if (distance >= 150) {
             InventoryManager.give(shooter, null, new ItemStack(Material.DIAMOND, 5));
             InventoryManager.give(shooter, null, new ItemStack(Material.GOLD_INGOT, 3));
             InventoryManager.give(shooter, null, new ItemStack(Material.IRON_INGOT, 2));
-            shooter.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§bVous avez touché à " + distance + " blocks ! Vous obtenez donc 2 lingots de fer, 3 lingots d'or et 5 diamants.");
+            shooter.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §bVous avez touché à " + df.format(distance) + " blocks ! Vous obtenez donc 2 lingots de fer, 3 lingots d'or et 5 diamants.");
         }
     }
 }
