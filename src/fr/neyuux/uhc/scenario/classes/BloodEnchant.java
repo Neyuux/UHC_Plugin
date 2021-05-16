@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.listeners.FightListener;
@@ -27,7 +27,7 @@ public class BloodEnchant extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
     }
 
@@ -39,12 +39,12 @@ public class BloodEnchant extends Scenario implements Listener {
 
     @EventHandler
     public void onEnchant(EnchantItemEvent ev) {
-        PlayerUHC pu = Index.getInstance().getPlayerUHC(ev.getEnchanter());
+        PlayerUHC pu = UHC.getInstance().getPlayerUHC(ev.getEnchanter());
         if (pu.isAlive()) {
             ev.getEnchanter().damage(0);
             if (ev.getEnchanter().getHealth() > damage * 2.0) ev.getEnchanter().setHealth(ev.getEnchanter().getHealth() - damage * 2.0);
-            else new FightListener(Index.getInstance()).eliminate(ev.getEnchanter(), true, null, ev.getEnchanter().getDisplayName() + " §da trop enchanté.");
-            Index.sendActionBar(ev.getEnchanter(), Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§4Vous perdez " + damage + Symbols.HEARTH + "  en enchantant.");
+            else new FightListener(UHC.getInstance()).eliminate(ev.getEnchanter(), true, null, ev.getEnchanter().getDisplayName() + " §da trop enchanté.");
+            UHC.sendActionBar(ev.getEnchanter(), UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§4Vous perdez " + damage + Symbols.HEARTH + "  en enchantant.");
         }
     }
 }

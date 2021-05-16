@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.util;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import org.bukkit.Bukkit;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -34,7 +34,6 @@ public class PlayerSkin {
             uc.addRequestProperty("Cache-Control", "no-cache, no-store, must-revalidate");
             uc.addRequestProperty("Pragma", "no-cache");
 
-            // Parse it
             String json = new Scanner(uc.getInputStream(), "UTF-8").useDelimiter("\\A").next();
             JSONParser parser = new JSONParser();
             Object obj = parser.parse(json);
@@ -52,7 +51,7 @@ public class PlayerSkin {
 
                 } catch (Exception e) {
                     Bukkit.getLogger().log(Level.WARNING, "Failed to apply auth property", e);
-                    Bukkit.broadcastMessage(Index.getInstance().getPrefix() + "§cErreur lors du chargement d'un skin.");
+                    Bukkit.broadcastMessage(UHC.getInstance().getPrefix() + "§cErreur lors du chargement d'un skin.");
                 }
             }
             uc.setConnectTimeout(0);

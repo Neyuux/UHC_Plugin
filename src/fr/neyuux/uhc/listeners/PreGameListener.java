@@ -1,9 +1,9 @@
 package fr.neyuux.uhc.listeners;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.InventoryManager;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.events.GameStartEvent;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -40,12 +40,12 @@ import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Random;
 
-import static fr.neyuux.uhc.config.GameConfig.ConfigurableParams.TEAMTYPE;
+import static fr.neyuux.uhc.GameConfig.ConfigurableParams.TEAMTYPE;
 
 public class PreGameListener implements Listener {
 
-    private final Index main;
-    public PreGameListener(Index main) {
+    private final UHC main;
+    public PreGameListener(UHC main) {
         this.main = main;
     }
 
@@ -92,15 +92,20 @@ public class PreGameListener implements Listener {
         playerUHC.setPlayer(player);
 
         if (playerUHC.isHost())
-            if (playerUHC.getTeam() == null) player.setDisplayName(TeamPrefix.getHostPrefix() + player.getName() + "§r");
-            else player.setDisplayName(TeamPrefix.getHostPrefix() + playerUHC.getTeam().getTeam().getPrefix() + player.getName() + playerUHC.getTeam().getTeam().getSuffix());
-        else player.setDisplayName(player.getName());
+            if (playerUHC.getTeam() == null) {
+                player.setDisplayName(TeamPrefix.getHostPrefix() + player.getName() + "§r");
+                main.getUHCTeamManager().getScoreboard().getTeam("Host").addEntry(player.getName());
+            } else player.setDisplayName(TeamPrefix.getHostPrefix() + playerUHC.getTeam().getTeam().getPrefix() + player.getName() + playerUHC.getTeam().getTeam().getSuffix());
+        else {
+            player.setDisplayName(player.getName());
+            main.getUHCTeamManager().getScoreboard().getTeam("Joueur").addEntry(player.getName());
+        }
         player.setPlayerListName(player.getDisplayName());
         player.teleport(new Location(Bukkit.getWorld("Core"), -565, 23.2, 850));
         main.setLobbyScoreboard(player);
 
-        InventoryManager.giveWaitInventory(playerUHC);
-        Index.setPlayerTabList(player, main.getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
+        InventoryManager.giveWaitInventory(player);
+        UHC.setPlayerTabList(player, main.getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
 
         int onlines = Bukkit.getOnlinePlayers().size();
         int maxonlines = (int) GameConfig.ConfigurableParams.SLOTS.getValue();
@@ -135,7 +140,7 @@ public class PreGameListener implements Listener {
         if (current == null || action == null) return;
 
         if (action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK) || action.equals(Action.PHYSICAL))
-            if (current.equals(Index.getSpecTear())) {
+            if (current.equals(UHC.getSpecTear())) {
                 main.spectators.add(player);
                 player.setGameMode(GameMode.SPECTATOR);
                 player.setDisplayName("§8[§7Spectateur§8] §7" + player.getName());
@@ -162,7 +167,7 @@ public class PreGameListener implements Listener {
             if (current.getType().equals(Material.BANNER)) {
                 if (current.getItemMeta().getDisplayName().equals("§fRéinitialiser votre Équipe")) {
                     if (playerUHC.getTeam() != null) {
-                        Index.playPositiveSound(player);
+                        UHC.playPositiveSound(player);
                         playerUHC.getTeam().leave(playerUHC);
                         player.closeInventory();
                         BannerMeta bm = (BannerMeta)player.getItemInHand().getItemMeta();
@@ -175,7 +180,7 @@ public class PreGameListener implements Listener {
                     if (playerUHC.getTeam() != null && playerUHC.getTeam().equals(t)) return;
 
                     if (playerUHC.getTeam() != null) playerUHC.getTeam().leave(playerUHC);
-                    Index.playPositiveSound(player);
+                    UHC.playPositiveSound(player);
                     t.add(player);
                     player.closeInventory();
                     BannerMeta bm = (BannerMeta)player.getItemInHand().getItemMeta();
@@ -341,13 +346,13 @@ public class PreGameListener implements Listener {
             ev.setCancelled(true);
             if (current.getType().equals(Material.SKULL_ITEM)) {
                 Player p = Bukkit.getPlayer(((SkullMeta)current.getItemMeta()).getOwner());
-                PlayerUHC puhc = Index.getInstance().getPlayerUHC(p);
-                p.sendMessage(Index.getStaticPrefix() + "§aVous avez été accepté comme acheteur.");
-                Index.playPositiveSound(p);
+                PlayerUHC puhc = UHC.getInstance().getPlayerUHC(p);
+                p.sendMessage(UHC.getPrefix() + "§aVous avez été accepté comme acheteur.");
+                UHC.playPositiveSound(p);
                 SlaveMarket.candidsInv.remove(current);
                 ev.getInventory().remove(current);
-                player.sendMessage(Index.getInstance().getPrefix() + "§aVous avez accepté §b" + p.getName() + " §acomme acheteur.");
-                Index.playPositiveSound(player);
+                player.sendMessage(UHC.getPrefix() + "§aVous avez accepté §b" + p.getName() + " §acomme acheteur.");
+                UHC.playPositiveSound(player);
                 SlaveMarket.owners.add(puhc);
                 SlaveMarket.candidates.remove(puhc);
                 if (SlaveMarket.owners.size() == SlaveMarket.nOwners) {
@@ -362,7 +367,7 @@ public class PreGameListener implements Listener {
 
     private Inventory getChangeTeamInv(int page) {
         int maxpages = BigDecimal.valueOf((double) main.getUHCTeamManager().getTeams().size() / 21.0).setScale(0, RoundingMode.UP).toBigInteger().intValue();
-        Inventory inv = Bukkit.createInventory(null, Index.adaptInvSizeForInt(main.getUHCTeamManager().getTeams().size(), 18), "§e§lChoix d'équipe " + " §8["+page+"/" + maxpages + "]");
+        Inventory inv = Bukkit.createInventory(null, UHC.adaptInvSizeForInt(main.getUHCTeamManager().getTeams().size(), 18), "§e§lChoix d'équipe " + " §8["+page+"/" + maxpages + "]");
         GameConfig.setInvCoin(inv, (short)4);
         if (page < maxpages)
             inv.setItem(44, GameConfig.getNextPaper());

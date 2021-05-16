@@ -1,7 +1,7 @@
 package fr.neyuux.uhc.scenario.classes;
 
 import com.google.common.collect.Lists;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.util.Interval;

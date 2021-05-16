@@ -1,6 +1,5 @@
 package fr.neyuux.uhc;
 
-import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.scenario.classes.Anonymous;
 import fr.neyuux.uhc.util.ItemsStack;
@@ -16,6 +15,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -81,14 +81,16 @@ public class InventoryManager {
             p.getWorld().dropItem(p.getLocation(), it);
     }
 
-    public static void giveWaitInventory(PlayerUHC player) {
-        if (!player.getPlayer().getPlayer().equals(Index.getInstance().getGameConfig().deathInvModifier) && !player.getPlayer().getPlayer().equals(Index.getInstance().getGameConfig().starterModifier)) {
-            clearInventory(player.getPlayer().getPlayer());
-            player.getPlayer().getPlayer().getInventory().setItem(1, Index.getSpecTear());
+    public static void giveWaitInventory(Player player) {
+        if (!player.hasPotionEffect(PotionEffectType.SATURATION))
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, Integer.MAX_VALUE, 0, false, false));
+        if (!player.equals(UHC.getInstance().getGameConfig().deathInvModifier) && !player.equals(UHC.getInstance().getGameConfig().starterModifier)) {
+            clearInventory(player);
+            player.getInventory().setItem(1, UHC.getSpecTear());
             if (((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To"))
-                give(player.getPlayer().getPlayer(), 4, GameConfig.getChooseTeamBanner(player));
-            if (player.isHost())
-                player.getPlayer().getPlayer().getInventory().setItem(6, new ItemsStack(Material.REDSTONE_COMPARATOR, "§c§lConfiguration de la partie", "§7Permet de configurer la partie", "§b>>Clique droit").toItemStack());
+                give(player, 4, GameConfig.getChooseTeamBanner(UHC.getInstance().getPlayerUHC(player)));
+            if (UHC.getInstance().getPlayerUHC(player).isHost())
+                player.getInventory().setItem(6, new ItemsStack(Material.REDSTONE_COMPARATOR, "§c§lConfiguration de la partie", "§7Permet de configurer la partie", "§b>>Clique droit").toItemStack());
         }
     }
 
@@ -116,7 +118,7 @@ public class InventoryManager {
             player.getWorld().dropItem(loc, new ItemsStack(Material.SKULL_ITEM, (short)3).toItemStackwithSkullMeta(name));
         }
         if ((boolean)GameConfig.ConfigurableParams.GOLDEN_HEAD.getValue())
-            player.getWorld().dropItem(loc, Index.getGoldenHead(1));
+            player.getWorld().dropItem(loc, UHC.getGoldenHead(1));
     }
 
     public static void createChestInventory(PlayerUHC died, Chest chest, boolean explosion, int timer) {
@@ -134,9 +136,9 @@ public class InventoryManager {
         if ((boolean)GameConfig.ConfigurableParams.HEAD.getValue())
             chest.getInventory().addItem(new ItemsStack(Material.SKULL_ITEM, (short)3).toItemStackwithSkullMeta(died.getPlayer().getName()));
         if ((boolean)GameConfig.ConfigurableParams.GOLDEN_HEAD.getValue())
-            chest.getInventory().addItem(Index.getGoldenHead(1));
+            chest.getInventory().addItem(UHC.getGoldenHead(1));
 
-        chest.setMetadata("nobreak", new FixedMetadataValue(Index.getInstance(), "nobreak"));
+        chest.setMetadata("nobreak", new FixedMetadataValue(UHC.getInstance(), "nobreak"));
 
 
         if(!explosion) return;
@@ -161,7 +163,7 @@ public class InventoryManager {
                 }
                 time--;
             }
-        }.runTaskTimer(Index.getInstance(), 1, 20);
+        }.runTaskTimer(UHC.getInstance(), 1, 20);
     }
 
     public static void giveDeathInventory(Player player) {

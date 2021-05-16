@@ -1,8 +1,8 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.PlayerEliminationEvent;
 import fr.neyuux.uhc.scenario.Scenario;
@@ -38,12 +38,12 @@ public class Kings extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
 
         Random random = new Random();
-        Bukkit.getScheduler().runTaskLater(Index.getInstance(), () -> {
-            for (UHCTeam team : Index.getInstance().getUHCTeamManager().getTeams()) {
+        Bukkit.getScheduler().runTaskLater(UHC.getInstance(), () -> {
+            for (UHCTeam team : UHC.getInstance().getUHCTeamManager().getTeams()) {
                 if (team.getAlivePlayers().size() > 0) {
                     List<Player> players = new ArrayList<>();
                     for (PlayerUHC u : team.getAlivePlayers()) {
@@ -52,11 +52,11 @@ public class Kings extends Scenario implements Listener {
                             players.add(p);
                     }
                     Player king = players.get(random.nextInt(players.size()));
-                    PlayerUHC ku = Index.getInstance().getPlayerUHC(king);
+                    PlayerUHC ku = UHC.getInstance().getPlayerUHC(king);
                     king.setDisplayName(team.getPrefix().toString() + "§l" + king.getName());
                     king.setPlayerListName(king.getDisplayName());
-                    king.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §6Vous avez été désigné comme Roi de l'équipe " + team.getTeam().getDisplayName() + " §6. Vous obtenez donc les effets : force, rapidité, résistance, résistance au feu, hâte et double vie. Si vous mourrez, le reste de votre équipe aura un effet de poison puissant pendant quelques secondes.");
-                    team.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + team.getPrefix().color.getColor() + " Le roi de votre équipe est " + king.getDisplayName() + ".");
+                    king.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §6Vous avez été désigné comme Roi de l'équipe " + team.getTeam().getDisplayName() + " §6. Vous obtenez donc les effets : force, rapidité, résistance, résistance au feu, hâte et double vie. Si vous mourrez, le reste de votre équipe aura un effet de poison puissant pendant quelques secondes.");
+                    team.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + team.getPrefix().color.getColor() + " Le roi de votre équipe est " + king.getDisplayName() + ".");
 
                     king.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0, true, true));
                     king.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 0, true, true));
@@ -81,8 +81,8 @@ public class Kings extends Scenario implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent ev) {
-        if (kings.contains(Index.getInstance().getPlayerUHC(ev.getPlayer()))) {
-            ev.getPlayer().setDisplayName(Index.getInstance().getPlayerUHC(ev.getPlayer()).getTeam().getPrefix().toString() + "§l" + ev.getPlayer().getName());
+        if (kings.contains(UHC.getInstance().getPlayerUHC(ev.getPlayer()))) {
+            ev.getPlayer().setDisplayName(UHC.getInstance().getPlayerUHC(ev.getPlayer()).getTeam().getPrefix().toString() + "§l" + ev.getPlayer().getName());
             ev.getPlayer().setPlayerListName(ev.getPlayer().getDisplayName());
         }
     }
@@ -95,7 +95,7 @@ public class Kings extends Scenario implements Listener {
             for (PlayerUHC u : team.getAlivePlayers()) {
                 Player p = u.getPlayer().getPlayer();
                 if (p != null) {
-                    p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVotre roi est Mort. Vous obtenez un effet de poison pendant 30 secondes.");
+                    p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVotre roi est Mort. Vous obtenez un effet de poison pendant 30 secondes.");
                     p.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 600, 3, true, true));
                 }
             }

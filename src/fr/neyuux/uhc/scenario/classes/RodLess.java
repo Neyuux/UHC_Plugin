@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -25,7 +25,7 @@ public class RodLess extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
     }
 
@@ -41,7 +41,7 @@ public class RodLess extends Scenario implements Listener {
         if(!(ev.getEntity() instanceof Player)) return;
         FishHook a = (FishHook) ev.getDamager();
         if(!(a.getShooter() instanceof Player)) return;
-        ((Player)a.getShooter()).sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLa canne à pêche est désactivée en PvP !");
+        ((Player)a.getShooter()).sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLa canne à pêche est désactivée en PvP !");
         ev.setCancelled(true);
     }
 }

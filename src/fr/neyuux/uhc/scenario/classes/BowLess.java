@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -27,7 +27,7 @@ public class BowLess extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
     }
 
@@ -41,8 +41,8 @@ public class BowLess extends Scenario implements Listener {
     public void onCraft(CraftItemEvent ev) {
         if (ev.getInventory().getResult().getType().equals(Material.BOW)) {
             ev.setCancelled(true);
-            ev.getWhoClicked().sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de l'arc est désactivé.");
-            Index.playNegativeSound((Player)ev.getWhoClicked());
+            ev.getWhoClicked().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de l'arc est désactivé.");
+            UHC.playNegativeSound((Player)ev.getWhoClicked());
         }
     }
 
@@ -50,8 +50,8 @@ public class BowLess extends Scenario implements Listener {
     public void onPickUp(PlayerPickupItemEvent ev) {
         if(ev.getItem().getItemStack().getType().equals(Material.BOW)) {
             ev.setCancelled(true);
-            ev.getPlayer().sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cL'arc est désactivé.");
-            Index.playNegativeSound(ev.getPlayer());
+            ev.getPlayer().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cL'arc est désactivé.");
+            UHC.playNegativeSound(ev.getPlayer());
         }
     }
 
@@ -60,8 +60,8 @@ public class BowLess extends Scenario implements Listener {
         if (ev.getEntity().getType().equals(EntityType.ARROW) && ev.getEntity().getShooter() instanceof Player) {
             Player p = (Player) ev.getEntity().getShooter();
             ev.setCancelled(true);
-            p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de l'arc est désactivé.");
-            Index.playNegativeSound(p);
+            p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de l'arc est désactivé.");
+            UHC.playNegativeSound(p);
         }
     }
 }

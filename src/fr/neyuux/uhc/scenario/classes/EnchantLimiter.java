@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.commands.CommandEnchant;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenario;
@@ -35,7 +35,7 @@ public class EnchantLimiter extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
     }
 
@@ -59,7 +59,7 @@ public class EnchantLimiter extends Scenario implements Listener {
             if (en.getKey().equals(Enchantment.ARROW_KNOCKBACK) && en.getValue() > punchMax) i = punchMax;
             if (en.getKey().equals(Enchantment.ARROW_INFINITE) && en.getValue() > infinityMax) i = infinityMax;
 
-            ev.getEnchanter().sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais comme il dépassait le niveau maximal, il sera de niveau §6§l" + i + "§c.");
+            ev.getEnchanter().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais comme il dépassait le niveau maximal, il sera de niveau §6§l" + i + "§c.");
             if (i != -1) if (i != 0) {
                 en.setValue(i);
             } else {
@@ -99,10 +99,10 @@ public class EnchantLimiter extends Scenario implements Listener {
                     if (i != -1) {
                         result.removeEnchantment(en.getKey());
                         if (i != 0) {
-                            p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais comme il dépassait le niveau maximal, il sera de niveau §6§l" + i + "§c.");
+                            p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais comme il dépassait le niveau maximal, il sera de niveau §6§l" + i + "§c.");
                             result.addEnchantment(en.getKey(), i);
                         } else
-                            p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais cet enchantement est désactivé. Il a donc été supprimé");
+                            p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais cet enchantement est désactivé. Il a donc été supprimé");
                     }
                 }
             }

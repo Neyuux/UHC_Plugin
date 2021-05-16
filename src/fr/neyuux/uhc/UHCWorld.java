@@ -1,6 +1,5 @@
 package fr.neyuux.uhc;
 
-import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.listeners.WorldListener;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PropertyManager;
@@ -28,13 +27,13 @@ import java.util.Random;
 public class UHCWorld {
 
     private static World world;
-    private static boolean loaded = false;
+    //private static boolean loaded = false;
     private static YamlConfiguration yconfig;
     private static final List<Location> spawns = new ArrayList<>();
 
-    private final Index main;
+    private final UHC main;
 
-    public UHCWorld(Index main) {
+    public UHCWorld(UHC main) {
         this.main = main;
         File file = new File(main.getDataFolder(), "config.yml");
         yconfig = YamlConfiguration.loadConfiguration(file);
@@ -43,9 +42,9 @@ public class UHCWorld {
 
     public UHCWorld create() {
         Long seed = (long)0;
-        if (main.mode.equals(Index.Modes.UHC))
+        if (main.mode.equals(UHC.Modes.UHC))
             seed = yconfig.getLongList("uhc_maps").get(new Random().nextInt(yconfig.getLongList("uhc_maps").size()));
-        else if (main.mode.equals(Index.Modes.LG))
+        else if (main.mode.equals(UHC.Modes.LG))
             seed = yconfig.getLongList("lg_maps").get(new Random().nextInt(yconfig.getLongList("lg_maps").size()));
         Bukkit.broadcastMessage(main.getPrefix() + "§2Création du monde §a\"§l" + seed + "§a\"§2...");
 
@@ -91,7 +90,7 @@ public class UHCWorld {
             p.teleport(new Location(Bukkit.getWorld("Core"), -565, 23.2, 850));
         long seed = world.getSeed();
         world.setAutoSave(false);
-        loaded = false;
+        //loaded = false;
         Bukkit.unloadWorld(Long.toString(seed), false);
         try {
             FileUtils.deleteDirectory(world.getWorldFolder());

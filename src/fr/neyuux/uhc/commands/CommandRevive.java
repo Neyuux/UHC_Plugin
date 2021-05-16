@@ -1,9 +1,9 @@
 package fr.neyuux.uhc.commands;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.InventoryManager;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.events.PlayerReviveEvent;
 import fr.neyuux.uhc.teams.TeamPrefix;
@@ -24,9 +24,9 @@ import java.util.Map;
 
 public class CommandRevive implements CommandExecutor {
 
-    private final Index main;
-    public CommandRevive(Index index) {
-        this.main = index;
+    private final UHC main;
+    public CommandRevive(UHC UHC) {
+        this.main = UHC;
     }
 
     @Override

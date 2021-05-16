@@ -1,9 +1,9 @@
 package fr.neyuux.uhc.listeners;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.InventoryManager;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.PlayerEliminationEvent;
@@ -42,10 +42,10 @@ import java.util.*;
 
 public class PlayerListener implements Listener {
 
-    private final Index main;
-    public PlayerListener(Index index) {
-        this.main = index;
-        if (main.mode.equals(Index.Modes.LG)) canChat = false;
+    private final UHC main;
+    public PlayerListener(UHC main) {
+        this.main = main;
+        if (main.mode.equals(UHC.Modes.LG)) canChat = false;
     }
 
     public static boolean canChat = true;
@@ -114,7 +114,7 @@ public class PlayerListener implements Listener {
         }
         if (main.isState(Gstate.PLAYING)) main.setGameScoreboard(player);
         else if (main.isState(Gstate.FINISHED)) main.setKillsScoreboard(player);
-        Index.setPlayerTabList(player, main.getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
+        UHC.setPlayerTabList(player, main.getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
         if (playerUHC.getTeam() != null)
             playerUHC.getTeam().reconnect(player);
         if (playerUHC.isSpec()) player.setDisplayName("§8[§7Spectateur§8] §7" + player.getName() + "§r");
@@ -160,7 +160,7 @@ public class PlayerListener implements Listener {
         if (e.getCurrentItem().isSimilar(new ItemStack(Material.GOLDEN_APPLE, 1, (short) 1))) {
             e.setCancelled(true);
             player.sendMessage(main.getPrefix() + "§cCe craft est interdit !");
-            Index.playNegativeSound(player);
+            UHC.playNegativeSound(player);
         }
     }
 
@@ -182,7 +182,7 @@ public class PlayerListener implements Listener {
         if (e.getType().equals(EntityType.HORSE) && !(boolean)GameConfig.ConfigurableParams.HORSE.getValue()) {
             ev.setCancelled(true);
             player.sendMessage(main.getPrefix() + "§cLes chevaux sont désactivés !");
-            Index.playNegativeSound(player);
+            UHC.playNegativeSound(player);
         }
         else if (e.getType().equals(EntityType.PLAYER) && playerUHC.isSpec())
             player.openInventory(main.getPlayerUHC((Player) e).getSpecInfosInventory(Collections.emptyList()));
@@ -197,12 +197,12 @@ public class PlayerListener implements Listener {
         if(item.getType() == Material.MILK_BUCKET && !(boolean)GameConfig.ConfigurableParams.MILK.getValue()){
             e.setCancelled(true);
             p.sendMessage(main.getPrefix() + "§cIl est interdit de boire un seau de lait !");
-            Index.playNegativeSound(p);
+            UHC.playNegativeSound(p);
             return;
         }
 
         if(item.getType() == Material.GOLDEN_APPLE){
-            if(item.equals(Index.getGoldenHead(item.getAmount()))) { // GOLDEN HEAD
+            if(item.equals(UHC.getGoldenHead(item.getAmount()))) { // GOLDEN HEAD
                 p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, 1, true, true));
                 main.getPlayerUHC(p).absorption = 2.0f;
             }
@@ -332,11 +332,11 @@ public class PlayerListener implements Listener {
         if(e.getTo().getWorld().getEnvironment() == World.Environment.NETHER && !(boolean)GameConfig.ConfigurableParams.NETHER.getValue()) {
             e.setCancelled(true);
             player.sendMessage(main.getPrefix() + "§cLe Nether est désactivé.");
-            Index.playNegativeSound(player);
+            UHC.playNegativeSound(player);
         } else if(e.getTo().getWorld().getEnvironment() == World.Environment.THE_END && !(boolean)GameConfig.ConfigurableParams.END.getValue()) {
             e.setCancelled(true);
             player.sendMessage(main.getPrefix() + "§cL'End est désactivé.");
-            Index.playNegativeSound(player);
+            UHC.playNegativeSound(player);
         }
     }
 
@@ -352,7 +352,7 @@ public class PlayerListener implements Listener {
         if (main.isState(Gstate.PLAYING) || main.isState(Gstate.FINISHED)) {
             if (!canChat && !playerUHC.isHost()) {
                 player.sendMessage(main.getPrefix() + "§cLe chat est désactivé !");
-                Index.playNegativeSound(player);
+                UHC.playNegativeSound(player);
                 ev.setCancelled(true);
             } else {
                 if (playerUHC.getTeam() == null) {
@@ -374,7 +374,7 @@ public class PlayerListener implements Listener {
         } else {
             if (!canChat && !playerUHC.isHost()) {
                 player.sendMessage(main.getPrefix() + "§cLe chat est désactivé !");
-                Index.playNegativeSound(player);
+                UHC.playNegativeSound(player);
                 ev.setCancelled(true);
             } else format = player.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §f" + msg;
         }

@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.commands;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public class CommandHelpOp implements CommandExecutor {
 
-    private final Index main;
-    public CommandHelpOp(Index main) {
+    private final UHC main;
+    public CommandHelpOp(UHC main) {
         this.main = main;
     }
 

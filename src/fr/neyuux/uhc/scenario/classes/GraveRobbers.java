@@ -1,9 +1,9 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.InventoryManager;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.events.PlayerEliminationEvent;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -32,12 +32,12 @@ public class GraveRobbers extends Scenario implements Listener {
 
     @Override
     protected void activate() {
-        if ((boolean) GameConfig.ConfigurableParams.BARRIER_HEAD.getValue())Index.sendHostMessage(Index.getStaticPrefix() + "§cVeuillez désactiver l'apparition d'un poteau au kill pour que " + scenario.getDisplayName() + " §cpuisse fonctionner.");
+        if ((boolean) GameConfig.ConfigurableParams.BARRIER_HEAD.getValue()) UHC.sendHostMessage(UHC.getPrefix() + "§cVeuillez désactiver l'apparition d'un poteau au kill pour que " + scenario.getDisplayName() + " §cpuisse fonctionner.");
     }
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
     }
 
@@ -112,7 +112,7 @@ public class GraveRobbers extends Scenario implements Listener {
         new Location(w, x-1, y-1, z+1).getBlock().setType(Material.COBBLESTONE);
 
         Chest chest = (Chest) chestLoc.getBlock().getState();
-        chest.setMetadata("spawned", new FixedMetadataValue(Index.getInstance(), "true"));
+        chest.setMetadata("spawned", new FixedMetadataValue(UHC.getInstance(), "true"));
         InventoryManager.createChestInventory(p, chest, false, 0);
         chest.update(true);
     }

@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
@@ -39,10 +39,10 @@ public class BestPVE extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
 
-        bestpve.addAll(Index.getInstance().getAlivePlayers());
+        bestpve.addAll(UHC.getInstance().getAlivePlayers());
         IGtimers[0] = timer;
         new BukkitRunnable() {
             @Override
@@ -52,16 +52,16 @@ public class BestPVE extends Scenario implements Listener {
                     for (PlayerUHC pu : bestpve) {
                         pu.maxHealth += 2.0;
                         if (pu.getPlayer().isOnline()) {
-                            pu.getPlayer().getPlayer().sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§7Vous avez reçu un coeur grâce à vos compétences en PvE.");
+                            pu.getPlayer().getPlayer().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§7Vous avez reçu un coeur grâce à vos compétences en PvE.");
                             pu.getPlayer().getPlayer().setMaxHealth(pu.maxHealth);
                         }
                     }
                     IGtimers[0] = BestPVE.timer;
                     cancel();
                 }
-                if (!Index.getInstance().isState(Gstate.PLAYING)) cancel();
+                if (!UHC.getInstance().isState(Gstate.PLAYING)) cancel();
             }
-        }.runTaskTimer(Index.getInstance(), 0, 20);
+        }.runTaskTimer(UHC.getInstance(), 0, 20);
     }
 
     @Override
@@ -73,10 +73,10 @@ public class BestPVE extends Scenario implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamage(EntityDamageEvent ev) {
         Entity e = ev.getEntity();
-        if (ev.getEntityType().equals(EntityType.PLAYER) && bestpve.contains(Index.getInstance().getPlayerUHC((Player)e)) && !ev.isCancelled()) {
-            PlayerUHC pu = Index.getInstance().getPlayerUHC((Player)e);
+        if (ev.getEntityType().equals(EntityType.PLAYER) && bestpve.contains(UHC.getInstance().getPlayerUHC((Player)e)) && !ev.isCancelled()) {
+            PlayerUHC pu = UHC.getInstance().getPlayerUHC((Player)e);
             bestpve.remove(pu);
-            Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l " + Symbols.DOUBLE_ARROW + pu.getPlayer().getPlayer().getDisplayName() + " §7a pris un dégât et est donc supprimé de la liste BestPvE !");
+            Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l " + Symbols.DOUBLE_ARROW + pu.getPlayer().getPlayer().getDisplayName() + " §7a pris un dégât et est donc supprimé de la liste BestPvE !");
         }
     }
 
@@ -84,7 +84,7 @@ public class BestPVE extends Scenario implements Listener {
     public void onKill(PlayerEliminationEvent ev) {
         if (ev.getKiller() != null && ev.getKiller().isAlive() && !bestpve.contains(ev.getKiller())) {
             bestpve.add(ev.getKiller());
-            Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l " + Symbols.DOUBLE_ARROW + ev.getKiller().getPlayer().getPlayer().getDisplayName() + " §7a fait un kill et retourne donc dans la liste BestPvE !");
+            Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l " + Symbols.DOUBLE_ARROW + ev.getKiller().getPlayer().getPlayer().getDisplayName() + " §7a fait un kill et retourne donc dans la liste BestPvE !");
         }
     }
 }

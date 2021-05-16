@@ -1,15 +1,16 @@
 package fr.neyuux.uhc.commands;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.InventoryManager;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.listeners.FightListener;
 import fr.neyuux.uhc.listeners.PlayerListener;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.scenario.classes.*;
+import fr.neyuux.uhc.scenario.classes.modes.AssaultAndBattery;
 import fr.neyuux.uhc.scenario.classes.modes.Moles;
 import fr.neyuux.uhc.scenario.classes.modes.SlaveMarket;
 import fr.neyuux.uhc.scenario.classes.modes.Switch;
@@ -33,8 +34,8 @@ import static org.bukkit.Material.GOLDEN_APPLE;
 
 public class CommandUHC implements CommandExecutor {
 
-    private final Index main;
-    public CommandUHC(Index main) {
+    private final UHC main;
+    public CommandUHC(UHC main) {
         this.main = main;
     }
 
@@ -60,10 +61,10 @@ public class CommandUHC implements CommandExecutor {
                                     "§elist §6: Affiche la liste des joueurs whitelistés.\n§eclear §6: Vide la liste des joueurs whitelistés";
                             if (args.length > 1) {
                                 if (args[1].equalsIgnoreCase("on") && !main.hasWhitelist) {
-                                    Bukkit.broadcastMessage(main.getPrefix() + "§6La whitelist a été §aactivée §6!");
+                                    Bukkit.broadcastMessage(UHC.getPrefix() + "§6La whitelist a été §aactivée §6!");
                                     main.hasWhitelist = true;
                                 } else if (args[1].equalsIgnoreCase("off") && main.hasWhitelist) {
-                                    Bukkit.broadcastMessage(main.getPrefix() + "§6La whitelist a été §cdésactivée §6!");
+                                    Bukkit.broadcastMessage(UHC.getPrefix() + "§6La whitelist a été §cdésactivée §6!");
                                     main.hasWhitelist = false;
 
                                 } else if (args[1].equalsIgnoreCase("add")) {
@@ -72,12 +73,12 @@ public class CommandUHC implements CommandExecutor {
                                         OfflinePlayer op = Bukkit.getOfflinePlayer(args[2]);
                                         if (op != null) {
                                             main.getWhitelist().add(op);
-                                            player.sendMessage(main.getPrefix() + "§a§l" + op.getName() + " §6a été whitelisté !");
-                                            Index.sendActionBarForAllPlayers(main.getPrefix() + "§a§l" + op.getName() + " §6a été whitelisté !");
+                                            player.sendMessage(UHC.getPrefix() + "§a§l" + op.getName() + " §6a été whitelisté !");
+                                            UHC.sendActionBarForAllPlayers(UHC.getPrefix() + "§a§l" + op.getName() + " §6a été whitelisté !");
                                         } else
-                                            player.sendMessage(main.getPrefix() + "§cLe joueur §4\"§6" + args[2] + "§4\" §cn'existe pas.");
+                                            player.sendMessage(UHC.getPrefix() + "§cLe joueur §4\"§6" + args[2] + "§4\" §cn'existe pas.");
                                     } else
-                                        player.sendMessage(main.getPrefix() + "§cVeuillez renseigner un joueur à whitelister.");
+                                        player.sendMessage(UHC.getPrefix() + "§cVeuillez renseigner un joueur à whitelister.");
 
                                 } else if (args[1].equalsIgnoreCase("remove")) {
                                     if (args.length > 2) {
@@ -86,33 +87,33 @@ public class CommandUHC implements CommandExecutor {
                                         if (op != null) {
                                             if (main.getWhitelist().contains(op)) {
                                                 main.getWhitelist().remove(op);
-                                                player.sendMessage(main.getPrefix() + "§c§l" + op.getName() + " §6a été retiré de la whitelist !");
-                                                Index.sendActionBarForAllPlayers(main.getPrefix() + "§c§l" + op.getName() + " §6a été retiré de la whitelist !");
+                                                player.sendMessage(UHC.getPrefix() + "§c§l" + op.getName() + " §6a été retiré de la whitelist !");
+                                                UHC.sendActionBarForAllPlayers(UHC.getPrefix() + "§c§l" + op.getName() + " §6a été retiré de la whitelist !");
                                             }
                                         } else
-                                            player.sendMessage(main.getPrefix() + "§cLe joueur §4\"§6" + args[2] + "§4\" §cn'existe pas.");
+                                            player.sendMessage(UHC.getPrefix() + "§cLe joueur §4\"§6" + args[2] + "§4\" §cn'existe pas.");
                                     } else
-                                        player.sendMessage(main.getPrefix() + "§cVeuillez renseigner un joueur à retirer de la whitelist.");
+                                        player.sendMessage(UHC.getPrefix() + "§cVeuillez renseigner un joueur à retirer de la whitelist.");
 
                                 } else if (args[1].equalsIgnoreCase("list")) {
                                     StringBuilder swl = new StringBuilder();
 
                                     for (OfflinePlayer p : main.getWhitelist())
                                         swl.append("\n").append(" §e- §l").append(p.getName());
-                                    player.sendMessage(main.getPrefix() + "§6Liste des joueurs whitelistés :" + swl.toString());
+                                    player.sendMessage(UHC.getPrefix() + "§6Liste des joueurs whitelistés :" + swl.toString());
 
                                 } else if (args[1].equalsIgnoreCase("clear")) {
                                     main.getWhitelist().clear();
-                                    Bukkit.broadcastMessage(main.getPrefix() + "§6La whitelist a été clear !");
-                                } else player.sendMessage(main.getPrefix() + helpwhitelistmessage);
-                            } else player.sendMessage(main.getPrefix() + helpwhitelistmessage);
-                        } else player.sendMessage(main.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");
+                                    Bukkit.broadcastMessage(UHC.getPrefix() + "§6La whitelist a été clear !");
+                                } else player.sendMessage(UHC.getPrefix() + helpwhitelistmessage);
+                            } else player.sendMessage(UHC.getPrefix() + helpwhitelistmessage);
+                        } else player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");
                         break;
                     case "classementores":
                         if (!playerUHC.isAlive()) {
                             if (main.getGameConfig().hosts.contains(player.getUniqueId())) {
                                 if (main.isState(Gstate.PLAYING)) {
-                                    Inventory inv = Bukkit.createInventory(null, Index.adaptInvSizeForInt(main.getAlivePlayers().size(), 0), "§6Classement des minerais");
+                                    Inventory inv = Bukkit.createInventory(null, UHC.adaptInvSizeForInt(main.getAlivePlayers().size(), 0), "§6Classement des minerais");
                                     for (PlayerUHC pu : main.getAlivePlayers())
                                         if (pu.isAlive()) {
                                             if (pu.getTeam() != null) {
@@ -127,16 +128,16 @@ public class CommandUHC implements CommandExecutor {
                                                         "§fFers minés : §6§l" + pu.getIrons(), "§5Animaux tués : §6§l" + pu.getAnimals(), "§8Monstres tués : §6§l" + pu.getMonsters()).toItemStackwithSkullMeta(player.getName()));
                                         }
                                     player.openInventory(inv);
-                                } else player.sendMessage(main.getPrefix() + "§cCette commande n'est disponible qu'en jeu.");
-                            } else player.sendMessage(main.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");
-                        } else player.sendMessage(main.getPrefix() + "§cVous ne pouvez pas regarder le classement des minerais tant que vous êtes en vie !");
+                                } else player.sendMessage(UHC.getPrefix() + "§cCette commande n'est disponible qu'en jeu.");
+                            } else player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");
+                        } else player.sendMessage(UHC.getPrefix() + "§cVous ne pouvez pas regarder le classement des minerais tant que vous êtes en vie !");
                         break;
                     case "rules":
                     case "rule":
                     case "uhc":
                     case "regles":
                     case "règles":
-                        StringBuilder sb = new StringBuilder(main.getPrefix() + "§6Informations sur la partie : \n");
+                        StringBuilder sb = new StringBuilder(UHC.getPrefix() + "§6Informations sur la partie : \n");
                         sb.append("§eChat : ").append(GameConfig.getStringBoolean(PlayerListener.canChat)).append("\n");
                         sb.append("\n§c").append(Symbols.SQUARE).append(" §8Options des joueurs : \n");
                         for (GameConfig.ConfigurableParams cp : GameConfig.ParamParts.PLAYERRULES.getParams())
@@ -181,7 +182,7 @@ public class CommandUHC implements CommandExecutor {
                                 "§elist §6: Affiche la liste des équipes et de leurs joueurs.";
                         if (args.length > 1) {
                             if (args[1].equals("list")) {
-                                StringBuilder sbl = new StringBuilder(main.getPrefix() + "§6Informations sur les équipes de la partie : \n");
+                                StringBuilder sbl = new StringBuilder(UHC.getPrefix() + "§6Informations sur les équipes de la partie : \n");
                                 if (main.getUHCTeamManager().getTeams().size() > 0) {
                                     for (UHCTeam t : main.getUHCTeamManager().getTeams()) {
                                         sbl.append(t.getTeam().getDisplayName()).append(" §6(§e").append(t.getAlivePlayers().size()).append(" joueurs§6) (§c").append(t.getKills()).append(" kills§6) : \n");
@@ -206,8 +207,8 @@ public class CommandUHC implements CommandExecutor {
                                             sbi.append("§f - ").append(pu.getPlayer().getPlayer().getDisplayName()).append(" §f: §c").append(pu.getKills()).append(" kills §8(§5Déconnecté§8)");
                                 } else sbi.append("§cVous n'êtes dans aucune équipe !");
                                 player.sendMessage(sbi.toString());
-                            } else player.sendMessage(main.getPrefix() + helpteammessage);
-                        } else player.sendMessage(main.getPrefix() + helpteammessage);
+                            } else player.sendMessage(UHC.getPrefix() + helpteammessage);
+                        } else player.sendMessage(UHC.getPrefix() + helpteammessage);
                         break;
                     case "host":
                     case "h":
@@ -222,11 +223,11 @@ public class CommandUHC implements CommandExecutor {
                                         if (p != null) {
                                             if (!main.getPlayerUHC(p).isHost()) {
                                                 main.setPlayerHost(p, true);
-                                                Bukkit.broadcastMessage(main.getPrefix() + "§a§l" + p.getName() + " §6a été promu §lHost §6de la partie !");
-                                            } else player.sendMessage(main.getPrefix() + "§cCe joueur est déjà §6§lHost §cde la partie !");
-                                        } else player.sendMessage(main.getPrefix() + "§cLe joueur §4\"§e" + args[2] + "§4\" §cn'existe pas.");
-                                    } else player.sendMessage(main.getPrefix() + helphostmessage);
-                                } else player.sendMessage(main.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");
+                                                Bukkit.broadcastMessage(UHC.getPrefix() + "§a§l" + p.getName() + " §6a été promu §lHost §6de la partie !");
+                                            } else player.sendMessage(UHC.getPrefix() + "§cCe joueur est déjà §6§lHost §cde la partie !");
+                                        } else player.sendMessage(UHC.getPrefix() + "§cLe joueur §4\"§e" + args[2] + "§4\" §cn'existe pas.");
+                                    } else player.sendMessage(UHC.getPrefix() + helphostmessage);
+                                } else player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");
 
                             } else if (args[1].equalsIgnoreCase("remove")) {
                                 if (main.getGameConfig().hosts.contains(player.getUniqueId())) {
@@ -236,7 +237,7 @@ public class CommandUHC implements CommandExecutor {
                                             if (offlinePlayer.getName().equals(args[2]))
                                                 op = offlinePlayer;
                                         if (op == null) {
-                                            player.sendMessage(main.getPrefix() + "§cLe joueur §4\"§e" + args[2] + "§4\"§c n'existe pas.");
+                                            player.sendMessage(UHC.getPrefix() + "§cLe joueur §4\"§e" + args[2] + "§4\"§c n'existe pas.");
                                             return true;
                                         }
                                         if (main.getGameConfig().hosts.contains(op.getUniqueId())) {
@@ -246,11 +247,11 @@ public class CommandUHC implements CommandExecutor {
                                                 if (Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Host").hasEntry(op.getName()))
                                                     Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Joueur").addEntry(op.getName());
                                             }
-                                            Bukkit.broadcastMessage(main.getPrefix() + "§c§l" + op.getName() + " §6n'est plus §lHost §6de la partie !");
-                                        } else player.sendMessage(main.getPrefix() + "§cCe joueur n'est pas §6§lHost §cde la partie !");
-                                    } else player.sendMessage(main.getPrefix() + helphostmessage);
+                                            Bukkit.broadcastMessage(UHC.getPrefix() + "§c§l" + op.getName() + " §6n'est plus §lHost §6de la partie !");
+                                        } else player.sendMessage(UHC.getPrefix() + "§cCe joueur n'est pas §6§lHost §cde la partie !");
+                                    } else player.sendMessage(UHC.getPrefix() + helphostmessage);
                                 } else
-                                    player.sendMessage(main.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");
+                                    player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");
 
                             } else if (args[1].equalsIgnoreCase("list")) {
                                 StringBuilder swl = new StringBuilder();
@@ -258,9 +259,9 @@ public class CommandUHC implements CommandExecutor {
                                 for (PlayerUHC pu : main.players)
                                     if (pu.isHost())
                                         swl.append("\n").append(" §e- §l").append(pu.getPlayer().getName());
-                                player.sendMessage(main.getPrefix() + "§6Liste des hosts de la partie :" + swl.toString());
+                                player.sendMessage(UHC.getPrefix() + "§6Liste des hosts de la partie :" + swl.toString());
                             }
-                        } else player.sendMessage(main.getPrefix() + helphostmessage);
+                        } else player.sendMessage(UHC.getPrefix() + helphostmessage);
                         break;
                     case "spec":
                         final String helpspecmessage = "§6La commande spec gérer les spectateurs de la partie.\nArgument possibles : \n" +
@@ -277,10 +278,10 @@ public class CommandUHC implements CommandExecutor {
                                         InventoryManager.clearInventory(player);
                                         playerUHC.heal();
 
-                                        player.sendMessage(main.getPrefix() + "§6Votre mode de jeu à été établi en spectateur.");
-                                        player.sendMessage(main.getPrefix() + "§7Pour revenir au mode non-spectateur, utilisez la commande §6§l/uhc spec off§7.");
-                                    } else player.sendMessage(main.getPrefix() + "§cCette commande est inutilisable une fois la partie commencée.");
-                                } else player.sendMessage(main.getPrefix() + "§cVous êtes déjà en spectateur !");
+                                        player.sendMessage(UHC.getPrefix() + "§6Votre mode de jeu à été établi en spectateur.");
+                                        player.sendMessage(UHC.getPrefix() + "§7Pour revenir au mode non-spectateur, utilisez la commande §6§l/uhc spec off§7.");
+                                    } else player.sendMessage(UHC.getPrefix() + "§cCette commande est inutilisable une fois la partie commencée.");
+                                } else player.sendMessage(UHC.getPrefix() + "§cVous êtes déjà en spectateur !");
 
                             } else if (args[1].equalsIgnoreCase("off")) {
                                 if (main.spectators.contains(player)) {
@@ -293,20 +294,20 @@ public class CommandUHC implements CommandExecutor {
                                             Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Joueur").addEntry(player.getName());
                                         player.setDisplayName(Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(player.getName()).getPrefix() + player.getName());
                                         player.setPlayerListName(player.getDisplayName());
-                                        InventoryManager.giveWaitInventory(playerUHC);
+                                        InventoryManager.giveWaitInventory(player);
 
-                                        player.sendMessage(main.getPrefix() + "§6Vous n'êtes plus un spectateur.");
-                                    } else player.sendMessage(main.getPrefix() + "§cCette commande est inutilisable une fois la partie commencée.");
-                                } else player.sendMessage(main.getPrefix() + "§cVous n'êtes pas en spectateur !");
+                                        player.sendMessage(UHC.getPrefix() + "§6Vous n'êtes plus un spectateur.");
+                                    } else player.sendMessage(UHC.getPrefix() + "§cCette commande est inutilisable une fois la partie commencée.");
+                                } else player.sendMessage(UHC.getPrefix() + "§cVous n'êtes pas en spectateur !");
 
                             } else if (args[1].equalsIgnoreCase("list")) {
                                 StringBuilder swl = new StringBuilder();
 
                                 for (Player p : main.spectators)
                                     swl.append("\n").append(" §e- §l").append(p.getName());
-                                player.sendMessage(main.getPrefix() + "§6Liste des spectateurs de la partie :" + swl.toString());
+                                player.sendMessage(UHC.getPrefix() + "§6Liste des spectateurs de la partie :" + swl.toString());
                             }
-                        } else player.sendMessage(main.getPrefix() + helpspecmessage);
+                        } else player.sendMessage(UHC.getPrefix() + helpspecmessage);
                         break;
 
                     case "start":
@@ -322,18 +323,18 @@ public class CommandUHC implements CommandExecutor {
                             if (args.length > 1) {
                                 switch (args[1].toLowerCase()) {
                                     case "pvp":
-                                        Bukkit.broadcastMessage(main.getPrefix() + "§b" + player.getName() + " §e a forcé le PvP !");
+                                        Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §e a forcé le PvP !");
                                         UHCRunnable.pvpTimer = 6;
                                         break;
                                     case "border":
                                     case "bordure":
-                                        Bukkit.broadcastMessage(main.getPrefix() + "§b" + player.getName() + " §e a forcé la Bordure !");
+                                        Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §e a forcé la Bordure !");
                                         UHCRunnable.borderTimer = 6;
                                         break;
                                     case "épisode":
                                     case "episode":
                                     case "episod":
-                                        Bukkit.broadcastMessage(main.getPrefix() + "§b" + player.getName() + " §e a forcé l'épisode !");
+                                        Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §e a forcé l'épisode !");
                                         UHCRunnable.episodTimer = 6;
                                         break;
                                     case "taupe":
@@ -342,15 +343,15 @@ public class CommandUHC implements CommandExecutor {
                                     case "moles":
                                         if (Scenarios.MOLES.isActivated())
                                             if (!Moles.hasChoosedMoles) {
-                                                Bukkit.broadcastMessage(main.getPrefix() + "§b" + player.getName() + " §e a forcé l'annonce des Taupes !");
+                                                Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §e a forcé l'annonce des Taupes !");
                                                 Moles.IGtimers[0] = 6;
                                             } else {
-                                                player.sendMessage(main.getPrefix() + "§cLes taupes ont déjà été annoncées");
-                                                Index.playNegativeSound(player);
+                                                player.sendMessage(UHC.getPrefix() + "§cLes taupes ont déjà été annoncées");
+                                                UHC.playNegativeSound(player);
                                             }
                                         else {
-                                            player.sendMessage(main.getPrefix() + "§cLe scénario " + Scenarios.MOLES.getDisplayName() + " §cn'est pas activé !");
-                                            Index.playNegativeSound(player);
+                                            player.sendMessage(UHC.getPrefix() + "§cLe scénario " + Scenarios.MOLES.getDisplayName() + " §cn'est pas activé !");
+                                            UHC.playNegativeSound(player);
                                         }
                                         break;
                                     case "supertaupe":
@@ -360,127 +361,127 @@ public class CommandUHC implements CommandExecutor {
                                         if (Scenarios.MOLES.isActivated())
                                             if (Moles.superMoles)
                                                 if (!Moles.hasChoosedSuperMoles) {
-                                                    Bukkit.broadcastMessage(main.getPrefix() + "§b" + player.getName() + " §e a forcé l'annonce des Super Taupes !");
+                                                    Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §e a forcé l'annonce des Super Taupes !");
                                                     Moles.IGtimers[1] = 6;
                                                 } else {
-                                                    player.sendMessage(main.getPrefix() + "§cLes super taupes ont déjà été annoncées");
-                                                    Index.playNegativeSound(player);
+                                                    player.sendMessage(UHC.getPrefix() + "§cLes super taupes ont déjà été annoncées");
+                                                    UHC.playNegativeSound(player);
                                                 }
                                             else {
-                                                player.sendMessage(main.getPrefix() + "§cLes super taupes ne sont pas activées !");
-                                                Index.playNegativeSound(player);
+                                                player.sendMessage(UHC.getPrefix() + "§cLes super taupes ne sont pas activées !");
+                                                UHC.playNegativeSound(player);
                                             }
                                         else {
-                                            player.sendMessage(main.getPrefix() + "§cLe scénario " + Scenarios.MOLES.getDisplayName() + " §cn'est pas activé !");
-                                            Index.playNegativeSound(player);
+                                            player.sendMessage(UHC.getPrefix() + "§cLe scénario " + Scenarios.MOLES.getDisplayName() + " §cn'est pas activé !");
+                                            UHC.playNegativeSound(player);
                                         }
                                         break;
                                     case "switch":
                                         if (Scenarios.SWITCH.isActivated()) {
-                                            Bukkit.broadcastMessage(main.getPrefix() + "§b" + player.getName() + " §e a forcé le Switch !");
+                                            Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §e a forcé le Switch !");
                                             Switch.IGtimers[0] = 6;
                                         } else {
-                                            player.sendMessage(main.getPrefix() + "§cLe scénario " + Scenarios.SWITCH.getDisplayName() + " §cn'est pas activé !");
-                                            Index.playNegativeSound(player);
+                                            player.sendMessage(UHC.getPrefix() + "§cLe scénario " + Scenarios.SWITCH.getDisplayName() + " §cn'est pas activé !");
+                                            UHC.playNegativeSound(player);
                                         }
                                         break;
                                     case "skyhigh":
                                         if (Scenarios.SKY_HIGH.isActivated())
                                             if (SkyHigh.IGtimers[0] != SkyHigh.timer) {
-                                                Bukkit.broadcastMessage(main.getPrefix() + "§b" + player.getName() + " §e a forcé le SkyHigh !");
+                                                Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §e a forcé le SkyHigh !");
                                                 SkyHigh.IGtimers[0] = 6;
                                             } else {
-                                                player.sendMessage(main.getPrefix() + "§cImpossible de force SkyHigh maintenant !");
-                                                Index.playNegativeSound(player);
+                                                player.sendMessage(UHC.getPrefix() + "§cImpossible de force SkyHigh maintenant !");
+                                                UHC.playNegativeSound(player);
                                             }
                                         else {
-                                            player.sendMessage(main.getPrefix() + "§cLe scénario " + Scenarios.SKY_HIGH.getDisplayName() + " §cn'est pas activé !");
-                                            Index.playNegativeSound(player);
+                                            player.sendMessage(UHC.getPrefix() + "§cLe scénario " + Scenarios.SKY_HIGH.getDisplayName() + " §cn'est pas activé !");
+                                            UHC.playNegativeSound(player);
                                         }
                                         break;
                                     case "netheribus":
                                         if (Scenarios.NETHERIBUS.isActivated())
                                             if (Netheribus.IGtimers[0] != Netheribus.timer) {
-                                                Bukkit.broadcastMessage(main.getPrefix() + "§b" + player.getName() + " §e a forcé le Netheribus !");
+                                                Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §e a forcé le Netheribus !");
                                                 Netheribus.IGtimers[0] = 6;
                                             } else {
-                                                player.sendMessage(main.getPrefix() + "§cImpossible de force Netheribus maintenant !");
-                                                Index.playNegativeSound(player);
+                                                player.sendMessage(UHC.getPrefix() + "§cImpossible de force Netheribus maintenant !");
+                                                UHC.playNegativeSound(player);
                                             }
                                         else {
-                                            player.sendMessage(main.getPrefix() + "§cLe scénario " + Scenarios.NETHERIBUS.getDisplayName() + " §cn'est pas activé !");
-                                            Index.playNegativeSound(player);
+                                            player.sendMessage(UHC.getPrefix() + "§cLe scénario " + Scenarios.NETHERIBUS.getDisplayName() + " §cn'est pas activé !");
+                                            UHC.playNegativeSound(player);
                                         }
                                         break;
                                     case "finalheal":
                                     case "fh":
                                         if (Scenarios.FINAL_HEAL.isActivated())
                                             if (FinalHeal.IGtimers[0] != FinalHeal.timer) {
-                                                Bukkit.broadcastMessage(main.getPrefix() + "§b" + player.getName() + " §e a forcé le Final Heal !");
+                                                Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §e a forcé le Final Heal !");
                                                 FinalHeal.IGtimers[0] = 6;
                                             } else {
-                                                player.sendMessage(main.getPrefix() + "§cImpossible de force Final Heal maintenant !");
-                                                Index.playNegativeSound(player);
+                                                player.sendMessage(UHC.getPrefix() + "§cImpossible de force Final Heal maintenant !");
+                                                UHC.playNegativeSound(player);
                                             }
                                         else {
-                                            player.sendMessage(main.getPrefix() + "§cLe scénario " + Scenarios.FINAL_HEAL.getDisplayName() + " §cn'est pas activé !");
-                                            Index.playNegativeSound(player);
+                                            player.sendMessage(UHC.getPrefix() + "§cLe scénario " + Scenarios.FINAL_HEAL.getDisplayName() + " §cn'est pas activé !");
+                                            UHC.playNegativeSound(player);
                                         }
                                         break;
                                     case "bestpve":
                                         if (Scenarios.BEST_PVE.isActivated())
                                             if (BestPVE.IGtimers[0] != BestPVE.timer) {
-                                                Bukkit.broadcastMessage(main.getPrefix() + "§b" + player.getName() + " §e a forcé le Best PvE !");
+                                                Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §e a forcé le Best PvE !");
                                                 BestPVE.IGtimers[0] = 6;
                                             } else {
-                                                player.sendMessage(main.getPrefix() + "§cImpossible de force Best PvE maintenant !");
-                                                Index.playNegativeSound(player);
+                                                player.sendMessage(UHC.getPrefix() + "§cImpossible de force Best PvE maintenant !");
+                                                UHC.playNegativeSound(player);
                                             }
                                         else {
-                                            player.sendMessage(main.getPrefix() + "§cLe scénario " + Scenarios.BEST_PVE.getDisplayName() + " §cn'est pas activé !");
-                                            Index.playNegativeSound(player);
+                                            player.sendMessage(UHC.getPrefix() + "§cLe scénario " + Scenarios.BEST_PVE.getDisplayName() + " §cn'est pas activé !");
+                                            UHC.playNegativeSound(player);
                                         }
                                         break;
                                     default:
-                                        player.sendMessage(main.getPrefix() + "§cArgument incorrect, liste des timers forçables : §e§opvp, border, episode, taupe, supertaupe, switch, skyhigh, netheribus, fh, bestpve");
+                                        player.sendMessage(UHC.getPrefix() + "§cArgument incorrect, liste des timers forçables : §e§opvp, border, episode, taupe, supertaupe, switch, skyhigh, netheribus, fh, bestpve");
                                         break;
                                 }
-                            } else player.sendMessage(main.getPrefix() + "§cArgument incorrect, liste des timers forçables : §e§opvp, border, episode, taupe, supertaupe, switch, skyhigh, netheribus, fh, bestpve");
+                            } else player.sendMessage(UHC.getPrefix() + "§cArgument incorrect, liste des timers forçables : §e§opvp, border, episode, taupe, supertaupe, switch, skyhigh, netheribus, fh, bestpve");
                         } else {
-                            player.sendMessage(main.getPrefix() + "§cVous n'avez pas la permission d'utiliser cette commande.");
-                            Index.playNegativeSound(player);
+                            player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'utiliser cette commande.");
+                            UHC.playNegativeSound(player);
                         }
                         break;
 
                     case "help":
-                        player.sendMessage(main.getPrefix() + helpmessage);
+                        player.sendMessage(UHC.getPrefix() + helpmessage);
 
                     case "sm":
                     case "slavemarket":
                         if (!Scenarios.SLAVE_MARKET.isActivated() || main.isState(Gstate.PLAYING) || main.isState(Gstate.FINISHED)) return true;
                         if (args.length > 1) {
-                            if (!Index.getInstance().isState(Gstate.PLAYING) || SlaveMarket.owners.size() != SlaveMarket.nOwners) {
+                            if (!UHC.getInstance().isState(Gstate.PLAYING) || SlaveMarket.owners.size() != SlaveMarket.nOwners) {
                                 if (args[1].equals("candidate")) {
                                     if (!SlaveMarket.candidates.contains(playerUHC)) {
                                         if (!SlaveMarket.owners.contains(playerUHC)) {
-                                            player.sendMessage(Index.getInstance().getPrefix() + "§aVous avez bien émis une candidature pour devenir acheteur.");
-                                            Index.playPositiveSound(player);
+                                            player.sendMessage(UHC.getInstance().getPrefix() + "§aVous avez bien émis une candidature pour devenir acheteur.");
+                                            UHC.playPositiveSound(player);
                                             SlaveMarket.candidates.add(playerUHC);
                                             SlaveMarket.candidsInv.setItem(SlaveMarket.candidsInv.firstEmpty(), new ItemsStack(Material.SKULL_ITEM, (short) 3, playerUHC.getPlayer().getPlayer().getDisplayName(), "§7Ce joueur ce propose pour être acheteur.", "", "§b>>Cliquer pour accepter").toItemStackwithSkullMeta(playerUHC.getPlayer().getPlayer().getName()));
                                         } else {
-                                            player.sendMessage(Index.getInstance().getPrefix() + "§cVous êtes déjà un acheteur.");
-                                            Index.playNegativeSound(player);
+                                            player.sendMessage(UHC.getInstance().getPrefix() + "§cVous êtes déjà un acheteur.");
+                                            UHC.playNegativeSound(player);
                                         }
                                     } else {
-                                        player.sendMessage(Index.getInstance().getPrefix() + "§cVous êtes déjà candidat pour être acheteur.");
+                                        player.sendMessage(UHC.getInstance().getPrefix() + "§cVous êtes déjà candidat pour être acheteur.");
                                     }
                                 } else if (args[1].equals("view")) {
                                     if (playerUHC.isHost()) player.openInventory(SlaveMarket.candidsInv);
-                                    else player.sendMessage(Index.getInstance().getPrefix() + "§cVous n'avez pas la permissions d'exécuter cette commande");
+                                    else player.sendMessage(UHC.getInstance().getPrefix() + "§cVous n'avez pas la permissions d'exécuter cette commande");
                                 }
-                            } else player.sendMessage(Index.getStaticPrefix() + "§cImpossible d'utiliser cette commande en jeu.");
+                            } else player.sendMessage(UHC.getPrefix() + "§cImpossible d'utiliser cette commande en jeu.");
 
-                        } else player.sendMessage(main.getPrefix() + "§cArguments incomplets. Utilisation : §e/uhc sm §4§l<view/candidate>");
+                        } else player.sendMessage(UHC.getPrefix() + "§cArguments incomplets. Utilisation : §e/uhc sm §4§l<view/candidate>");
                         break;
                     case "bid":
                         if (Scenarios.SLAVE_MARKET.isActivated()) {
@@ -495,20 +496,20 @@ public class CommandUHC implements CommandExecutor {
                                                         SlaveMarket.bid = j;
                                                         SlaveMarket.bestBidder = playerUHC;
                                                         SlaveMarket.timers[0] = 4;
-                                                        Index.playPositiveSound(player);
-                                                        Bukkit.broadcastMessage(Index.getStaticPrefix() + Scenarios.SLAVE_MARKET.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + player.getDisplayName() + " §ea parié §b" + j + " diamants §e!");
-                                                    } else player.sendMessage(main.getPrefix() + "§cVous avez pas assez de diamants !");
-                                                } else player.sendMessage(main.getPrefix() + "§cVous n'avez plus de diamants !");
+                                                        UHC.playPositiveSound(player);
+                                                        Bukkit.broadcastMessage(UHC.getPrefix() + Scenarios.SLAVE_MARKET.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + player.getDisplayName() + " §ea parié §b" + j + " diamants §e!");
+                                                    } else player.sendMessage(UHC.getPrefix() + "§cVous avez pas assez de diamants !");
+                                                } else player.sendMessage(UHC.getPrefix() + "§cVous n'avez plus de diamants !");
                                         } catch (NumberFormatException e) {
-                                            player.sendMessage(Index.getStaticPrefix() + "§cLa valeur donnée n'est pas un nombre valide.");
-                                            Index.playNegativeSound(player);
+                                            player.sendMessage(UHC.getPrefix() + "§cLa valeur donnée n'est pas un nombre valide.");
+                                            UHC.playNegativeSound(player);
                                         }
-                                    } else player.sendMessage(main.getPrefix() + "§cVeuillez préciser le nombre de diamants que vous voulez parier.");
-                                } else player.sendMessage(main.getPrefix() + "§cVous n'êtes pas un owner !");
-                            } else player.sendMessage(main.getPrefix() + "§cVous ne pouvez pas utiliser cette commande maintenant !");
+                                    } else player.sendMessage(UHC.getPrefix() + "§cVeuillez préciser le nombre de diamants que vous voulez parier.");
+                                } else player.sendMessage(UHC.getPrefix() + "§cVous n'êtes pas un owner !");
+                            } else player.sendMessage(UHC.getPrefix() + "§cVous ne pouvez pas utiliser cette commande maintenant !");
                         } else {
-                            player.sendMessage(main.getPrefix() + "§cLe scénario " + Scenarios.SLAVE_MARKET.getDisplayName() + " §cn'est pas activé !");
-                            Index.playNegativeSound(player);
+                            player.sendMessage(UHC.getPrefix() + "§cLe scénario " + Scenarios.SLAVE_MARKET.getDisplayName() + " §cn'est pas activé !");
+                            UHC.playNegativeSound(player);
                         }
                         break;
 
@@ -518,11 +519,11 @@ public class CommandUHC implements CommandExecutor {
                         if (args.length > 1) {
                             Anonymous.usedName = args[1];
                             if (playerUHC.isHost()) {
-                                player.sendMessage(main.getPrefix() + "§6Vous avez bien mit l'identité du Scénario Anonymous à §b§l" + args[1] + "§6.");
-                                Index.playPositiveSound(player);
-                            } else player.sendMessage(main.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");
+                                player.sendMessage(UHC.getPrefix() + "§6Vous avez bien mit l'identité du Scénario Anonymous à §b§l" + args[1] + "§6.");
+                                UHC.playPositiveSound(player);
+                            } else player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");
 
-                        } else player.sendMessage(main.getPrefix() + "§cArguments incomplets. Utilisation : §e/uhc am §4§l<pseudo d'un compte Minecraft>");
+                        } else player.sendMessage(UHC.getPrefix() + "§cArguments incomplets. Utilisation : §e/uhc am §4§l<pseudo d'un compte Minecraft>");
                         break;
 
                     case "ti":
@@ -541,13 +542,13 @@ public class CommandUHC implements CommandExecutor {
                                 if (args[1].equalsIgnoreCase("off")) b = false;
                                 else if (args[1].equalsIgnoreCase("on")) b = true;
                                 Moles.areSuperMolesTogether = b;
-                                Bukkit.broadcastMessage(Index.getStaticPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + player.getDisplayName() + " §6a " + GameConfig.getStringBoolean(b) + " §6Équipe des Super-Taupes.");
-                                Index.playPositiveSound(player);
+                                Bukkit.broadcastMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + player.getDisplayName() + " §6a " + GameConfig.getStringBoolean(b) + " §6Équipe des Super-Taupes.");
+                                UHC.playPositiveSound(player);
                             } else {
-                                player.sendMessage(main.getPrefix() + "§cVeuillez préciser si vous voulez activer ou non §o(on/off)§c.");
-                                Index.playNegativeSound(player);
+                                player.sendMessage(UHC.getPrefix() + "§cVeuillez préciser si vous voulez activer ou non §o(on/off)§c.");
+                                UHC.playNegativeSound(player);
                             }
-                        } else player.sendMessage(main.getPrefix() + "§cVous n'avez pas la permission.");
+                        } else player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission.");
                         break;
                     case "apotaupes":
                         if (!Scenarios.MOLES.isActivated()) return true;
@@ -556,29 +557,29 @@ public class CommandUHC implements CommandExecutor {
                                 try {
                                     int j = Integer.parseInt(args[1]);
                                     Moles.nOfApoMoles = j;
-                                    Bukkit.broadcastMessage(Index.getStaticPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + player.getDisplayName() + " §6a mit le nombre de taupes à §e§l" + j + "§6.");
-                                    Index.playPositiveSound(player);
+                                    Bukkit.broadcastMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + player.getDisplayName() + " §6a mit le nombre de taupes à §e§l" + j + "§6.");
+                                    UHC.playPositiveSound(player);
                                 } catch (NumberFormatException e) {
-                                    player.sendMessage(Index.getStaticPrefix() + "§cLa valeur donnée n'est pas un nombre valide.");
-                                    Index.playNegativeSound(player);
+                                    player.sendMessage(UHC.getPrefix() + "§cLa valeur donnée n'est pas un nombre valide.");
+                                    UHC.playNegativeSound(player);
                                 }
                             } else {
-                                player.sendMessage(main.getPrefix() + "§cVeuillez préciser le nombre de taupes que vous voulez mettre.");
-                                Index.playNegativeSound(player);
+                                player.sendMessage(UHC.getPrefix() + "§cVeuillez préciser le nombre de taupes que vous voulez mettre.");
+                                UHC.playNegativeSound(player);
                             }
-                        } else player.sendMessage(main.getPrefix() + "§cVous n'avez pas la permission.");
+                        } else player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission.");
                         break;
                     case "reveal":
                         if (!Scenarios.MOLES.isActivated() || !main.isState(Gstate.PLAYING)) return true;
                         if (!Moles.alreadyReveal.contains(playerUHC)) {
                             if (Moles.isTaupe(playerUHC)) {
-                                Bukkit.broadcastMessage(Index.getStaticPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + player.getDisplayName() + " §cse révèle être une taupe faisant partie de l'équipe " + Moles.taupes.get(playerUHC).getTeam().getDisplayName() + "§c !");
+                                Bukkit.broadcastMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + player.getDisplayName() + " §cse révèle être une taupe faisant partie de l'équipe " + Moles.taupes.get(playerUHC).getTeam().getDisplayName() + "§c !");
                                 for (Player p : Bukkit.getOnlinePlayers())
                                     p.playSound(p.getLocation(), Sound.GHAST_SCREAM, 8f, 2f);
                                 playerUHC.getTeam().getPlayers().remove(playerUHC);
                                 playerUHC.getTeam().getAlivePlayers().remove(playerUHC);
                                 if (playerUHC.getTeam().getAlivePlayers().size() == 0)
-                                    Bukkit.broadcastMessage(Index.getStaticPrefix() + "§6L'équipe " + playerUHC.getTeam().getTeam().getDisplayName() + " §6est éliminée...");
+                                    Bukkit.broadcastMessage(UHC.getPrefix() + "§6L'équipe " + playerUHC.getTeam().getTeam().getDisplayName() + " §6est éliminée...");
                                 Moles.taupes.get(playerUHC).add(player);
                                 Moles.alreadyReveal.add(playerUHC);
                                 InventoryManager.give(player, null, new ItemStack(GOLDEN_APPLE));
@@ -586,21 +587,21 @@ public class CommandUHC implements CommandExecutor {
                                 for (PlayerUHC pu : main.players)
                                     main.boards.get(pu).setLine(3, "§7§lTeams : §f" + main.getUHCTeamManager().getAliveTeams().size() + "§8/§7" + UHCTeamManager.baseteams + " §8(§7" + main.getAlivePlayers().size() + "§8 joueurs)");
                                 FightListener.checkWin();
-                            } else player.sendMessage(Index.getStaticPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous n'êtes pas une taupe ! (Demander à quelqu'un d'autre de lire ce message est interdit, je te vois venir)");
-                        } else player.sendMessage(Index.getStaticPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous êtes déjà reveal !");
+                            } else player.sendMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous n'êtes pas une taupe ! (Demander à quelqu'un d'autre de lire ce message est interdit, je te vois venir)");
+                        } else player.sendMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous êtes déjà reveal !");
                         break;
                     case "superreveal":
                         if (!Scenarios.MOLES.isActivated() || !main.isState(Gstate.PLAYING)) return true;
                         if (!Moles.alreadySuperReveal.contains(playerUHC)) {
                             if (Moles.alreadyReveal.contains(playerUHC)) {
                                 if (Moles.isSuperTaupe(playerUHC)) {
-                                    Bukkit.broadcastMessage(Index.getStaticPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + player.getDisplayName() + " §fse révèle être une §lSuper Taupe§f faisant partie de l'équipe " + Moles.superTaupes.get(playerUHC).getTeam().getDisplayName() + "§c !");
+                                    Bukkit.broadcastMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + player.getDisplayName() + " §fse révèle être une §lSuper Taupe§f faisant partie de l'équipe " + Moles.superTaupes.get(playerUHC).getTeam().getDisplayName() + "§c !");
                                     for (Player p : Bukkit.getOnlinePlayers())
                                         p.playSound(p.getLocation(), Sound.GHAST_SCREAM, 8f, 2f);
                                     playerUHC.getTeam().getPlayers().remove(playerUHC);
                                     playerUHC.getTeam().getAlivePlayers().remove(playerUHC);
                                     if (playerUHC.getTeam().getAlivePlayers().size() == 0)
-                                        Bukkit.broadcastMessage(Index.getStaticPrefix() + "§6L'équipe " + playerUHC.getTeam().getTeam().getDisplayName() + " §6est éliminée...");
+                                        Bukkit.broadcastMessage(UHC.getPrefix() + "§6L'équipe " + playerUHC.getTeam().getTeam().getDisplayName() + " §6est éliminée...");
                                     Moles.superTaupes.get(playerUHC).add(player);
                                     Moles.alreadySuperReveal.add(playerUHC);
                                     if (Moles.areSuperMolesTogether)
@@ -611,9 +612,9 @@ public class CommandUHC implements CommandExecutor {
                                         main.boards.get(pu).setLine(3, "§7§lTeams : §f" + main.getUHCTeamManager().getAliveTeams().size() + "§8/§7" + UHCTeamManager.baseteams + " §8(§7" + main.getAlivePlayers().size() + "§8 joueurs)");
                                     FightListener.checkWin();
                                 } else
-                                    player.sendMessage(Index.getStaticPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " Vous n'êtes pas une super taupe ! (Demander à quelqu'un d'autre de lire ce message est interdit, je te vois venir)");
-                            } else player.sendMessage(Index.getStaticPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous devez être reveal pour vous super reveal !");
-                        } else player.sendMessage(Index.getStaticPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous êtes déjà super reveal !");
+                                    player.sendMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " Vous n'êtes pas une super taupe ! (Demander à quelqu'un d'autre de lire ce message est interdit, je te vois venir)");
+                            } else player.sendMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous devez être reveal pour vous super reveal !");
+                        } else player.sendMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous êtes déjà super reveal !");
                         break;
                     case "claim":
                         if (!Scenarios.MOLES.isActivated() || !main.isState(Gstate.PLAYING)) return true;
@@ -622,11 +623,11 @@ public class CommandUHC implements CommandExecutor {
                                 Moles.Kits kit = Moles.kits.get(playerUHC);
                                 for (ItemStack it : kit.getItems())
                                     InventoryManager.give(player, null, it);
-                                player.sendMessage(Index.getStaticPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous avez obtenu les objets de votre kit " + kit.getName() + "§c.");
-                                Index.playPositiveSound(player);
+                                player.sendMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous avez obtenu les objets de votre kit " + kit.getName() + "§c.");
+                                UHC.playPositiveSound(player);
                                 Moles.alreadyUse.add(playerUHC);
-                            } else player.sendMessage(main.getPrefix() + "Vous n'êtes pas une super taupe ! (Demander à quelqu'un d'autre de lire ce message est interdit, je te vois venir)");
-                        } else player.sendMessage(Index.getStaticPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous avez déjà récupéré votre kit !");
+                            } else player.sendMessage(UHC.getPrefix() + "Vous n'êtes pas une super taupe ! (Demander à quelqu'un d'autre de lire ce message est interdit, je te vois venir)");
+                        } else player.sendMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous avez déjà récupéré votre kit !");
                         break;
                     case "t":
                         if (!Scenarios.MOLES.isActivated() || !main.isState(Gstate.PLAYING)) return true;
@@ -648,6 +649,60 @@ public class CommandUHC implements CommandExecutor {
                                     en.getKey().getPlayer().getPlayer().sendMessage("§f[" + Moles.superTaupes.get(playerUHC).getTeam().getDisplayName() + "§f] " + player.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §c" + Arrays.stream(m.toArray()).map(part -> part + " ").collect(Collectors.joining()));
                         }
                         break;
+                    case "taupelist":
+                        if (!Scenarios.MOLES.isActivated() || !main.isState(Gstate.PLAYING)) return true;
+                        if (playerUHC.isSpec() && playerUHC.isHost()) {
+                            Bukkit.broadcastMessage(UHC.getPrefix() + "§eListe des taupes de la partie :");
+                            Bukkit.broadcastMessage("§7------------------------------");
+                            Bukkit.broadcastMessage("");
+                            for (UHCTeam t : main.getUHCTeamManager().getTeams())
+                                if (t.getPrefix().isTaupePrefix() && !t.getPrefix().isSuperTaupePrefix()) {
+                                    Bukkit.broadcastMessage(" §0" + Symbols.SQUARE + " " + t.getTeam().getDisplayName() + "§8(§7" + t.getPlayers().size() + "§8) §6:");
+                                    for (PlayerUHC pu : t.getPlayers()) {
+                                        String details = " §8(";
+                                        if (Moles.isSuperTaupe(pu)) details = details + "§c§lSuper Taupe§8) ";
+                                        if (!pu.isAlive()) details = details + "§8(§cMort§8) ";
+                                        if (pu.isAlive() && !pu.getPlayer().isOnline()) details = details + "§8(§7Déconnecté§8)";
+                                        Bukkit.broadcastMessage("  §0- §f" + pu.getPlayer().getName() + details);
+                                    }
+                                    Bukkit.broadcastMessage("");
+                                }
+                            if (Moles.areSuperMolesTogether && main.getUHCTeamManager().getTeamByDisplayName("§f§lSuper Taupes") != null) {
+                                UHCTeam t = main.getUHCTeamManager().getTeamByDisplayName("§f§lSuper Taupes");
+                                Bukkit.broadcastMessage(" §0" + Symbols.SQUARE + " " + t.getTeam().getDisplayName() + "§8(§7" + t.getPlayers().size() + "§8) §6:");
+                                for (PlayerUHC pu : t.getPlayers()) {
+                                    String details = " §8(";
+                                    if (Moles.isSuperTaupe(pu)) details = details + "§c§lSuper Taupe§8) ";
+                                    if (!pu.isAlive()) details = details + "§8(§cMort§8) ";
+                                    if (pu.isAlive() && !pu.getPlayer().isOnline()) details = details + "§8(§7Déconnecté§8)";
+                                    Bukkit.broadcastMessage("  §0- §f" + pu.getPlayer().getName() + details);
+                                }
+                            }
+                            Bukkit.broadcastMessage("§7------------------------------");
+                        } else player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'utiliser cette commande.");
+                        break;
+                    case "aablist":
+                        if (!Scenarios.ASSAULT_AND_BATTERY.isActivated() || !main.isState(Gstate.PLAYING)) return true;
+                        if (playerUHC.isSpec() && playerUHC.isHost()) {
+                            Bukkit.broadcastMessage(UHC.getPrefix() + "§eListe des Assault et des Battery de la partie :");
+                            Bukkit.broadcastMessage("§7------------------------------");
+                            Bukkit.broadcastMessage("");
+                            for (UHCTeam t : main.getUHCTeamManager().getAliveTeams())
+                                if (AssaultAndBattery.hasRole(t.getListPlayers().get(0))) {
+                                    Bukkit.broadcastMessage(" §0" + Symbols.SQUARE + " " + t.getTeam().getDisplayName() + "§8(§7" + t.getPlayers().size() + "§8) §6:");
+                                    for (PlayerUHC pu : t.getPlayers()) {
+                                        String details = " §8(";
+                                        if (AssaultAndBattery.assaults.contains(pu)) details = details + "§4§lAssault§8) ";
+                                        if (AssaultAndBattery.batteries.contains(pu)) details = details + "§a§lBattery§8) ";
+                                        if (!pu.isAlive()) details = details + "§8(§cMort§8) ";
+                                        if (pu.isAlive() && !pu.getPlayer().isOnline()) details = details + "§8(§7Déconnecté§8)";
+                                        Bukkit.broadcastMessage("  §0- §f" + pu.getPlayer().getName() + details);
+                                    }
+                                    Bukkit.broadcastMessage("");
+                                }
+                            Bukkit.broadcastMessage("§7------------------------------");
+                        } else player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'utiliser cette commande.");
+                        break;
 
                     case "chat":
                         final String helpchatmessage = "§6La commande chat gérer le chat de la partie.\nArgument possibles : \n" +
@@ -657,30 +712,30 @@ public class CommandUHC implements CommandExecutor {
                             if (args.length > 1) {
                                 if (args[1].equals("on")) {
                                     PlayerListener.canChat = true;
-                                    Bukkit.broadcastMessage(main.getPrefix() + player.getDisplayName() + " §aa réactivé le Chat !");
+                                    Bukkit.broadcastMessage(UHC.getPrefix() + player.getDisplayName() + " §aa réactivé le Chat !");
                                     for (Player p : Bukkit.getOnlinePlayers())
-                                        Index.playPositiveSound(p);
+                                        UHC.playPositiveSound(p);
                                 } else if (args[1].equals("off")) {
                                     PlayerListener.canChat = false;
-                                    Bukkit.broadcastMessage(main.getPrefix() + player.getDisplayName() + " §ca désactivé le Chat !");
+                                    Bukkit.broadcastMessage(UHC.getPrefix() + player.getDisplayName() + " §ca désactivé le Chat !");
                                     for (Player p : Bukkit.getOnlinePlayers())
-                                        Index.playPositiveSound(p);
-                                } else player.sendMessage(main.getPrefix() + helpchatmessage);
-                            } else player.sendMessage(main.getPrefix() + helpchatmessage);
+                                        UHC.playPositiveSound(p);
+                                } else player.sendMessage(UHC.getPrefix() + helpchatmessage);
+                            } else player.sendMessage(UHC.getPrefix() + helpchatmessage);
                         } else {
-                            player.sendMessage(main.getPrefix() + "§cVous n'avez pas la permission d'utiliser cette commande.");
-                            Index.playNegativeSound(player);
+                            player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'utiliser cette commande.");
+                            UHC.playNegativeSound(player);
                         }
                         break;
                     default:
-                        player.sendMessage(main.getPrefix() + helpmessage);
+                        player.sendMessage(UHC.getPrefix() + helpmessage);
                         break;
 
                 }
 
-            } else player.sendMessage(main.getPrefix() + helpmessage);
+            } else player.sendMessage(UHC.getPrefix() + helpmessage);
         } else {
-            sender.sendMessage(main.getPrefix() + "§cVous devez être un joueur pour effectuer cette commande.");
+            sender.sendMessage(UHC.getPrefix() + "§cVous devez être un joueur pour effectuer cette commande.");
             return true;
         }
 

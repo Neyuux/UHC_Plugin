@@ -2,7 +2,7 @@ package fr.neyuux.uhc.scenario.classes;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
@@ -37,16 +37,16 @@ public class Anonymous extends Scenario implements Listener {
     public static String usedName = "";
     private static int used;
     private static final HashMap<PlayerUHC, String> realName = new HashMap<>();
-    private static final Index main = Index.getInstance();
+    private static final UHC main = UHC.getInstance();
 
     @Override
     protected void activate() {
-        Index.sendHostMessage(main.getPrefix() + "§6Vous pouvez changer le pseudo / skin qui sera utilisé par le Scénario Anonymous avec la commande §b§l/uhc am §a<nom du pseudo/skin>§6. §o(Si vous n'utilisez pas cette commande, le skin et le pseudo appartiendront à un joueur aléatoire de la partie.)");
+        UHC.sendHostMessage(main.getPrefix() + "§6Vous pouvez changer le pseudo / skin qui sera utilisé par le Scénario Anonymous avec la commande §b§l/uhc am §a<nom du pseudo/skin>§6. §o(Si vous n'utilisez pas cette commande, le skin et le pseudo appartiendront à un joueur aléatoire de la partie.)");
     }
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
 
         List<PlayerUHC> choosable = new ArrayList<>();

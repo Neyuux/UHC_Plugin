@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.commands;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.InventoryManager;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -12,10 +12,10 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class CommandFinish implements CommandExecutor {
 
-    private final Index main;
+    private final UHC main;
 
-    public CommandFinish(Index index) {
-        this.main = index;
+    public CommandFinish(UHC UHC) {
+        this.main = UHC;
     }
 
     @Override
@@ -34,23 +34,22 @@ public class CommandFinish implements CommandExecutor {
                 if (pi.getBoots() != null)main.getInventoryManager().getStartArmor().put(3, pi.getBoots());
 
                 InventoryManager.startInventory = pi.getContents();
+                InventoryManager.clearInventory(player);
+                InventoryManager.giveWaitInventory(player);
+                player.setGameMode(GameMode.ADVENTURE);
                 player.sendMessage(main.getPrefix() + "§dVous avez enregistré l'inventaire de Départ !");
-                Index.playPositiveSound(player);
+                UHC.playPositiveSound(player);
             } else if (main.getGameConfig().deathInvModifier != null && main.getGameConfig().deathInvModifier.equals(player)) {
                 main.getGameConfig().deathInvModifier = null;
                 main.getInventoryManager().getDeathInventory().clear();
                 for (ItemStack it : player.getInventory().getContents()) if (it != null) main.getInventoryManager().getDeathInventory().add(it);
                 player.sendMessage(main.getPrefix() + "§5Vous avez enregistré l'inventaire de Mort !");
-                Index.playPositiveSound(player);
+                UHC.playPositiveSound(player);
             } else {
                 player.sendMessage(main.getPrefix() + "§cVous ne modifiez aucun inventaire !");
-                Index.playNegativeSound(player);
+                UHC.playNegativeSound(player);
             }
-            InventoryManager.clearInventory(player);
-            InventoryManager.giveWaitInventory(main.getPlayerUHC(player));
-            player.setGameMode(GameMode.ADVENTURE);
         }
-
         return true;
     }
 }

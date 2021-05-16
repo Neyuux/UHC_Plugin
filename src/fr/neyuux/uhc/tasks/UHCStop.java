@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.tasks;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.enums.Gstate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -8,8 +8,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class UHCStop extends BukkitRunnable {
 
-    private final Index main;
-    public UHCStop(Index main) {
+    private final UHC main;
+    public UHCStop(UHC main) {
         this.main = main;
         timer = 30;
     }

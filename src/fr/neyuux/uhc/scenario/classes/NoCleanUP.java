@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.PlayerEliminationEvent;
@@ -27,7 +27,7 @@ public class NoCleanUP extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
     }
 
@@ -45,7 +45,7 @@ public class NoCleanUP extends Scenario implements Listener {
             if (ku.getPlayer().isOnline()) {
                 Player k = ku.getPlayer().getPlayer();
                 k.setHealth(Math.min((k.getHealth() + a), k.getMaxHealth()));
-                k.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §dVous venez de récupérer §4§l" +  healthAdded + Symbols.HEARTH + " §d!");
+                k.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §dVous venez de récupérer §4§l" +  healthAdded + Symbols.HEARTH + " §d!");
             } else ku.health = Math.min((ku.health + a), ku.maxHealth);
         }
     }

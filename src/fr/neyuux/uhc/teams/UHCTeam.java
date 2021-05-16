@@ -1,8 +1,8 @@
 package fr.neyuux.uhc.teams;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.TeamChangeEvent;
@@ -34,9 +34,9 @@ public class UHCTeam {
     private final Set<PlayerUHC> players;
     private final Set<PlayerUHC> alivePlayers;
     private final Set<PlayerUHC> deathPlayers;
-    private final Index main;
+    private final UHC main;
     public final int id;
-    public UHCTeam(Index main, TeamPrefix prefix) {
+    public UHCTeam(UHC main, TeamPrefix prefix) {
         this.main = main;
         this.prefix = prefix;
         this.players = new HashSet<>();

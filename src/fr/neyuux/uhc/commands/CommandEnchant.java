@@ -1,8 +1,8 @@
 package fr.neyuux.uhc.commands;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.util.ItemsStack;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -15,10 +15,10 @@ import org.bukkit.inventory.ItemFlag;
 
 public class CommandEnchant implements CommandExecutor {
 
-    private final Index main;
+    private final UHC main;
 
-    public CommandEnchant(Index index) {
-        this.main = index;
+    public CommandEnchant(UHC UHC) {
+        this.main = UHC;
     }
 
     @Override

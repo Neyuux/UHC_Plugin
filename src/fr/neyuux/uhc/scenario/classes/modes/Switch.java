@@ -1,8 +1,8 @@
 package fr.neyuux.uhc.scenario.classes.modes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenario;
@@ -37,7 +37,7 @@ public class Switch extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
 
         IGtimers[0] = firstSwitch - randomTimeLimit + new SecureRandom().nextInt(randomTimeLimit + 1);
@@ -46,21 +46,21 @@ public class Switch extends Scenario implements Listener {
             public void run() {
                 IGtimers[0]--;
                 if (IGtimers[0] == 300 && randomTimeLimit == 0)
-                    Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSwitch dans 5 minutes !");
+                    Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSwitch dans 5 minutes !");
                 else if (IGtimers[0] == 60 && randomTimeLimit == 0)
-                    Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSwitch dans 1 minute !");
+                    Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSwitch dans 1 minute !");
                 else if (IGtimers[0] < 6 && IGtimers[0] > 1)
-                    Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSwitch dans "+IGtimers[0]+" secondes !");
+                    Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSwitch dans "+IGtimers[0]+" secondes !");
                 else if (IGtimers[0] == 1)
-                    Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSwitch dans 1 seconde !");
+                    Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSwitch dans 1 seconde !");
                 else if (IGtimers[0] == 0) {
-                    Bukkit.broadcastMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eActivation du Scénario !");
+                    Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eActivation du Scénario !");
                     switchTeams();
                     IGtimers[0] = switchFrequency - randomTimeLimit + new SecureRandom().nextInt(randomTimeLimit + 1);
                 }
-                if (!Index.getInstance().isState(Gstate.PLAYING)) cancel();
+                if (!UHC.getInstance().isState(Gstate.PLAYING)) cancel();
             }
-        }.runTaskTimer(Index.getInstance(), 0, 20);
+        }.runTaskTimer(UHC.getInstance(), 0, 20);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class Switch extends Scenario implements Listener {
         HashMap<PlayerUHC, ItemStack[]> inventories = new HashMap<>();
         Random random = new SecureRandom();
         random.setSeed(System.currentTimeMillis());
-        for (UHCTeam t : Index.getInstance().getUHCTeamManager().getAliveTeams()) {
+        for (UHCTeam t : UHC.getInstance().getUHCTeamManager().getAliveTeams()) {
             if (!hasSoloSwitch && t.getAlivePlayers().size() == 1) continue;
             PlayerUHC pu = new ArrayList<>(t.getAlivePlayers()).get(random.nextInt(t.getAlivePlayers().size()));
             playersToSwitch.add(pu);
@@ -98,7 +98,7 @@ public class Switch extends Scenario implements Listener {
             player1.teleport(player2UHC.getLastLocation().clone());
             player1UHC.getTeam().leave(player1UHC);
             baseTeams.get(player2UHC).add(player1);
-            player1.sendMessage(Index.getStaticPrefix() + Scenarios.SWITCH.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous avez switch avec " + baseTeams.get(player2UHC).getTeam().getPrefix() + player2.getName() + " §e!");
+            player1.sendMessage(UHC.getPrefix() + Scenarios.SWITCH.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous avez switch avec " + baseTeams.get(player2UHC).getTeam().getPrefix() + player2.getName() + " §e!");
             player1.playSound(player1.getLocation(), Sound.ENDERMAN_TELEPORT, 8, 1f);
         }
     }

@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -24,10 +24,10 @@ public class NineSlots extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
 
-        for (PlayerUHC pu : Index.getInstance().getAlivePlayers())
+        for (PlayerUHC pu : UHC.getInstance().getAlivePlayers())
             for (int i = 9; i <= 35; i++) {
                 ItemStack it = pu.getPlayer().getPlayer().getInventory().getItem(i);
                 if (it != null && !it.getType().equals(Material.AIR)) pu.getPlayer().getPlayer().getWorld().dropItem(pu.getPlayer().getPlayer().getLocation(), it);

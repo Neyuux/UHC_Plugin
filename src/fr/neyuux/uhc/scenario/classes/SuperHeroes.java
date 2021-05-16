@@ -1,8 +1,9 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
+import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -18,9 +19,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class SuperHeroes extends Scenario implements Listener {
@@ -35,29 +38,45 @@ public class SuperHeroes extends Scenario implements Listener {
     @Override
     public void activate() {
         if ((boolean) GameConfig.ConfigurableParams.MILK.getValue())
-            Bukkit.broadcastMessage(Index.getStaticPrefix() + "§cVeuillez désactiver le seau de lait pour que " + scenario.getDisplayName() + " §cpuisse fonctionner.");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§cVeuillez désactiver le seau de lait pour que " + scenario.getDisplayName() + " §cpuisse fonctionner.");
     }
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
 
-        Bukkit.getScheduler().runTaskLater(Index.getInstance(), () -> {
-            ArrayList<PotionEffectType> p = new ArrayList<>(setPowerList());
-            if (Index.getInstance().getUHCTeamManager().getAliveTeams().size() != 0) {
-                for (UHCTeam t : Index.getInstance().getUHCTeamManager().getAliveTeams()) {
-                    p.clear(); p.addAll(setPowerList());
-                    for (PlayerUHC pu : t.getPlayers()) {
-                        if (p.isEmpty()) p.addAll(setPowerList());
-                        addPower(pu, p.remove(new Random().nextInt(p.size())));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                ArrayList<PotionEffectType> p = new ArrayList<>(setPowerList());
+                if (UHC.getInstance().getUHCTeamManager().getAliveTeams().size() != 0) {
+                    for (UHCTeam t : UHC.getInstance().getUHCTeamManager().getAliveTeams()) {
+                        p.clear(); p.addAll(setPowerList());
+                        for (PlayerUHC pu : t.getPlayers()) {
+                            if (p.isEmpty()) p.addAll(setPowerList());
+                            addPower(pu, p.remove(new Random().nextInt(p.size())));
+                        }
                     }
-                }
-            } else {
-                for (PlayerUHC pu : Index.getInstance().getAlivePlayers())
-                    addPower(pu, p.get(new Random().nextInt(p.size())));
+                } else {
+                    for (PlayerUHC pu : UHC.getInstance().getAlivePlayers())
+                        addPower(pu, p.get(new Random().nextInt(p.size())));
             }
-        }, 100L);
+            }
+        }.runTaskTimer(UHC.getInstance(), 0, 100L);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!UHC.getInstance().isState(Gstate.PLAYING)) {
+                    cancel();
+                    return;
+                }
+                for (Map.Entry<PlayerUHC, PotionEffectType> en : powers.entrySet())
+                    if (en.getKey().getPlayer().isOnline() && !en.getKey().getPlayer().getPlayer().hasPotionEffect(en.getValue()))
+                        addPower(en.getKey(), en.getValue());
+            }
+        }.runTaskTimer(UHC.getInstance(), 0, 100L);
     }
 
     @Override
@@ -69,7 +88,7 @@ public class SuperHeroes extends Scenario implements Listener {
     @EventHandler
     public void onJBFallDamage(EntityDamageEvent ev) {
         if (ev.getEntityType().equals(EntityType.PLAYER) && ev.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
-            PlayerUHC pu = Index.getInstance().getPlayerUHC((Player)ev.getEntity());
+            PlayerUHC pu = UHC.getInstance().getPlayerUHC((Player)ev.getEntity());
             if (pu.isAlive() && powers.containsKey(pu) && powers.get(pu).equals(PotionEffectType.JUMP)) ev.setCancelled(true);
         }
     }
@@ -77,19 +96,18 @@ public class SuperHeroes extends Scenario implements Listener {
     @EventHandler
     public void nerfRez(EntityDamageEvent ev) {
         if (ev.getEntityType().equals(EntityType.PLAYER)) {
-            PlayerUHC pu = Index.getInstance().getPlayerUHC((Player)ev.getEntity());
+            PlayerUHC pu = UHC.getInstance().getPlayerUHC((Player)ev.getEntity());
             if (pu.isAlive() && powers.containsKey(pu) && powers.get(pu).equals(PotionEffectType.DAMAGE_RESISTANCE)) {
-                System.out.println("Nerf Réz : base réz : " + ev.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE) + " base total : " + ev.getFinalDamage());
+                //NERF  : 40% >> 30%
                 ev.setDamage(EntityDamageEvent.DamageModifier.RESISTANCE, -(ev.getDamage() - (ev.getDamage() * 0.7)));
-                System.out.println("after nerf réz: " + ev.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE) + " after nerf total : " + ev.getFinalDamage());
             }
         }
     }
 
     @EventHandler
     public void onJoinNeedPower(PlayerJoinEvent ev) {
-        if (needPower.containsKey(Index.getInstance().getPlayerUHC(ev.getPlayer()))) {
-            addPower(Index.getInstance().getPlayerUHC(ev.getPlayer()), needPower.get(Index.getInstance().getPlayerUHC(ev.getPlayer())));
+        if (needPower.containsKey(UHC.getInstance().getPlayerUHC(ev.getPlayer()))) {
+            addPower(UHC.getInstance().getPlayerUHC(ev.getPlayer()), needPower.get(UHC.getInstance().getPlayerUHC(ev.getPlayer())));
         }
     }
 
@@ -100,27 +118,27 @@ public class SuperHeroes extends Scenario implements Listener {
             Player p = pu.getPlayer().getPlayer();
             if (power.equals(PotionEffectType.DAMAGE_RESISTANCE)) {
                 p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 1, true, true));
-                p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous obtenez le pouvoir §7§lRésistance 2§e!");
+                p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous obtenez le pouvoir §7§lRésistance 2§e!");
             } else if (power.equals(PotionEffectType.JUMP)) {
                 p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 3, true, true));
                 p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0, true, true));
                 p.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, Integer.MAX_VALUE, 0, true, true));
                 p.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0, true, true));
-                p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous obtenez le pouvoir §a§lSaut Amélioré 4§e !");
+                p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous obtenez le pouvoir §a§lSaut Amélioré 4§e !");
             } else if (power.equals(PotionEffectType.INCREASE_DAMAGE)) {
                 p.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0, true, true));
-                p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous obtenez le pouvoir §4§lForce §e!");
+                p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous obtenez le pouvoir §4§lForce §e!");
             } else if (power.equals(PotionEffectType.SPEED)) {
                 p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1, true, true));
                 p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 0, true, true));
-                p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous obtenez le pouvoir §b§lRapidité 2§e!");
+                p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous obtenez le pouvoir §b§lRapidité 2§e!");
             } else if (power.equals(PotionEffectType.HEALTH_BOOST)) {
                 p.setMaxHealth(p.getMaxHealth() * 2);
                 p.setHealth(p.getMaxHealth());
-                p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous obtenez le pouvoir §c§lDouble Vie §e!");
+                p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous obtenez le pouvoir §c§lDouble Vie §e!");
             } else if (power.equals(PotionEffectType.INVISIBILITY)) {
                 p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false));
-                p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous obtenez le pouvoir §3§lInvisibilité §e!");
+                p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous obtenez le pouvoir §3§lInvisibilité §e!");
             }
         } else {
             if (!power.equals(PotionEffectType.HEALTH_BOOST)) {

@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -27,7 +27,7 @@ public class NoAnvil extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
     }
 
@@ -41,8 +41,8 @@ public class NoAnvil extends Scenario implements Listener {
     public void onCraft(CraftItemEvent ev) {
         if (ev.getInventory().getResult().getType().equals(Material.ANVIL)) {
             ev.setCancelled(true);
-            ev.getWhoClicked().sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de l'enclume est désactivé.");
-            Index.playNegativeSound((Player)ev.getWhoClicked());
+            ev.getWhoClicked().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de l'enclume est désactivé.");
+            UHC.playNegativeSound((Player)ev.getWhoClicked());
         }
     }
 
@@ -50,8 +50,8 @@ public class NoAnvil extends Scenario implements Listener {
     public void onPickUp(PlayerPickupItemEvent ev) {
         if(ev.getItem().getItemStack().getType().equals(Material.ANVIL)) {
             ev.setCancelled(true);
-            ev.getPlayer().sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cL'enclume est désactivée.");
-            Index.playNegativeSound(ev.getPlayer());
+            ev.getPlayer().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cL'enclume est désactivée.");
+            UHC.playNegativeSound(ev.getPlayer());
         }
     }
 
@@ -60,8 +60,8 @@ public class NoAnvil extends Scenario implements Listener {
         if (!(e.getWhoClicked() instanceof Player)) return;
         Player p = (Player) e.getWhoClicked();
         if (e.getClickedInventory() instanceof AnvilInventory) {
-            p.sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cL'utilisation de l'enclume est désactivée.");
-            Index.playNegativeSound(p);
+            p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cL'utilisation de l'enclume est désactivée.");
+            UHC.playNegativeSound(p);
             e.setCancelled(true);
             p.closeInventory();
         }

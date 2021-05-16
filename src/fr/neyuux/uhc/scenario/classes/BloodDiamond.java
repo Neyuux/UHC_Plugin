@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.listeners.FightListener;
@@ -27,7 +27,7 @@ public class BloodDiamond extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
     }
 
@@ -38,12 +38,12 @@ public class BloodDiamond extends Scenario implements Listener {
 
     @EventHandler
     public void onMineDiamond(BlockBreakEvent ev) {
-        PlayerUHC pu = Index.getInstance().getPlayerUHC(ev.getPlayer());
+        PlayerUHC pu = UHC.getInstance().getPlayerUHC(ev.getPlayer());
         if (ev.getBlock().getType().equals(Material.DIAMOND_ORE) && pu.isAlive()) {
             ev.getPlayer().damage(0);
             if (ev.getPlayer().getHealth() > damage * 2.0) ev.getPlayer().setHealth(ev.getPlayer().getHealth() - damage * 2.0);
-            else new FightListener(Index.getInstance()).eliminate(ev.getPlayer(), true, null, ev.getPlayer().getDisplayName() + " §da miné trop de diamants.");
-            Index.sendActionBar(ev.getPlayer(), Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§4Vous perdez " + damage + " coeurs en minant du diamant.");
+            else new FightListener(UHC.getInstance()).eliminate(ev.getPlayer(), true, null, ev.getPlayer().getDisplayName() + " §da miné trop de diamants.");
+            UHC.sendActionBar(ev.getPlayer(), UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§4Vous perdez " + damage + " coeurs en minant du diamant.");
         }
     }
 }

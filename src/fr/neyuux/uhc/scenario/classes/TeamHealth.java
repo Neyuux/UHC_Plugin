@@ -1,8 +1,8 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.events.TeamChangeEvent;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -33,7 +33,7 @@ public class TeamHealth extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
     }
 
@@ -52,7 +52,7 @@ public class TeamHealth extends Scenario implements Listener {
     public void onHealth(EntityRegainHealthEvent ev) {
         if (ev.getEntityType().equals(EntityType.PLAYER)) {
             Player player = (Player)ev.getEntity();
-            PlayerUHC playerUHC = Index.getInstance().getPlayerUHC(player);
+            PlayerUHC playerUHC = UHC.getInstance().getPlayerUHC(player);
             if (playerUHC.isAlive() && playerUHC.getTeam() != null)
                 updateHealth(playerUHC.getTeam(), ev.getAmount());
         }
@@ -62,7 +62,7 @@ public class TeamHealth extends Scenario implements Listener {
     public void onDamage(EntityDamageEvent ev) {
         if (ev.getEntityType().equals(EntityType.PLAYER)) {
             Player player = (Player)ev.getEntity();
-            PlayerUHC playerUHC = Index.getInstance().getPlayerUHC(player);
+            PlayerUHC playerUHC = UHC.getInstance().getPlayerUHC(player);
             if (playerUHC.isAlive() && playerUHC.getTeam() != null)
                 updateHealth(playerUHC.getTeam(), -ev.getFinalDamage());
         }

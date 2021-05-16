@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -25,7 +25,7 @@ public class NoEnchant extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
     }
 
@@ -39,8 +39,8 @@ public class NoEnchant extends Scenario implements Listener {
     public void onCraft(CraftItemEvent ev) {
         if (ev.getInventory().getResult().getType().equals(Material.ENCHANTMENT_TABLE)) {
             ev.setCancelled(true);
-            ev.getWhoClicked().sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de la table d'enchantement est désactivé.");
-            Index.playNegativeSound((Player)ev.getWhoClicked());
+            ev.getWhoClicked().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de la table d'enchantement est désactivé.");
+            UHC.playNegativeSound((Player)ev.getWhoClicked());
         }
     }
 
@@ -49,7 +49,7 @@ public class NoEnchant extends Scenario implements Listener {
     public void onEnchant(PrepareItemEnchantEvent ev) {
         ev.setCancelled(true);
         ev.getEnchanter().closeInventory();
-        ev.getEnchanter().sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLa table d'enchantement est désactivée.");
-        Index.playNegativeSound(ev.getEnchanter());
+        ev.getEnchanter().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLa table d'enchantement est désactivée.");
+        UHC.playNegativeSound(ev.getEnchanter());
     }
 }

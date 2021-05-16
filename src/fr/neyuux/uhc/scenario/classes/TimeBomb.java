@@ -1,9 +1,9 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.InventoryManager;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.events.PlayerEliminationEvent;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -30,12 +30,12 @@ public class TimeBomb extends Scenario implements Listener {
 
     @Override
     public void activate() {
-        if ((boolean) GameConfig.ConfigurableParams.BARRIER_HEAD.getValue()) Bukkit.broadcastMessage(Index.getStaticPrefix() + "§cVeuillez désactiver l'apparition d'un poteau au kill pour que " + scenario.getDisplayName() + " §cpuisse fonctionner.");
+        if ((boolean) GameConfig.ConfigurableParams.BARRIER_HEAD.getValue()) Bukkit.broadcastMessage(UHC.getPrefix() + "§cVeuillez désactiver l'apparition d'un poteau au kill pour que " + scenario.getDisplayName() + " §cpuisse fonctionner.");
     }
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
     }
 
@@ -75,7 +75,7 @@ public class TimeBomb extends Scenario implements Listener {
         b1.setType(Material.CHEST);
 
         Chest chest = (Chest) loc.getBlock().getState();
-        chest.setMetadata("spawned", new FixedMetadataValue(Index.getInstance(), "true"));
+        chest.setMetadata("spawned", new FixedMetadataValue(UHC.getInstance(), "true"));
         InventoryManager.createChestInventory(p, chest, true, timer);
         chest.update(true);
     }

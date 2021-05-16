@@ -1,15 +1,10 @@
 package fr.neyuux.uhc;
 
 import fr.neyuux.uhc.commands.*;
-import fr.neyuux.uhc.config.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.PluginReloadEvent;
-import fr.neyuux.uhc.listeners.ArmorListener;
-import fr.neyuux.uhc.listeners.FightListener;
-import fr.neyuux.uhc.listeners.PlayerListener;
-import fr.neyuux.uhc.listeners.PreGameListener;
-import fr.neyuux.uhc.listeners.WorldListener;
+import fr.neyuux.uhc.listeners.*;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.tasks.UHCStart;
@@ -21,7 +16,6 @@ import fr.neyuux.uhc.util.ScoreboardSign;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
-import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -47,7 +41,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class Index extends JavaPlugin {
+public class UHC extends JavaPlugin {
 
 	public final List<PlayerUHC> players = new ArrayList<>();
 	public final List<Player> spectators = new ArrayList<>();
@@ -59,37 +53,33 @@ public class Index extends JavaPlugin {
 	public UHCStart uhcStart;
 	public UHCWorld world = new UHCWorld(this);
 	private GameConfig config;
-	private static String prefix = ChatColor.translateAlternateColorCodes('&', Modes.UHC.getPrefix());
+	private static String prefix = Modes.UHC.getPrefix();
 	public final HashMap<String, PermissionAttachment> permissions = new HashMap<>();
 	private final List<OfflinePlayer> whitelist = new ArrayList<>();
 	public boolean hasWhitelist;
-	private static Index instance;
+	private static UHC instance;
 	private static final HashMap<PlayerUHC, BukkitTask> infiniteActionBars = new HashMap<>();
 
-	public final String getPrefix() {
-		return ChatColor.translateAlternateColorCodes('&', prefix) + ChatColor.translateAlternateColorCodes('&', "&8&l"+Symbols.DOUBLE_ARROW+" &r");
-	}
-
-	public final String getPrefixWithoutArrow() {
+	public static String getPrefixWithoutArrow() {
 		return getPrefix().substring(0, getPrefix().length() - 8);
 	}
 
-	public static String getStaticPrefix() {
-		return ChatColor.translateAlternateColorCodes('&', prefix) + ChatColor.translateAlternateColorCodes('&', "&8&l"+ Symbols.DOUBLE_ARROW+" &r");
+	public static String getPrefix() {
+		return prefix + "§8§l"+ Symbols.DOUBLE_ARROW+" §r";
 	}
 
 	public List<OfflinePlayer> getWhitelist() {
-		return whitelist;
+		return this.whitelist;
 	}
 
-	public static Index getInstance() {
+	public static UHC getInstance() {
 		return instance;
 	}
 
 	public void changeMode(Modes mode) {
 		this.mode = mode;
 		prefix = mode.getPrefix();
-		world.delete();
+		this.world.delete();
 		rel();
 	}
 
@@ -116,7 +106,7 @@ public class Index extends JavaPlugin {
 				return;
 
 		instance = this;
-		config = new GameConfig(this, Modes.UHC);
+		this.config = new GameConfig(this, Modes.UHC);
 		System.out.println("UHC enabling");
 
 		File file = new File(getDataFolder(), "config.yml");
@@ -142,7 +132,7 @@ public class Index extends JavaPlugin {
 		pm.registerEvents(new PlayerListener(this), this);
 		pm.registerEvents(new FightListener(this), this);
 		pm.registerEvents(new ArmorListener(Collections.emptyList()), this);
-		pm.registerEvents(config, this);
+		pm.registerEvents(this.config, this);
 
 		reloadScoreboard();
 		rel();
@@ -154,14 +144,14 @@ public class Index extends JavaPlugin {
 	public void onDisable() {
 		System.out.println("UHC disabling");
 
-		world.delete();
+		this.world.delete();
 
 		super.onDisable();
 	}
 
 
 	public PlayerUHC getPlayerUHC(OfflinePlayer player) {
-		for (PlayerUHC pu : players)
+		for (PlayerUHC pu : this.players)
 			if (pu.getPlayer().getUniqueId().equals(player.getUniqueId()))
 				return pu;
 
@@ -169,39 +159,39 @@ public class Index extends JavaPlugin {
 	}
 
 	public static ItemStack getGoldenHead(int amount) {
-		return new ItemsStack(Material.GOLDEN_APPLE, amount, ChatColor.translateAlternateColorCodes('&', "&6Golden Head"), ChatColor.translateAlternateColorCodes('&', "&7Donne &dRégénération 2 pendant 8 secondes"), ChatColor.translateAlternateColorCodes('&', "&7et &e2 coeurs d'absorption")).toItemStack();
+		return new ItemsStack(Material.GOLDEN_APPLE, amount, "§6Golden Head", "§7Donne §dRégénération 2 pendant 8 secondes", "§7et §e2 coeurs d'absorption").toItemStack();
 	}
 
 	public static ItemStack getSpecTear() {
-		return new ItemsStack(Material.GHAST_TEAR, ChatColor.translateAlternateColorCodes('&', "&7&lDevenir Spectateur"), ChatColor.translateAlternateColorCodes('&', "&7Permet de devenir spectateur"), ChatColor.translateAlternateColorCodes('&', "&b>>Clique droit")).toItemStack();
+		return new ItemsStack(Material.GHAST_TEAR, "§7§lDevenir Spectateur", "§7Permet de devenir spectateur", "§b>>Clique droit").toItemStack();
 	}
 
 	public InventoryManager getInventoryManager() {
-		return InventoryManager;
+		return this.InventoryManager;
 	}
 
 	public UHCTeamManager getUHCTeamManager() {
-		return uhcTeamManager;
+		return this.uhcTeamManager;
 	}
 
 	public GameConfig getGameConfig() {
-		return config;
+		return this.config;
 	}
 
 	public List<PlayerUHC> getAlivePlayers() {
 		List<PlayerUHC> list = new ArrayList<>();
-		for (PlayerUHC pu : players)
+		for (PlayerUHC pu : this.players)
 			if (pu.isAlive() && pu.getPlayer().isOnline())
 				list.add(pu);
 		return list;
 	}
 
 	public void setLobbyScoreboard(Player player) {
-		if (boards.containsKey(getPlayerUHC(player))) boards.get(getPlayerUHC(player)).destroy();
+		if (this.boards.containsKey(getPlayerUHC(player))) this.boards.get(getPlayerUHC(player)).destroy();
 		ScoreboardSign ss = new ScoreboardSign(player, getPrefixWithoutArrow());
 		ss.create();
 		ss.setLine(0, player.getDisplayName());
-		if (mode.equals(Modes.UHC)) {
+		if (this.mode.equals(Modes.UHC)) {
 			ss.setLine(1, "§0");
 			ss.setLine(2, "§e§lÉquipe §e: " +(getPlayerUHC(player).getTeam() != null ? getPlayerUHC(player).getTeam().getTeam().getDisplayName() : "§cAucune"));
 		}
@@ -209,22 +199,22 @@ public class Index extends JavaPlugin {
 		ss.setLine(4, "§6§lSlots §6: §f" + Bukkit.getServer().getOnlinePlayers().size() + "§6/§e" + GameConfig.ConfigurableParams.SLOTS.getValue());
 		ss.setLine(5, "§8------------");
 		ss.setLine(6, "§5§oMap by §c§l§oNeyuux_");
-		boards.put(getPlayerUHC(player), ss);
+		this.boards.put(getPlayerUHC(player), ss);
 	}
 
 	public void setGameScoreboard(Player player) {
-		if (boards.containsKey(getPlayerUHC(player))) boards.get(getPlayerUHC(player)).destroy();
+		if (this.boards.containsKey(getPlayerUHC(player))) this.boards.get(getPlayerUHC(player)).destroy();
 		ScoreboardSign ss = new ScoreboardSign(player, getPrefixWithoutArrow());
 		PlayerUHC playerUHC = getPlayerUHC(player);
 		ss.create();
 		ss.setLine(0, player.getDisplayName());
-		if (mode.equals(Modes.UHC)) {
+		if (this.mode.equals(Modes.UHC)) {
 			ss.setLine(1, "§0");
 			ss.setLine(2, "§e§lÉquipe §e: " +(playerUHC.getTeam() != null ? playerUHC.getTeam().getTeam().getDisplayName() : "§cAucune"));
 			if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA"))
 				ss.setLine(3, "§7§lJoueurs §7: §f" + getAlivePlayers().size());
 			else
-				ss.setLine(3, "§7§lTeams : §f" + uhcTeamManager.getTeams().size() + "§8/§7" + UHCTeamManager.baseteams + " §8(§7" + getAlivePlayers().size() + "§8 joueurs)");
+				ss.setLine(3, "§7§lTeams : §f" + this.uhcTeamManager.getTeams().size() + "§8/§7" + UHCTeamManager.baseteams + " §8(§7" + getAlivePlayers().size() + "§8 joueurs)");
 			ss.setLine(4, "§c§lKills §c: §l" + playerUHC.getKills() +(playerUHC.getTeam() != null ? " §4("+playerUHC.getTeam().getAlivePlayersKills()+")" : ""));
 			ss.setLine(5, "§5");
 			ss.setLine(6, "§6§lTimer §6: §e§l" + getTimer(0));
@@ -235,7 +225,7 @@ public class Index extends JavaPlugin {
 			ss.setLine(11, "§9§lCentre : §6" + "centerdist" + " blocks " + "Arrowto00");
 			ss.setLine(12, "§8------------");
 			ss.setLine(13, "§5§oMap by §c§l§oNeyuux_");
-		} else if (mode.equals(Modes.LG)) {
+		} else if (this.mode.equals(Modes.LG)) {
 			ss.setLine(1, "§0");
 			ss.setLine(2, "§9§lRôle §9: " + "roledisplayname");
 			ss.setLine(3, "§7§lJoueurs §7: §f" + getAlivePlayers().size());
@@ -251,10 +241,10 @@ public class Index extends JavaPlugin {
 			ss.setLine(13, "§8------------");
 			ss.setLine(14, "§5§oMap by §c§l§oNeyuux_");
 		}
-		boards.put(playerUHC, ss);
+		this.boards.put(playerUHC, ss);
 	}
 	public void setKillsScoreboard(Player player) {
-		if (boards.containsKey(getPlayerUHC(player))) boards.get(getPlayerUHC(player)).destroy();
+		if (this.boards.containsKey(getPlayerUHC(player))) this.boards.get(getPlayerUHC(player)).destroy();
 		ScoreboardSign scoreboard = new ScoreboardSign(player, "§4§lKills");
 		scoreboard.create();
 		int limit = 0;
@@ -279,7 +269,7 @@ public class Index extends JavaPlugin {
 			}
 			limit++;
 		}
-		boards.put(getPlayerUHC(player), scoreboard);
+		this.boards.put(getPlayerUHC(player), scoreboard);
 	}
 
 	public static int adaptInvSizeForInt(int toAdapt, int marge) {
@@ -410,7 +400,7 @@ public class Index extends JavaPlugin {
 		if(!(boolean)GameConfig.ConfigurableParams.SCOREBOARD_LIFE.getValue()) return;
 
 		if(Scenarios.TEAM_HEALTH.isActivated() && getPlayerUHC(player).getTeam() != null) {
-			UHCTeam team = getPlayerUHC(player).getTeam();;
+			UHCTeam team = getPlayerUHC(player).getTeam();
 
 			for(PlayerUHC pu : team.getAlivePlayers()) {
 				Bukkit.getScoreboardManager().getMainScoreboard().getObjective("health").getScore(pu.getPlayer().getName()).setScore((int)team.getHealth());
@@ -422,17 +412,17 @@ public class Index extends JavaPlugin {
 	public void setPlayerHost(Player player, boolean isHost) {
 		Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 		if (isHost) {
-			if (!whitelist.contains(player)) whitelist.add(player);
-			if (!config.hosts.contains(player.getUniqueId())) config.hosts.add(player.getUniqueId());
+			if (!this.whitelist.contains(player)) this.whitelist.add(player);
+			if (!this.config.hosts.contains(player.getUniqueId())) this.config.hosts.add(player.getUniqueId());
 			if (!getPlayerUHC(player).isSpec()) {
 				if (scoreboard.getTeam("Joueur").hasEntry(player.getName()))
 					scoreboard.getTeam("Host").addEntry(player.getName());
 				player.setDisplayName(scoreboard.getEntryTeam(player.getName()).getPrefix() + player.getName());
 				player.setPlayerListName(player.getDisplayName());
 			}
-			if (isState(Gstate.WAITING) || isState(Gstate.STARTING))fr.neyuux.uhc.InventoryManager.giveWaitInventory(getPlayerUHC(player));
+			if (isState(Gstate.WAITING) || isState(Gstate.STARTING))fr.neyuux.uhc.InventoryManager.giveWaitInventory(player);
 		} else {
-			config.hosts.remove(player.getUniqueId());
+			this.config.hosts.remove(player.getUniqueId());
 			if (!getPlayerUHC(player).isSpec()) {
 				if (scoreboard.getTeam("Host").hasEntry(player.getName()))
 					scoreboard.getTeam("Joueur").addEntry(player.getName());
@@ -457,7 +447,7 @@ public class Index extends JavaPlugin {
 			if (p.getUniqueId().toString().equals("9a4d5447-13e0-43a3-87af-977ba87e77a7") || p.getUniqueId().toString().equals("cb067197-d121-4bfc-ac47-d6b4e40841b2"))
 				hosts.add(p.getUniqueId());
 
-			if (p.isOp() && !hosts.contains(p))
+			if (p.isOp() && !hosts.contains(p.getUniqueId()))
 				hosts.add(p.getUniqueId());
 		}
 
@@ -477,26 +467,27 @@ public class Index extends JavaPlugin {
 		Bukkit.getScheduler().cancelTasks(this);
 
 		setState(Gstate.WAITING);
-		players.clear();
-		spectators.clear();
+		this.players.clear();
+		this.spectators.clear();
 		GameConfig.ConfigurableParams.TEAMTYPE.setValue(GameConfig.getTeamTypeString(1, false));
-		uhcTeamManager.clearTeams();
-		boards.forEach((id, ss) -> ss.destroy());
-		boards.clear();
-		InventoryManager = new InventoryManager();
-		uhcTeamManager = new UHCTeamManager(this);
+		this.uhcTeamManager.clearTeams();
+		this.boards.forEach((id, ss) -> ss.destroy());
+		this.boards.clear();
+		this.InventoryManager = new InventoryManager();
+		this.uhcTeamManager = new UHCTeamManager(this);
 		Scenario.removeEvents();
-		HandlerList.unregisterAll(config);
-		config = new GameConfig(this, mode);
-		world.changePVP(false);
-		getServer().getPluginManager().registerEvents(config, this);
+		HandlerList.unregisterAll(this.config);
+		getServer().resetRecipes();
+		this.config = new GameConfig(this, this.mode);
+		this.world.changePVP(false);
+		getServer().getPluginManager().registerEvents(this.config, this);
 		UHCWorld.setAchievements(false);
 		for (Player p : Bukkit.getOnlinePlayers())
 			if (p.hasPermission("uhc.*"))
-				config.hosts.add(p.getUniqueId());
+				this.config.hosts.add(p.getUniqueId());
 
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			players.add(new PlayerUHC(p, this));
+			this.players.add(new PlayerUHC(p, this));
 
 			for (Player p2 : Bukkit.getOnlinePlayers())
 				p.showPlayer(p2);
@@ -518,10 +509,10 @@ public class Index extends JavaPlugin {
 			p.setPlayerListName(p.getName());
 			p.setGameMode(GameMode.ADVENTURE);
 
-			fr.neyuux.uhc.InventoryManager.giveWaitInventory(getPlayerUHC(p));
+			fr.neyuux.uhc.InventoryManager.giveWaitInventory(p);
 			p.updateInventory();
 			setLobbyScoreboard(p);
-			Index.setPlayerTabList(p, getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
+			UHC.setPlayerTabList(p, getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
 
 			try {
 				Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Joueur").addEntry(p.getName());
@@ -558,24 +549,23 @@ public class Index extends JavaPlugin {
 
 
 	public static void setPlayerTabList(Player player,String header, String footer) {
-		PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
 		IChatBaseComponent tabTitle = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + header + "\"}");
 		IChatBaseComponent tabFoot = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + footer + "\"}");
-		PacketPlayOutPlayerListHeaderFooter headerPacket = new PacketPlayOutPlayerListHeaderFooter(tabTitle);
+		PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter(tabTitle);
 		try {
-			Field field = headerPacket.getClass().getDeclaredField("b");
+			Field field = packet.getClass().getDeclaredField("b");
 			field.setAccessible(true);
-			field.set(headerPacket, tabFoot);
+			field.set(packet, tabFoot);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			connection.sendPacket(headerPacket);
+			sendPacket(player, packet);
 		}
 	}
 
 
 
-	private void sendPacket(Player player, Object packet) {
+	private static void sendPacket(Player player, Object packet) {
 		try {
 			Object handle = player.getClass().getMethod("getHandle").invoke(player);
 			Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
@@ -595,7 +585,7 @@ public class Index extends JavaPlugin {
 		return null;
 	}
 
-	public void sendTitle(Player player, String title, String subtitle, int fadeInTime, int showTime, int fadeOutTime) {
+	public static void sendTitle(Player player, String title, String subtitle, int fadeInTime, int showTime, int fadeOutTime) {
 		try {
 			Object chatTitle = Objects.requireNonNull(getNMSClass("IChatBaseComponent")).getDeclaredClasses()[0].getMethod("a", String.class)
 					.invoke(null, "{\"text\": \"" + title + "\"}");
@@ -638,7 +628,7 @@ public class Index extends JavaPlugin {
 			}
 		};
 		if (infiniteActionBars.containsKey(pu)) stopInfiniteActionBar(pu);
-		infiniteActionBars.put(pu, br.runTaskTimer(Index.getInstance(), 0, 5));
+		infiniteActionBars.put(pu, br.runTaskTimer(UHC.getInstance(), 0, 5));
 	}
 
 	public static void sendInfiniteActionBarForAllPlayers(String message) {
@@ -668,37 +658,20 @@ public class Index extends JavaPlugin {
 
 
 	public static void setF3(Player p, boolean isReducted) {
-		if (isReducted) {
-			try {
-				Class<?> packetClass = getNMSClass("PacketPlayOutEntityStatus");
-				Constructor<?> packetConstructor = packetClass.getConstructor(getNMSClass("Entity"), Byte.TYPE);
-				Object packet = packetConstructor.newInstance(getHandle(p), (byte) 22);
-				Method sendPacket = getNMSClass("PlayerConnection").getMethod("sendPacket", getNMSClass("Packet"));
-				sendPacket.invoke(getConnection(p), packet);
-			} catch (Exception e) {
-				Bukkit.broadcastMessage(getStaticPrefix() + "§4[§cErreur§4]§c Une erreur s'est produite lors de la modification du F3 pour" + p.getName());
-				e.printStackTrace();
-			}
-		} else {
-			try {
-				Class<?> packetClass = getNMSClass("PacketPlayOutEntityStatus");
-				Constructor<?> packetConstructor = packetClass.getConstructor(getNMSClass("Entity"), Byte.TYPE);
-				Object packet = packetConstructor.newInstance(getHandle(p), (byte) 23);
-				Method sendPacket = getNMSClass("PlayerConnection").getMethod("sendPacket", getNMSClass("Packet"));
-				sendPacket.invoke(getConnection(p), packet);
-			} catch (Exception e) {
-				Bukkit.broadcastMessage(getStaticPrefix() + "§4[§cErreur§4]§c Une erreur s'est produite lors de la modification du F3 pour" + p.getName());
-				e.printStackTrace();
-			}
+		try {
+			Class<?> packetClass = getNMSClass("PacketPlayOutEntityStatus");
+			Constructor<?> packetConstructor = packetClass.getConstructor(getNMSClass("Entity"), Byte.TYPE);
+			Object packet;
+			if (isReducted) packet = packetConstructor.newInstance(getHandle(p), (byte) 22);
+			else packet = packetConstructor.newInstance(getHandle(p), (byte) 23);
+			sendPacket(p, packet);
+		} catch(Exception e) {
+			Bukkit.broadcastMessage(getPrefix() + "§4[§cErreur§4]§c Une erreur s'est produite lors de la modification du F3 pour" + p.getName());
+			e.printStackTrace();
 		}
 	}
 
-	private static Object getConnection(Player player) throws SecurityException, NoSuchMethodException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		Field conField = getHandle(player).getClass().getField("playerConnection");
-		return conField.get(getHandle(player));
-	}
-
-	private static Object getHandle(Player player) throws SecurityException, NoSuchMethodException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	private static Object getHandle(Player player) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		Method getHandle = player.getClass().getMethod("getHandle");
 		return getHandle.invoke(player);
 	}
@@ -707,8 +680,8 @@ public class Index extends JavaPlugin {
 
 	public enum Modes {
 
-		LG("&4&lL&8&lG &9&lUHC"),
-		UHC("&e&lUHC");
+		LG("§4§lL§8§lG §9§lUHC"),
+		UHC("§e§lUHC");
 
 		Modes(String prefix) {
 			this.prefix = prefix;

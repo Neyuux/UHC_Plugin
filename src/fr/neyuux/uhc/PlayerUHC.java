@@ -23,7 +23,7 @@ import java.util.Map;
 public class PlayerUHC {
 
     private OfflinePlayer player;
-    private final Index main;
+    private final UHC main;
     private int kills;
     private int diamonds;
     private int golds;
@@ -40,7 +40,7 @@ public class PlayerUHC {
     private ItemStack[] lastInv = new ItemStack[]{};
     private Location lastLocation;
 
-    public PlayerUHC(Player player, Index main) {
+    public PlayerUHC(Player player, UHC main) {
         this.player = player;
         this.main = main;
         this.kills = 0; this.diamonds = 0; this.golds = 0;
@@ -91,7 +91,8 @@ public class PlayerUHC {
     }
 
     public boolean isSpec() {
-        return main.spectators.contains(player);
+        if (!player.isOnline()) return false;
+        return main.spectators.contains(player.getPlayer());
     }
 
     public UHCTeam getTeam() {
@@ -228,7 +229,7 @@ public class PlayerUHC {
         inv.setItem(7, new ItemsStack(Material.INK_SACK, (short)1, "§cVie du joueur", "§c§lVie : §4" + df.format(player.getPlayer().getHealth()) + Symbols.HEARTH, "§e§lAbso : §6" + df.format(((CraftPlayer)player.getPlayer().getPlayer()).getHandle().getAbsorptionHearts()), "§d§lSaturation : §5" + foodLevel).toItemStack());
         ItemsStack food = new ItemsStack(Material.BREWING_STAND_ITEM, "§5Effets de potion du joueur");
         for (PotionEffect pe : player.getPlayer().getActivePotionEffects())
-            food.addLore("§e" + Index.translatePotionEffect(pe.getType()) + "§l" + (pe.getAmplifier() - 1) + "§7: §6" + Index.getTimer(pe.getDuration() / 20));
+            food.addLore("§e" + UHC.translatePotionEffect(pe.getType()) + "§l" + (pe.getAmplifier() - 1) + "§7: §6" + UHC.getTimer(pe.getDuration() / 20));
         inv.setItem(6, food.toItemStack());
         inv.setItem(5, new ItemsStack(Material.EXP_BOTTLE, "§aNiveau du joueur", "§aNiveau : §l" + player.getPlayer().getLevel(), "§2Expérience : §l" + player.getPlayer().getExp()).toItemStack());
 

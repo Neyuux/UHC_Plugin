@@ -1,8 +1,8 @@
 package fr.neyuux.uhc.tasks;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -19,8 +19,8 @@ import java.util.Map;
 
 public class UHCRunnable extends BukkitRunnable {
 
-    private final Index main;
-    public UHCRunnable(Index main) {
+    private final UHC main;
+    public UHCRunnable(UHC main) {
         this.main = main;
         timer = 0;
         pvpTimer = (int)GameConfig.ConfigurableParams.PVP.getValue();
@@ -52,7 +52,7 @@ public class UHCRunnable extends BukkitRunnable {
                         cancel();
                         return;
                     }
-                    if (main.mode.equals(Index.Modes.UHC)) {
+                    if (main.mode.equals(UHC.Modes.UHC)) {
                         for (Map.Entry<PlayerUHC, ScoreboardSign> en : main.boards.entrySet()) {
                             Location l = en.getKey().getPlayer().getPlayer().getLocation();
                             DecimalFormat df = new DecimalFormat();
@@ -93,7 +93,7 @@ public class UHCRunnable extends BukkitRunnable {
                                         if (d <= 30) sdist = "§a";
                                         tm.append(shealth).append(tu.getPlayer().getName()).append(" ").append(sdist).append(pu.getDirectionArrow(new Location(tu.getPlayer().getPlayer().getWorld(), tu.getPlayer().getPlayer().getLocation().getX(), pu.getPlayer().getPlayer().getLocation().getY(), tu.getPlayer().getPlayer().getLocation().getZ()))).append("§7(").append(df.format(d)).append(" b) | ");
                                     }
-                                Index.sendActionBar(pu.getPlayer().getPlayer(), tm.substring(0, tm.length() - 3));
+                                UHC.sendActionBar(pu.getPlayer().getPlayer(), tm.substring(0, tm.length() - 3));
                             }
                     }
                 }
@@ -188,31 +188,31 @@ public class UHCRunnable extends BukkitRunnable {
         for (Map.Entry<PlayerUHC, ScoreboardSign> en : main.boards.entrySet()) {
             DecimalFormat df = new DecimalFormat();
             df.setMaximumFractionDigits(1);
-            if (main.mode.equals(Index.Modes.UHC)) {
-                en.getValue().setLine(6, "§6§lTimer §6: §e§l" + Index.getTimer(timer));
+            if (main.mode.equals(UHC.Modes.UHC)) {
+                en.getValue().setLine(6, "§6§lTimer §6: §e§l" + UHC.getTimer(timer));
 
                 if (pvpTimer > 0)
-                    en.getValue().setLine(7, "§6§lPvP §6: §c§l" + Index.getTimer(pvpTimer));
+                    en.getValue().setLine(7, "§6§lPvP §6: §c§l" + UHC.getTimer(pvpTimer));
                 else
                     en.getValue().removeLine(7);
 
                 if (borderTimer > 0)
-                    en.getValue().setLine(8, "§6§lBordure §6: §3§l" + Index.getTimer(borderTimer));
+                    en.getValue().setLine(8, "§6§lBordure §6: §3§l" + UHC.getTimer(borderTimer));
                 else
                     en.getValue().removeLine(8);
 
                 en.getValue().setLine(10, "§b§lTaille de la bordure §b: " + Symbols.PLUS_MINUS + "§3" +  df.format(Bukkit.getWorld(main.world.getSeed() + "").getWorldBorder().getSize() / 2.0));
 
-            } else if (main.mode.equals(Index.Modes.LG)) {
-                en.getValue().setLine(8, "§6§lTimer §6: §e§l" + Index.getTimer(timer));
+            } else if (main.mode.equals(UHC.Modes.LG)) {
+                en.getValue().setLine(8, "§6§lTimer §6: §e§l" + UHC.getTimer(timer));
 
                 if (pvpTimer > 0)
-                    en.getValue().setLine(9, "§6§lPvP §6: §c§l" + Index.getTimer(pvpTimer));
+                    en.getValue().setLine(9, "§6§lPvP §6: §c§l" + UHC.getTimer(pvpTimer));
                 else
                     en.getValue().removeLine(9);
 
                 if (borderTimer > 0)
-                    en.getValue().setLine(10, "§6§lBordure §6: §3§l" + Index.getTimer(borderTimer));
+                    en.getValue().setLine(10, "§6§lBordure §6: §3§l" + UHC.getTimer(borderTimer));
                 else
                     en.getValue().removeLine(10);
                 en.getValue().setLine(12, "§b§lTaille de la bordure §b: " + Symbols.PLUS_MINUS + "§3" + df.format(Bukkit.getWorld(main.world.getSeed() + "").getWorldBorder().getSize() / 2.0));

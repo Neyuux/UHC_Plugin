@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -39,7 +39,7 @@ public class VeinMiner extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
     }
 
@@ -85,7 +85,7 @@ public class VeinMiner extends Scenario implements Listener {
         for(Block b : filon)
             if (b.getType() != Material.AIR) if (checkBlock(b, e, filon.size())) {
                 e.setCancelled(true);
-                PlayerUHC up = Index.getInstance().getPlayerUHC(p);
+                PlayerUHC up = UHC.getInstance().getPlayerUHC(p);
                 if(b.getType() == Material.DIAMOND_ORE) up.addDiamonds(1);
                 else if(b.getType() == Material.GOLD_ORE) up.addGolds(1);
                 else if(b.getType() == Material.IRON_ORE) up.addIrons(1);
@@ -109,7 +109,7 @@ public class VeinMiner extends Scenario implements Listener {
         HashMap<Material, Loot> loots = VarsLoot.getBlocksLoots();
         boolean ol = true;
         if (Scenarios.ORE_LIMITER.isActivated()) {
-            PlayerUHC pu = Index.getInstance().getPlayerUHC(event.getPlayer());
+            PlayerUHC pu = UHC.getInstance().getPlayerUHC(event.getPlayer());
             if (mat.equals(Material.GOLD_ORE) && pu.getGolds() >= OreLimiter.golds) ol = false;
             if (mat.equals(Material.DIAMOND_ORE) && pu.getDiamonds() >= OreLimiter.diamonds) ol = false;
             if (mat.equals(Material.IRON_ORE) && pu.getIrons() >= OreLimiter.irons) ol = false;

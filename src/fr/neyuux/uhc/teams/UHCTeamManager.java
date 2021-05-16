@@ -1,9 +1,9 @@
 package fr.neyuux.uhc.teams;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.util.ItemsStack;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -13,12 +13,12 @@ import java.util.*;
 
 public class UHCTeamManager {
 
-    private final Index main;
+    private final UHC main;
     private List<UHCTeam> teams;
     public static int baseteams;
     public static List<PlayerUHC> baseplayers;
 
-    public UHCTeamManager(Index main) {
+    public UHCTeamManager(UHC main) {
         this.main = main;
         teams = new ArrayList<>();
         UHCTeamColors.used = 0;

@@ -1,7 +1,7 @@
 package fr.neyuux.uhc.scenario.classes;
 
 import com.google.common.collect.Lists;
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.util.Interval;
@@ -32,7 +32,7 @@ public class DiamondLess extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
 
         VarsLoot.getBlocksLoots().put(Material.DIAMOND_ORE, new Loot(0, Lists.newArrayList(
@@ -48,7 +48,7 @@ public class DiamondLess extends Scenario implements Listener {
     @EventHandler(priority= EventPriority.LOWEST)
     public void onBlockBreak(BlockBreakEvent e) {
         if(e.getBlock().getType() == Material.DIAMOND_ORE)
-            Index.sendActionBar(e.getPlayer(), Index.getStaticPrefix() + scenario.getDisplayName() + " §cDiamants désactivés !");
+            UHC.sendActionBar(e.getPlayer(), UHC.getPrefix() + scenario.getDisplayName() + " §cDiamants désactivés !");
     }
 
     @EventHandler(priority=EventPriority.LOWEST)

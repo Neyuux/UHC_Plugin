@@ -1,8 +1,8 @@
 package fr.neyuux.uhc.scenario;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.util.ItemsStack;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.classes.*;
 import fr.neyuux.uhc.scenario.classes.modes.*;
@@ -20,6 +20,7 @@ import java.util.*;
 public enum Scenarios {
 
     CUT_CLEAN("CutClean", "§7§lCutClean", false, "La nourriture et les minerais sont automatiquement cuits.", CutClean.class),
+    CAT_EYES("Cat Eyes", "§3§lCat Eyes", false, "Tous les joueurs obtiennent un effet de vision nocturne.", CatEyes.class),
     FAST_SMELTING("FastSmelting", "§7§lFastSmelting", false, "Accélère la vitesse de cuisson des fours. ", FastSmelting.class, createConfigInv("§7§lFastSmelting", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.COAL, "§7Rapidité de Cuisson", "§bValeur : §a§lScenarioField./FastSmelting.smeltSpeed fois plus rapide")))), getValue("§7Rapidité de Cuisson", "/FastSmelting.smeltSpeed", " fois plus rapide", "smeltSpeed")),
     HASTEY_BOYS("HasteyBoys", "§e§lHasteyBoys", false, "Tous les outils sont automatiquement enchantés efficacité et durabilité 2.", HasteyBoys.class, createConfigInv("§e§lHasteyBoys", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.BOOK, "§dNiveau de l'Efficacité", "§bValeur : §a§lScenarioField./HasteyBoys.enchantLevel")))), getValue("§dNiveau de l'Efficacité", "/HasteyBoys.enchantLevel", "", "enchantLevel")),
     BLOOD_DIAMOND("BloodDiamond", "§4§lBlood§b§lDiamond", false, "Miner des minerais de diamants inflige des dégâts.", BloodDiamond.class, createConfigInv("§4§lBlood§b§lDiamond", 5, Collections.singletonList(getEntry(0, new ItemsStack(Material.REDSTONE, "§cDégâts reçus", "§bValeur : §4§lScenarioField./BloodDiamond.damage " + Symbols.HEARTH)))), getValue("§cDégâts reçus", "/BloodDiamond.damage", Symbols.HEARTH, "damage")),
@@ -59,6 +60,7 @@ public enum Scenarios {
 
     REWARDING_LONGSHOT("RewardingLongShot", "§e§lRewardingLongShot", false, "Pour chaque enemi touché suite à un tir à longue distance, vous obtiendrez une récompense.", RewardingLongShot.class),
     ENCHANTED_DEATH("EnchantedDeath", "§5§lEnchanted§4§lDeath", false, "La réalisation de table d'enchantement est impossible. Le seul moyen d'en obtenir est de la récupérer sur le corps d'un joueur.", EnchantedDeath.class),
+    TARGET("Target", "§c§lTarget", false, "A un moment dans la partie, un joueur sera désigné comme Target. La Target possède des effets et le but des autres joueurs est de la tuer. Tuer la Target vous fait devenir Target.", Target.class),
 
     TEAM_INVENTORY("TeamInventory", "§e§lTeamInventory", false, "Ajoute une commande §b§l/uhc ti §7qui permet de stocker des objets pour l'équipe.", TeamInventory.class),
     NINE_SLOTS("NineSlots", "§7§lNineSlots", false, "Oblige les joueurs à utiliser uniquement les 9 slots de leurs hotbar.", NineSlots.class),
@@ -110,7 +112,7 @@ public enum Scenarios {
                     classe.getMethod("addCache", String.class, String.class, Class.class).invoke(classe.newInstance(), o.getKey().getValue(), o.getKey().getKey(), classe);
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
                     e.printStackTrace();
-                    Bukkit.broadcastMessage(Index.getStaticPrefix() + "§4[§cErreur§4] §cEchec du chargement des scénarios.");
+                    Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cEchec du chargement des scénarios.");
                 }
             }
     }
@@ -170,7 +172,6 @@ public enum Scenarios {
                 for (String s : itm.getLore())
                     if (s.contains("ScenarioField")) {
                         String ns = s;
-                        ns = s;
                         ns = ns.replace("ScenarioField.", "");
                         Class<? extends Scenario> sc;
                         Object o;
@@ -186,7 +187,7 @@ public enum Scenarios {
                             ns = ns.replace("true", GameConfig.getON());
                         } catch (IllegalAccessException | NoSuchFieldException | InstantiationException | ClassNotFoundException e) {
                             e.printStackTrace();
-                            Bukkit.broadcastMessage(Index.getStaticPrefix() + "§4[§cErreur§4] §cEchec du chargement des valeurs du scénario " + this + " 2");
+                            Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cEchec du chargement des valeurs du scénario " + configInv.getName() + " 2");
                         }
                         lore.add(ns);
                     } else lore.add(s);
@@ -210,12 +211,12 @@ public enum Scenarios {
                 o = sc.getField(en.getValue().getKey().split("\\.")[1]).get(sc.newInstance());
             } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchFieldException e) {
                 e.printStackTrace();
-                Bukkit.broadcastMessage(Index.getStaticPrefix() + "§4[§cErreur§4] §cEchec du chargement des valeurs du scénario " + this);
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cEchec du chargement des valeurs du scénario " + this);
             }
             if (o instanceof Boolean)
                 sb.append(GameConfig.getStringBoolean((boolean)o));
             else if (o instanceof Integer && en.getValue().getValue().equals("timer"))
-                sb.append(Index.getTimer((int)o));
+                sb.append(UHC.getTimer((int)o));
             else if (o instanceof List)
                 sb.append(o.toString().replace("[", "").replace("]", "").replace(",", en.getKey().substring(0, 2) + "§l,")).append(en.getValue().getValue().replace("[", "").replace("]", "").replace(",", en.getKey().substring(0, 2) + "§l,"));
             else

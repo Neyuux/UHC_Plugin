@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -26,7 +26,7 @@ public class NoBookShelves extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
     }
 
@@ -40,8 +40,8 @@ public class NoBookShelves extends Scenario implements Listener {
     public void onCraft(CraftItemEvent ev) {
         if (ev.getInventory().getResult().getType().equals(Material.BOOKSHELF)) {
             ev.setCancelled(true);
-            ev.getWhoClicked().sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de la bibliothèque est désactivé.");
-            Index.playNegativeSound((Player)ev.getWhoClicked());
+            ev.getWhoClicked().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de la bibliothèque est désactivé.");
+            UHC.playNegativeSound((Player)ev.getWhoClicked());
         }
     }
 
@@ -49,8 +49,8 @@ public class NoBookShelves extends Scenario implements Listener {
     public void onPickUp(PlayerPickupItemEvent ev) {
         if(ev.getItem().getItemStack().getType().equals(Material.BOOKSHELF)) {
             ev.setCancelled(true);
-            ev.getPlayer().sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLes bibliothèques est désactivées.");
-            Index.playNegativeSound(ev.getPlayer());
+            ev.getPlayer().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLes bibliothèques est désactivées.");
+            UHC.playNegativeSound(ev.getPlayer());
         }
     }
 
@@ -59,8 +59,8 @@ public class NoBookShelves extends Scenario implements Listener {
         if (ev.getEnchantmentBonus() != 0) {
             ev.setCancelled(true);
             ev.getEnchanter().closeInventory();
-            ev.getEnchanter().sendMessage(Index.getStaticPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLes bibliothèques est désactivées.");
-            Index.playNegativeSound(ev.getEnchanter());
+            ev.getEnchanter().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLes bibliothèques est désactivées.");
+            UHC.playNegativeSound(ev.getEnchanter());
         }
     }
 }

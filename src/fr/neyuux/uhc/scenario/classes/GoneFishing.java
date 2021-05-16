@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -22,7 +22,7 @@ public class GoneFishing extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        for (PlayerUHC pu : Index.getInstance().getAlivePlayers()) {
+        for (PlayerUHC pu : UHC.getInstance().getAlivePlayers()) {
             ItemsStack g = new ItemsStack(Material.FISHING_ROD, scenario.getDisplayName());
             g.addUnSafeEnchantement(Enchantment.LURE, 7);
             g.addUnSafeEnchantement(Enchantment.LUCK, 250);

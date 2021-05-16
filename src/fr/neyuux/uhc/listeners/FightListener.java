@@ -1,9 +1,9 @@
 package fr.neyuux.uhc.listeners;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.InventoryManager;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.GameEndEvent;
@@ -36,8 +36,8 @@ import java.util.Map;
 
 public class FightListener implements Listener {
 
-    private final Index main;
-    public FightListener (Index main) {
+    private final UHC main;
+    public FightListener (UHC main) {
         this.main = main;
     }
 
@@ -386,52 +386,52 @@ public class FightListener implements Listener {
     public static boolean checkWin() {
         boolean win = false;
         if (Scenarios.ANONYMOUS.isActivated()) {
-            System.out.println(Index.getInstance().getAlivePlayers().toString());
-            System.out.println(Index.getInstance().getUHCTeamManager().getAliveTeams().toString());
+            System.out.println(UHC.getInstance().getAlivePlayers().toString());
+            System.out.println(UHC.getInstance().getUHCTeamManager().getAliveTeams().toString());
         }
-        if ((GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && Index.getInstance().getAlivePlayers().size() < 2) || (!GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && Index.getInstance().getUHCTeamManager().getAliveTeams().size() < 2)) {
+        if ((GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && UHC.getInstance().getAlivePlayers().size() < 2) || (!GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && UHC.getInstance().getUHCTeamManager().getAliveTeams().size() < 2)) {
             GameEndEvent gameEndEvent = new GameEndEvent();
             Bukkit.getPluginManager().callEvent(gameEndEvent);
             if (!gameEndEvent.isCancelled()) {
                 win = true;
-                Index.stopInfiniteActionBarForAllPlayers();
-                if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && Index.getInstance().getAlivePlayers().size() < 2) {
-                    Index.getInstance().setState(Gstate.FINISHED);
-                    new UHCStop(Index.getInstance()).runTaskTimer(Index.getInstance(), 0, 20);
-                    if (Index.getInstance().getAlivePlayers().size() == 1) {
-                        PlayerUHC winner = Index.getInstance().getAlivePlayers().get(0);
+                UHC.stopInfiniteActionBarForAllPlayers();
+                if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && UHC.getInstance().getAlivePlayers().size() < 2) {
+                    UHC.getInstance().setState(Gstate.FINISHED);
+                    new UHCStop(UHC.getInstance()).runTaskTimer(UHC.getInstance(), 0, 20);
+                    if (UHC.getInstance().getAlivePlayers().size() == 1) {
+                        PlayerUHC winner = UHC.getInstance().getAlivePlayers().get(0);
                         Bukkit.broadcastMessage("");
-                        Bukkit.broadcastMessage(Index.getInstance().getPrefix() + winner.getPlayer().getPlayer().getDisplayName() + " §6remporte la partie !");
+                        Bukkit.broadcastMessage(UHC.getInstance().getPrefix() + winner.getPlayer().getPlayer().getDisplayName() + " §6remporte la partie !");
                         for (Player p : Bukkit.getOnlinePlayers()) {
                             p.playSound(p.getLocation(), Sound.ZOMBIE_REMEDY, 9, 1);
-                            Index.getInstance().sendTitle(p, "§c§l§n§kaa§r §e§l§nVictoire§e§l §nde§e§l " + winner.getPlayer().getPlayer().getDisplayName() + " §c§l§n§kaa", "§6§l§nNombre de Kills §7§l: §f" + winner.getKills(), 20, 180, 20);
+                            UHC.getInstance().sendTitle(p, "§c§l§n§kaa§r §e§l§nVictoire§e§l §nde§e§l " + winner.getPlayer().getPlayer().getDisplayName() + " §c§l§n§kaa", "§6§l§nNombre de Kills §7§l: §f" + winner.getKills(), 20, 180, 20);
                         }
                     } else {
                         Bukkit.broadcastMessage("");
-                        Bukkit.broadcastMessage(Index.getInstance().getPrefix() + "§6Aucun joueur ne s'en est sorti vivant. §cÉGALITÉE PARFAITE.");
+                        Bukkit.broadcastMessage(UHC.getInstance().getPrefix() + "§6Aucun joueur ne s'en est sorti vivant. §cÉGALITÉE PARFAITE.");
                         for (Player p : Bukkit.getOnlinePlayers()) {
                             p.playSound(p.getLocation(), Sound.ZOMBIE_REMEDY, 8, 1);
-                            Index.getInstance().sendTitle(p, "§5§kaa§r §c§l§nÉgalité§r §5§kaa", "§cAucun survivant.", 20, 120, 20);
+                            UHC.getInstance().sendTitle(p, "§5§kaa§r §c§l§nÉgalité§r §5§kaa", "§cAucun survivant.", 20, 120, 20);
                         }
                     }
-                } else if (!GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && Index.getInstance().getUHCTeamManager().getAliveTeams().size() < 2) {
-                    Index.getInstance().setState(Gstate.FINISHED);
-                    new UHCStop(Index.getInstance()).runTaskTimer(Index.getInstance(), 0, 20);
-                    if (Index.getInstance().getUHCTeamManager().getAliveTeams().size() == 1) {
-                        UHCTeam team = Index.getInstance().getUHCTeamManager().getAliveTeams().get(0);
-                        Bukkit.broadcastMessage(Index.getInstance().getPrefix() + "§6La Team " + team.getTeam().getDisplayName() + " §6a gagné !");
-                        Bukkit.broadcastMessage(Index.getInstance().getPrefix() + "§eNombre de gagnants : " + team.getAlivePlayers().size() + " §7:");
+                } else if (!GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") && UHC.getInstance().getUHCTeamManager().getAliveTeams().size() < 2) {
+                    UHC.getInstance().setState(Gstate.FINISHED);
+                    new UHCStop(UHC.getInstance()).runTaskTimer(UHC.getInstance(), 0, 20);
+                    if (UHC.getInstance().getUHCTeamManager().getAliveTeams().size() == 1) {
+                        UHCTeam team = UHC.getInstance().getUHCTeamManager().getAliveTeams().get(0);
+                        Bukkit.broadcastMessage(UHC.getInstance().getPrefix() + "§6La Team " + team.getTeam().getDisplayName() + " §6a gagné !");
+                        Bukkit.broadcastMessage(UHC.getInstance().getPrefix() + "§eNombre de gagnants : " + team.getAlivePlayers().size() + " §7:");
                         for (PlayerUHC pu : team.getAlivePlayers())
-                            Bukkit.broadcastMessage(Index.getInstance().getPrefix() + pu.getPlayer().getPlayer().getDisplayName() + " §8(§c" + pu.getKills() + " kills§8)");
+                            Bukkit.broadcastMessage(UHC.getInstance().getPrefix() + pu.getPlayer().getPlayer().getDisplayName() + " §8(§c" + pu.getKills() + " kills§8)");
                         for (Player p : Bukkit.getOnlinePlayers()) {
                             p.playSound(p.getLocation(), Sound.ZOMBIE_REMEDY, 9, 1);
-                            Index.getInstance().sendTitle(p, "§c§l§n§kaa§r §e§l§nVictoire de la team§r " + team.getTeam().getDisplayName() + " §c§l§n§kaa", "§6§l§nNombre de Survivants§r §7§l: §f" + team.getAlivePlayers().size(), 20, 180, 20);
+                            UHC.getInstance().sendTitle(p, "§c§l§n§kaa§r §e§l§nVictoire de la team§r " + team.getTeam().getDisplayName() + " §c§l§n§kaa", "§6§l§nNombre de Survivants§r §7§l: §f" + team.getAlivePlayers().size(), 20, 180, 20);
                         }
-                    } else if (Index.getInstance().getUHCTeamManager().getAliveTeams().size() == 0) {
-                        Bukkit.broadcastMessage(Index.getInstance().getPrefix() + "§6Aucune Team ne s'en est sortie vivante. §cÉGALITÉE PARFAITE.");
+                    } else if (UHC.getInstance().getUHCTeamManager().getAliveTeams().size() == 0) {
+                        Bukkit.broadcastMessage(UHC.getInstance().getPrefix() + "§6Aucune Team ne s'en est sortie vivante. §cÉGALITÉE PARFAITE.");
                         for (Player p : Bukkit.getOnlinePlayers()) {
                             p.playSound(p.getLocation(), Sound.ZOMBIE_REMEDY, 8, 1);
-                            Index.getInstance().sendTitle(p, "§5§kaa§r §c§l§nÉgalité§r §5§kaa", "§cAucun survivant.", 20, 120, 20);
+                            UHC.getInstance().sendTitle(p, "§5§kaa§r §c§l§nÉgalité§r §5§kaa", "§cAucun survivant.", 20, 120, 20);
                         }
                     }
                 }

@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.teams;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.classes.modes.Moles;
 import org.apache.commons.lang3.Validate;
@@ -10,7 +10,7 @@ public class TeamPrefix {
     private static final String[] symbols = { Symbols.HEARTH + " ", Symbols.STARBALL + " ",
             Symbols.ARROW_RIGHT_FULL + " ", Symbols.SNOWMAN + " ", Symbols.CROSS + " ",
             Symbols.OK + " ", Symbols.NUCLEAR + " ", Symbols.INFINITE + " ", Symbols.CERCLED_S + " "};
-    private final Index main;
+    private final UHC main;
 
     public final UHCTeamColors color;
     public String symbol;
@@ -18,7 +18,7 @@ public class TeamPrefix {
     private boolean isSuperTaupePrefix;
     public static int taupeTeams;
 
-    public TeamPrefix(Index main, UHCTeamColors color, String symbol) {
+    public TeamPrefix(UHC main, UHCTeamColors color, String symbol) {
         this.main = main;
 
         if (symbol == null)

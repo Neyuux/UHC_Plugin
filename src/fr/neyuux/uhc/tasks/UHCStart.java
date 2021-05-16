@@ -1,11 +1,11 @@
 package fr.neyuux.uhc.tasks;
 
 import com.google.common.collect.Lists;
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.InventoryManager;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.UHCWorld;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.GameStartEvent;
@@ -32,8 +32,8 @@ import java.util.ConcurrentModificationException;
 public class UHCStart extends BukkitRunnable {
 
     private static int timer = 11;
-    private final Index main;
-    public UHCStart(Index main) {
+    private final UHC main;
+    public UHCStart(UHC main) {
         this.main = main;
         main.uhcStart = this;
     }
@@ -147,7 +147,7 @@ public class UHCStart extends BukkitRunnable {
             Bukkit.broadcastMessage(main.getPrefix() + "§2Lancement de la Pré-Génération du monde...");
             for (PlayerUHC p : main.getAlivePlayers()) {
                 if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) == 1) main.world.addSpawnLoad();
-                Index.setF3(p.getPlayer().getPlayer(), !(boolean)GameConfig.ConfigurableParams.COORDS_F3.getValue());
+                UHC.setF3(p.getPlayer().getPlayer(), !(boolean)GameConfig.ConfigurableParams.COORDS_F3.getValue());
                 if (Scenarios.TEAM_HEALTH.isActivated()) {
                     health.getScore(p.getPlayer().getName()).setScore((int)p.getTeam().getHealth());
                     healthBelow.getScore(p.getPlayer().getName()).setScore((int)p.getTeam().getHealth());
@@ -163,7 +163,7 @@ public class UHCStart extends BukkitRunnable {
             main.world.setDayCycle((Boolean)GameConfig.ConfigurableParams.DAY_CYCLE.getValue());
             main.world.initialiseWorldBorder();
             if((boolean) GameConfig.ConfigurableParams.CRAFT_GOLDEN_HEAD.getValue()) {
-                ShapedRecipe recette = new ShapedRecipe(Index.getGoldenHead(1));
+                ShapedRecipe recette = new ShapedRecipe(UHC.getGoldenHead(1));
                 recette.shape("@@@", "@T@", "@@@");
                 recette.setIngredient('@', Material.GOLD_INGOT).setIngredient('T', Material.SKULL_ITEM, 3);
                 Bukkit.getServer().addRecipe(recette);

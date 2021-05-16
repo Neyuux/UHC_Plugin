@@ -1,9 +1,9 @@
 package fr.neyuux.uhc.listeners;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.UHCWorld;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -26,8 +26,8 @@ import java.util.List;
 
 public class WorldListener implements Listener {
 
-    private final Index main;
-    public WorldListener(Index main) {
+    private final UHC main;
+    public WorldListener(UHC main) {
         this.main = main;
     }
 
@@ -79,7 +79,7 @@ public class WorldListener implements Listener {
                 if (nb >= 10) {
                     e.setCancelled(true);
                     p.sendMessage(main.getPrefix() + "§cLes towers sont désactivées.");
-                    Index.playNegativeSound(p);
+                    UHC.playNegativeSound(p);
                 } else
                     blocksTowers.add(e.getBlock());
             } else

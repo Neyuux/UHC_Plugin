@@ -1,6 +1,6 @@
 package fr.neyuux.uhc.commands;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.util.ItemsStack;
 import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.Bukkit;
@@ -15,10 +15,10 @@ import java.lang.reflect.InvocationTargetException;
 
 public class CommandScenario implements CommandExecutor {
 
-    private final Index main;
+    private final UHC main;
 
-    public CommandScenario(Index index) {
-        this.main = index;
+    public CommandScenario(UHC UHC) {
+        this.main = UHC;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class CommandScenario implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player)sender;
             if (Scenarios.getActivatedScenarios().size() != 0) {
-                Inventory inv = Bukkit.createInventory(null, Index.adaptInvSizeForInt(Scenarios.getActivatedScenarios().size(), 0), "§6Liste des §lScénarios activés");
+                Inventory inv = Bukkit.createInventory(null, UHC.adaptInvSizeForInt(Scenarios.getActivatedScenarios().size(), 0), "§6Liste des §lScénarios activés");
                 for (Scenarios sc : Scenarios.getActivatedScenarios()) {
                     try {
                         Class<?> c = sc.getScenarioClass();

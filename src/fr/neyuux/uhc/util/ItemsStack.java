@@ -36,7 +36,7 @@ public class ItemsStack {
         this.amount = 1;
         this.durabilite = 0;
 
-        List<String> desc = new ArrayList<String>();
+        List<String> desc = new ArrayList<>();
         for (String s : lore) {
             desc.add(s);
             this.lore = desc;
@@ -59,7 +59,7 @@ public class ItemsStack {
         this.amount = amount;
         this.durabilite = 0;
 
-        List<String> desc = new ArrayList<String>();
+        List<String> desc = new ArrayList<>();
         for (String s : lore) {
             desc.add(s);
             this.lore = desc;
@@ -142,10 +142,9 @@ public class ItemsStack {
         return item;
     }
 
-    public ItemStack toItemStackWithEnchant(Map.Entry<Enchantment, Integer>... enchantment) {
-
+    @SafeVarargs
+    public final ItemStack toItemStackWithEnchant(Map.Entry<Enchantment, Integer>... enchantment) {
         ItemStack item = this.item;
-
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(this.name);
         itemMeta.setLore(this.lore);
@@ -288,7 +287,7 @@ public class ItemsStack {
     }
 
     public void setLore(String... lore) {
-        List<String> desc = new ArrayList<String>();
+        List<String> desc = new ArrayList<>();
         for (String s : lore) {
             desc.add(s);
             this.lore = desc;
@@ -296,7 +295,7 @@ public class ItemsStack {
     }
 
     public void addLore(String... lore) {
-        List<String> desc = new ArrayList<String>(this.lore);
+        List<String> desc = new ArrayList<>(this.lore);
         for (String s : lore) {
             desc.add(s);
             this.lore = desc;
@@ -323,7 +322,7 @@ public class ItemsStack {
         this.item.removeEnchantment(enchant);
     }
 
-    public ItemStack addGlowEffect() {
+    public ItemsStack addGlowEffect() {
         ItemMeta itemMeta = this.item.getItemMeta();
 
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -331,7 +330,7 @@ public class ItemsStack {
 
         this.item.setItemMeta(itemMeta);
 
-        return item;
+        return this;
     }
 
     public Map<Enchantment, Integer> getEnchantments() {

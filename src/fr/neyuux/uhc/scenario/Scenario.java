@@ -1,7 +1,7 @@
 package fr.neyuux.uhc.scenario;
 
-import fr.neyuux.uhc.Index;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.UHC;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.util.ItemsStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -70,7 +70,7 @@ public abstract class Scenario {
 
     public void activateScenario(){
         if (!scenario.isActivated()){
-            Bukkit.broadcastMessage(Index.getStaticPrefix() + "§aActivation §7du Scénario " + scenario.getDisplayName());
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§aActivation §7du Scénario " + scenario.getDisplayName());
             scenario.setActivated(true);
             activate();
         }
@@ -78,7 +78,7 @@ public abstract class Scenario {
 
     public void desactivateScenario() {
         if(scenario.isActivated()){
-            Bukkit.broadcastMessage(Index.getStaticPrefix() + "§cDésactivation §7du Scénario " + scenario.getDisplayName());
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§cDésactivation §7du Scénario " + scenario.getDisplayName());
             scenario.setActivated(false);
             if (scenario.equals(Scenarios.RANDOM_TEAM)) GameConfig.ConfigurableParams.TEAMTYPE.setValue(GameConfig.getTeamTypeString(GameConfig.getTeamTypeInt((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()), false));
             if (scenario.equals(Scenarios.SLAVE_MARKET)) GameConfig.ConfigurableParams.TEAMTYPE.setValue(GameConfig.getTeamTypeString(0, Scenarios.RANDOM_TEAM.isActivated()));
@@ -99,18 +99,18 @@ public abstract class Scenario {
             Field f = c.getField(field);
             cache.put(valueName, f);
         } catch (NoSuchFieldException e) {
-            Bukkit.broadcastMessage(Index.getStaticPrefix() + "§4[§cErreur§4] §cEchec du chargement des scénarios 2.");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cEchec du chargement des scénarios 2.");
         }
     }
 
     public static void setCache(String name, String current, Object value) {
-        Class<?> sc = Scenarios.getByName(name).getScenarioClass();
         try {
+            Class<?> sc = Scenarios.getByName(name).getScenarioClass();
             cache.get(current).set(sc.newInstance(), value);
             sc.getField(cache.get(current).getName()).set(sc.newInstance(), value);
-        } catch (IllegalAccessException | NoSuchFieldException | InstantiationException e) {
+        } catch (IllegalAccessException | NoSuchFieldException | InstantiationException | NullPointerException e) {
             e.printStackTrace();
-            Bukkit.broadcastMessage(Index.getStaticPrefix() + "§4[§cErreur§4] §cEchec de la modification de la valeur du Scenario " + name + ".");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cEchec de la modification de la valeur du Scenario " + name + ".");
         }
     }
 }

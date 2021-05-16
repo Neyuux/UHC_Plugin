@@ -1,7 +1,7 @@
 package fr.neyuux.uhc.scenario.classes;
 
 import com.google.common.collect.Lists;
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.util.Interval;
@@ -29,7 +29,7 @@ public class CutClean extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
 
         VarsLoot.getBlocksLoots().put(Material.GOLD_ORE, new Loot(1.2, Lists.newArrayList(

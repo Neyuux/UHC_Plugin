@@ -1,8 +1,8 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -26,10 +26,10 @@ public class AloneTogether extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
 
-        Index.getInstance().getUHCTeamManager().getTeams().forEach(t -> t.getPlayers().forEach(p -> t.getPlayers().forEach(p2 -> p.getPlayer().getPlayer().hidePlayer(p2.getPlayer().getPlayer()))));
+        UHC.getInstance().getUHCTeamManager().getTeams().forEach(t -> t.getPlayers().forEach(p -> t.getPlayers().forEach(p2 -> p.getPlayer().getPlayer().hidePlayer(p2.getPlayer().getPlayer()))));
     }
 
     @Override
@@ -40,9 +40,9 @@ public class AloneTogether extends Scenario implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onJoin(PlayerJoinEvent ev) {
-        if (!Index.getInstance().isState(Gstate.PLAYING)) return;
-        if (Index.getInstance().getPlayerUHC(ev.getPlayer()).getTeam() != null)
-            for (PlayerUHC p : Index.getInstance().getPlayerUHC(ev.getPlayer()).getTeam().getAlivePlayers()) {
+        if (!UHC.getInstance().isState(Gstate.PLAYING)) return;
+        if (UHC.getInstance().getPlayerUHC(ev.getPlayer()).getTeam() != null)
+            for (PlayerUHC p : UHC.getInstance().getPlayerUHC(ev.getPlayer()).getTeam().getAlivePlayers()) {
                 p.getPlayer().getPlayer().hidePlayer(ev.getPlayer());
                 ev.getPlayer().hidePlayer(p.getPlayer().getPlayer());
             }

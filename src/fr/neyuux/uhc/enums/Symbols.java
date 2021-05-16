@@ -81,7 +81,7 @@ public enum Symbols {
 
     public static Symbols getBySymbol(String s) {
         for (Symbols sy : Symbols.values())
-            if (sy.equals(s))
+            if (sy.toString().equals(s))
                 return sy;
         return null;
     }

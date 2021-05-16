@@ -1,7 +1,7 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.Index;
-import fr.neyuux.uhc.config.GameConfig;
+import fr.neyuux.uhc.UHC;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.PlayerEliminationEvent;
 import fr.neyuux.uhc.scenario.Scenario;
@@ -33,11 +33,11 @@ public class TeamInventory extends Scenario implements Listener {
 
     @Override
     public void execute() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, Index.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
 
         inventories.clear();
-        for (UHCTeam t : Index.getInstance().getUHCTeamManager().getAliveTeams())
+        for (UHCTeam t : UHC.getInstance().getUHCTeamManager().getAliveTeams())
             inventories.put(t, Bukkit.createInventory(null, 27, scenario.getDisplayName()));
     }
 

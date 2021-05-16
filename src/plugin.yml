@@ -1,7 +1,7 @@
 name: UHC
-version: Beta1.2
+version: Beta2.0
 author: Neyuux_
-main: fr.neyuux.uhc.Index
+main: fr.neyuux.uhc.UHC
 softdepend: [NeyGin_Core]
 commands:
   uhc:
