@@ -67,9 +67,9 @@ public class UHCStart extends BukkitRunnable {
 
         if (timer != 11 && timer != 0)
             if (timer == 1)
-                Bukkit.broadcastMessage(main.getPrefix() + "§eLancement du jeu dans §c§l" + timer + "§c seconde §e!");
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§eLancement du jeu dans §c§l" + timer + "§c seconde §e!");
             else
-                Bukkit.broadcastMessage(main.getPrefix() + "§eLancement du jeu dans §c§l" + timer + "§c secondes §e!");
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§eLancement du jeu dans §c§l" + timer + "§c secondes §e!");
 
         timer--;
 
@@ -80,13 +80,13 @@ public class UHCStart extends BukkitRunnable {
                     boolean b = (boolean) c.getMethod("checkStart").invoke(c.newInstance());
 
                     if (!b) {
-                        Bukkit.broadcastMessage(main.getPrefix() + "§6Le Scénario " + sc.getDisplayName() + " §6empêche de lancer la partie à cause d'une mauvaise configuration.");
+                        Bukkit.broadcastMessage(UHC.getPrefix() + "§6Le Scénario " + sc.getDisplayName() + " §6empêche de lancer la partie à cause d'une mauvaise configuration.");
                         cancelStart();
                         return;
                     }
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
                     e.printStackTrace();
-                    Bukkit.broadcastMessage(main.getPrefix() + "§4[§cErreur§4] §cUne erreur s'est produite lors de la vérification pour start des scénarios, veuillez en informer Neyuux_ !");
+                    Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cUne erreur s'est produite lors de la vérification pour start des scénarios, veuillez en informer Neyuux_ !");
                 }
         }
         if (timer == -1) {
@@ -144,7 +144,7 @@ public class UHCStart extends BukkitRunnable {
                 health.unregister();
                 healthBelow.unregister();
             }
-            Bukkit.broadcastMessage(main.getPrefix() + "§2Lancement de la Pré-Génération du monde...");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§2Lancement de la Pré-Génération du monde...");
             for (PlayerUHC p : main.getAlivePlayers()) {
                 if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) == 1) main.world.addSpawnLoad();
                 UHC.setF3(p.getPlayer().getPlayer(), !(boolean)GameConfig.ConfigurableParams.COORDS_F3.getValue());
@@ -153,7 +153,7 @@ public class UHCStart extends BukkitRunnable {
                     healthBelow.getScore(p.getPlayer().getName()).setScore((int)p.getTeam().getHealth());
                 }
                 if (p.isSpec() && !p.isHost() && !(boolean)GameConfig.ConfigurableParams.SPECTATORS.getValue())
-                    p.getPlayer().getPlayer().kickPlayer(main.getPrefix() + "§cLes spectateurs se sont pas autorisés.");
+                    p.getPlayer().getPlayer().kickPlayer(UHC.getPrefix() + "§cLes spectateurs se sont pas autorisés.");
             }
             if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) != 1)
                 for (int i = 0; i < main.getUHCTeamManager().getTeams().size(); i++)
@@ -255,7 +255,7 @@ public class UHCStart extends BukkitRunnable {
                 p.getPlayer().getPlayer().teleport(main.world.getSpawns().remove(0));
                 for (Player pl : Bukkit.getOnlinePlayers())
                     pl.playSound(pl.getLocation(), Sound.CHICKEN_EGG_POP, 7f ,2f);
-                Bukkit.broadcastMessage(main.getPrefix() + p.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
+                Bukkit.broadcastMessage(UHC.getPrefix() + p.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
                 p.setLastLocation(p.getPlayer().getPlayer().getLocation().add(0, -38, 0));
             }
             else {
@@ -269,7 +269,7 @@ public class UHCStart extends BukkitRunnable {
                         playerUHC.getPlayer().getPlayer().setPlayerListName(playerUHC.getPlayer().getPlayer().getDisplayName());
                         for (Player pl : Bukkit.getOnlinePlayers())
                             pl.playSound(pl.getLocation(), Sound.CHICKEN_EGG_POP, 7f ,2f);
-                        Bukkit.broadcastMessage(main.getPrefix() + playerUHC.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
+                        Bukkit.broadcastMessage(UHC.getPrefix() + playerUHC.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
                         playerUHC.setLastLocation(playerUHC.getPlayer().getPlayer().getLocation().add(0, -39, 0));
                     }
                     t.getTeam().setAllowFriendlyFire((boolean)GameConfig.ConfigurableParams.FRIENDLY_FIRE.getValue());
@@ -280,7 +280,7 @@ public class UHCStart extends BukkitRunnable {
                     sc.getScenarioClass().getMethod("execute").invoke(sc.getScenarioClass().newInstance());
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
                     e.printStackTrace();
-                    Bukkit.broadcastMessage(main.getPrefix() + "§4[§cErreur§4] §cUne erreur s'est produite lors de l'exécutions des scénarios, veuillez en informer Neyuux_ !");
+                    Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cUne erreur s'est produite lors de l'exécutions des scénarios, veuillez en informer Neyuux_ !");
                 }
 
             new UHCRunnable(main).runTaskTimer(main, 1, 20);
@@ -292,15 +292,15 @@ public class UHCStart extends BukkitRunnable {
 
     private void sendStartTimerTitle(Player pls) {
         if (timer != 1)
-            main.sendTitle(pls, ChatColor.translateAlternateColorCodes('&', main.mode.getPrefix()), "§eLancement dans §6§l" + timer + " §esecondes.", 0, 20, 0);
+            UHC.sendTitle(pls, ChatColor.translateAlternateColorCodes('&', main.mode.getPrefix()), "§eLancement dans §6§l" + timer + " §esecondes.", 0, 20, 0);
         else
-            main.sendTitle(pls, ChatColor.translateAlternateColorCodes('&', main.mode.getPrefix()), "§eLancement dans §6§l" + timer + " §eseconde.", 0, 20, 0);
+            UHC.sendTitle(pls, ChatColor.translateAlternateColorCodes('&', main.mode.getPrefix()), "§eLancement dans §6§l" + timer + " §eseconde.", 0, 20, 0);
     }
 
     public void cancelStart() {
         main.setState(Gstate.WAITING);
         cancel();
-        if (timer != -1) Bukkit.broadcastMessage(main.getPrefix() + "§cLe démarrage de la partie a été annulé !");
+        if (timer != -1) Bukkit.broadcastMessage(UHC.getPrefix() + "§cLe démarrage de la partie a été annulé !");
         timer = 11;
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.setLevel(0);

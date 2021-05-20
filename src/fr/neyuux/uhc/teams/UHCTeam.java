@@ -82,15 +82,15 @@ public class UHCTeam {
 
     public void add(Player player) {
         if (((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To") && players.size() >= GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) && !prefix.isTaupePrefix() && !(main.isState(Gstate.PLAYING) && (Scenarios.SWITCH.isActivated() || Scenarios.TRUE_LOVE.isActivated()))) {
-            player.sendMessage(main.getPrefix() + "§cL'équipe " + team.getDisplayName() + " §cest pleine !");
+            player.sendMessage(UHC.getPrefix() + "§cL'équipe " + team.getDisplayName() + " §cest pleine !");
             return;
         }
         if (hasPlayer(main.getPlayerUHC(player))) return;
         team.addEntry(player.getName());
 
         if (((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To")) {
-            player.sendMessage(main.getPrefix() + prefix.color.getColor() + "Vous avez rejoint l'équipe " + team.getDisplayName() + " !");
-            sendMessage(main.getPrefix() + player.getDisplayName() + prefix.color.getColor() + " a rejoint votre équipe !");
+            player.sendMessage(UHC.getPrefix() + prefix.color.getColor() + "Vous avez rejoint l'équipe " + team.getDisplayName() + " !");
+            sendMessage(UHC.getPrefix() + player.getDisplayName() + prefix.color.getColor() + " a rejoint votre équipe !");
         }
         players.add(main.getPlayerUHC(player));
         alivePlayers.add(main.getPlayerUHC(player));
@@ -119,7 +119,7 @@ public class UHCTeam {
         if (pu.getPlayer().isOnline()) {
             Player player = pu.getPlayer().getPlayer();
             if (((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To")) {
-                player.sendMessage(main.getPrefix() + prefix.color.getColor() + "Vous avez bien quitté l'équipe " + team.getDisplayName() + " !");
+                player.sendMessage(UHC.getPrefix() + prefix.color.getColor() + "Vous avez bien quitté l'équipe " + team.getDisplayName() + " !");
                 player.setDisplayName(player.getName());
                 player.setPlayerListName(player.getDisplayName());
                 if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) {

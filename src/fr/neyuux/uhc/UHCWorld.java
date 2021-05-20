@@ -46,7 +46,7 @@ public class UHCWorld {
             seed = yconfig.getLongList("uhc_maps").get(new Random().nextInt(yconfig.getLongList("uhc_maps").size()));
         else if (main.mode.equals(UHC.Modes.LG))
             seed = yconfig.getLongList("lg_maps").get(new Random().nextInt(yconfig.getLongList("lg_maps").size()));
-        Bukkit.broadcastMessage(main.getPrefix() + "§2Création du monde §a\"§l" + seed + "§a\"§2...");
+        Bukkit.broadcastMessage(UHC.getPrefix() + "§2Création du monde §a\"§l" + seed + "§a\"§2...");
 
         System.out.println(world);
         world = Bukkit.createWorld(new WorldCreator(seed.toString()).seed(seed));
@@ -157,10 +157,10 @@ public class UHCWorld {
         for (Location l : spawns) {
             loadLocationChunks(l, true);
             d++;
-            Bukkit.broadcastMessage(main.getPrefix() + "§2Chargement du monde : §a§l" + df.format(d / (main.getAlivePlayers().size() + 1) * 100) + "%§2.");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§2Chargement du monde : §a§l" + df.format(d / (main.getAlivePlayers().size() + 1) * 100) + "%§2.");
         }
         loadLocationChunks(new Location(world, 0, 70, 0), true);
-        Bukkit.broadcastMessage(main.getPrefix() + "§2Chargement du monde : §a§l100%§2.");
+        Bukkit.broadcastMessage(UHC.getPrefix() + "§2Chargement du monde : §a§l100%§2.");
     }
 
     private static List<Chunk> loadLocationChunks(Location loc, Boolean load) {

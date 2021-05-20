@@ -41,7 +41,7 @@ public class Anonymous extends Scenario implements Listener {
 
     @Override
     protected void activate() {
-        UHC.sendHostMessage(main.getPrefix() + "§6Vous pouvez changer le pseudo / skin qui sera utilisé par le Scénario Anonymous avec la commande §b§l/uhc am §a<nom du pseudo/skin>§6. §o(Si vous n'utilisez pas cette commande, le skin et le pseudo appartiendront à un joueur aléatoire de la partie.)");
+        UHC.sendHostMessage(UHC.getPrefix() + "§6Vous pouvez changer le pseudo / skin qui sera utilisé par le Scénario Anonymous avec la commande §b§l/uhc am §a<nom du pseudo/skin>§6. §o(Si vous n'utilisez pas cette commande, le skin et le pseudo appartiendront à un joueur aléatoire de la partie.)");
     }
 
     @Override
@@ -53,7 +53,7 @@ public class Anonymous extends Scenario implements Listener {
         for (PlayerUHC pu : main.players) if (!pu.isSpec() && pu.getPlayer().isOnline())
             choosable.add(pu);
         if (usedName.equals("")) usedName = choosable.get(new Random().nextInt(choosable.size())).getPlayer().getName();
-        Bukkit.broadcastMessage(main.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §6Identité sélectionnée pour la partie : §b§l" + usedName + "§6.");
+        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §6Identité sélectionnée pour la partie : §b§l" + usedName + "§6.");
 
         for (PlayerUHC pl : choosable) changeNameAndSkin(pl.getPlayer().getPlayer(), "§kAnonymous" + used + "§r", usedName);
     }
@@ -120,7 +120,7 @@ public class Anonymous extends Scenario implements Listener {
             if (t != null) t.add(p);
         } catch (Exception e) {
             e.printStackTrace();
-            Bukkit.broadcastMessage(main.getPrefix() + "§cErreur lors du changement du skin de " + p.getName());
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§cErreur lors du changement du skin de " + p.getName());
         }
         used++;
         if (main.isState(Gstate.PLAYING))
@@ -160,7 +160,7 @@ public class Anonymous extends Scenario implements Listener {
                     if (t != null) t.add(p);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Bukkit.broadcastMessage(main.getPrefix() + "§cErreur lors du changement du skin de " + p.getName());
+                    Bukkit.broadcastMessage(UHC.getPrefix() + "§cErreur lors du changement du skin de " + p.getName());
                 }
             }
     }

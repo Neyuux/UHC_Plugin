@@ -114,14 +114,14 @@ public class PlayerListener implements Listener {
         }
         if (main.isState(Gstate.PLAYING)) main.setGameScoreboard(player);
         else if (main.isState(Gstate.FINISHED)) main.setKillsScoreboard(player);
-        UHC.setPlayerTabList(player, main.getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
+        UHC.setPlayerTabList(player, UHC.getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
         if (playerUHC.getTeam() != null)
             playerUHC.getTeam().reconnect(player);
         if (playerUHC.isSpec()) player.setDisplayName("§8[§7Spectateur§8] §7" + player.getName() + "§r");
         player.setPlayerListName(player.getDisplayName());
 
         playerUHC.setInvulnerable(true);
-        player.sendMessage(main.getPrefix() + "§6Vous êtes invincible pendant 5 secondes.");
+        player.sendMessage(UHC.getPrefix() + "§6Vous êtes invincible pendant 5 secondes.");
         new BukkitRunnable() {
             int i = 5;
             public void run() {
@@ -159,7 +159,7 @@ public class PlayerListener implements Listener {
 
         if (e.getCurrentItem().isSimilar(new ItemStack(Material.GOLDEN_APPLE, 1, (short) 1))) {
             e.setCancelled(true);
-            player.sendMessage(main.getPrefix() + "§cCe craft est interdit !");
+            player.sendMessage(UHC.getPrefix() + "§cCe craft est interdit !");
             UHC.playNegativeSound(player);
         }
     }
@@ -181,7 +181,7 @@ public class PlayerListener implements Listener {
 
         if (e.getType().equals(EntityType.HORSE) && !(boolean)GameConfig.ConfigurableParams.HORSE.getValue()) {
             ev.setCancelled(true);
-            player.sendMessage(main.getPrefix() + "§cLes chevaux sont désactivés !");
+            player.sendMessage(UHC.getPrefix() + "§cLes chevaux sont désactivés !");
             UHC.playNegativeSound(player);
         }
         else if (e.getType().equals(EntityType.PLAYER) && playerUHC.isSpec())
@@ -196,7 +196,7 @@ public class PlayerListener implements Listener {
 
         if(item.getType() == Material.MILK_BUCKET && !(boolean)GameConfig.ConfigurableParams.MILK.getValue()){
             e.setCancelled(true);
-            p.sendMessage(main.getPrefix() + "§cIl est interdit de boire un seau de lait !");
+            p.sendMessage(UHC.getPrefix() + "§cIl est interdit de boire un seau de lait !");
             UHC.playNegativeSound(p);
             return;
         }
@@ -331,11 +331,11 @@ public class PlayerListener implements Listener {
         Player player = e.getPlayer();
         if(e.getTo().getWorld().getEnvironment() == World.Environment.NETHER && !(boolean)GameConfig.ConfigurableParams.NETHER.getValue()) {
             e.setCancelled(true);
-            player.sendMessage(main.getPrefix() + "§cLe Nether est désactivé.");
+            player.sendMessage(UHC.getPrefix() + "§cLe Nether est désactivé.");
             UHC.playNegativeSound(player);
         } else if(e.getTo().getWorld().getEnvironment() == World.Environment.THE_END && !(boolean)GameConfig.ConfigurableParams.END.getValue()) {
             e.setCancelled(true);
-            player.sendMessage(main.getPrefix() + "§cL'End est désactivé.");
+            player.sendMessage(UHC.getPrefix() + "§cL'End est désactivé.");
             UHC.playNegativeSound(player);
         }
     }
@@ -351,7 +351,7 @@ public class PlayerListener implements Listener {
 
         if (main.isState(Gstate.PLAYING) || main.isState(Gstate.FINISHED)) {
             if (!canChat && !playerUHC.isHost()) {
-                player.sendMessage(main.getPrefix() + "§cLe chat est désactivé !");
+                player.sendMessage(UHC.getPrefix() + "§cLe chat est désactivé !");
                 UHC.playNegativeSound(player);
                 ev.setCancelled(true);
             } else {
@@ -373,7 +373,7 @@ public class PlayerListener implements Listener {
             }
         } else {
             if (!canChat && !playerUHC.isHost()) {
-                player.sendMessage(main.getPrefix() + "§cLe chat est désactivé !");
+                player.sendMessage(UHC.getPrefix() + "§cLe chat est désactivé !");
                 UHC.playNegativeSound(player);
                 ev.setCancelled(true);
             } else format = player.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §f" + msg;
@@ -391,7 +391,7 @@ public class PlayerListener implements Listener {
         if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING))
             if (playings.size() >= (int) GameConfig.ConfigurableParams.SLOTS.getValue()) if (!p.isOp()) {
                 e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-                e.setKickMessage(main.getPrefixWithoutArrow() + "\n" + "§cLe serveur est plein ... \n" + "§7Slots : §8[§e" + playings.size() + "§7/§c" + GameConfig.ConfigurableParams.SLOTS.getValue() + "§8]");
+                e.setKickMessage(UHC.getPrefixWithoutArrow() + "\n" + "§cLe serveur est plein ... \n" + "§7Slots : §8[§e" + playings.size() + "§7/§c" + GameConfig.ConfigurableParams.SLOTS.getValue() + "§8]");
                 return;
             }
         playings.clear();
@@ -399,13 +399,13 @@ public class PlayerListener implements Listener {
 
         if (main.isState(Gstate.PLAYING) && !(boolean)GameConfig.ConfigurableParams.SPECTATORS.getValue() && !playings.contains(main.getPlayerUHC(p))) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            e.setKickMessage(main.getPrefixWithoutArrow() + "\n" + " §cLes spectateurs ne sont pas autorisés !");
+            e.setKickMessage(UHC.getPrefixWithoutArrow() + "\n" + " §cLes spectateurs ne sont pas autorisés !");
             return;
         }
 
         if (main.hasWhitelist && !main.getWhitelist().contains(p)) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            e.setKickMessage(main.getPrefixWithoutArrow() + "\n" + "§cVous n'êtes pas whitelisté !");
+            e.setKickMessage(UHC.getPrefixWithoutArrow() + "\n" + "§cVous n'êtes pas whitelisté !");
             return;
         }
 

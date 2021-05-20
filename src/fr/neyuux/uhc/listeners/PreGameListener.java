@@ -105,7 +105,7 @@ public class PreGameListener implements Listener {
         main.setLobbyScoreboard(player);
 
         InventoryManager.giveWaitInventory(player);
-        UHC.setPlayerTabList(player, main.getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
+        UHC.setPlayerTabList(player, UHC.getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
 
         int onlines = Bukkit.getOnlinePlayers().size();
         int maxonlines = (int) GameConfig.ConfigurableParams.SLOTS.getValue();
@@ -147,8 +147,8 @@ public class PreGameListener implements Listener {
                 player.setPlayerListName(player.getDisplayName());
                 InventoryManager.clearInventory(player);
 
-                player.sendMessage(main.getPrefix() + "§6Vous avez établi votre mode de jeu en spectateur.");
-                player.sendMessage(main.getPrefix() + "§7Pour revenir au mode non-spectateur, utilisez la commande §6§l/uhc spec off§7.");
+                player.sendMessage(UHC.getPrefix() + "§6Vous avez établi votre mode de jeu en spectateur.");
+                player.sendMessage(UHC.getPrefix() + "§7Pour revenir au mode non-spectateur, utilisez la commande §6§l/uhc spec off§7.");
             }
     }
 
@@ -253,10 +253,10 @@ public class PreGameListener implements Listener {
             if (SlaveMarket.nOwners == 1) SlaveMarket.nOwners = 2;
             if (SlaveMarket.nOwners > UHCTeamColors.values().length) SlaveMarket.nOwners = UHCTeamColors.values().length;
             if (!SlaveMarket.randomChoiceOwners) {
-                Bukkit.broadcastMessage(main.getPrefix() + "§6Veuillez choisir les acheteurs de la partie. Pour ce faire, les joueurs voulant l'être doivent effectuer la commande §b§l/uhc sm candidate §6et les hosts doivent accepter les joueurs.");
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§6Veuillez choisir les acheteurs de la partie. Pour ce faire, les joueurs voulant l'être doivent effectuer la commande §b§l/uhc sm candidate §6et les hosts doivent accepter les joueurs.");
                 for (PlayerUHC playerUHC : main.players)
                     if (playerUHC.isHost())
-                        playerUHC.getPlayer().getPlayer().sendMessage(main.getPrefix() + "§6Pour ouvrir l'inventaire des joueurs candidats, effectuez la commande §b§l/uhc sm view§6.");
+                        playerUHC.getPlayer().getPlayer().sendMessage(UHC.getPrefix() + "§6Pour ouvrir l'inventaire des joueurs candidats, effectuez la commande §b§l/uhc sm view§6.");
                 final int[] waitTicks = {6000};
                 waitTask = new BukkitRunnable() {
                     public void run() {
@@ -265,7 +265,7 @@ public class PreGameListener implements Listener {
                             cancel();
                             main.uhcStart = null;
                             waitTask = null;
-                            Bukkit.broadcastMessage(main.getPrefix() + "§cVous avez mit trop de temps à choisir les acheteurs.");
+                            Bukkit.broadcastMessage(UHC.getPrefix() + "§cVous avez mit trop de temps à choisir les acheteurs.");
                             main.rel();
                         }
                         waitTicks[0]--;
@@ -280,7 +280,7 @@ public class PreGameListener implements Listener {
                 public void run() {
                     if (SlaveMarket.owners.size() == SlaveMarket.nOwners) {
                         if (i[1] == 0) {
-                            Bukkit.broadcastMessage(main.getPrefix() + "§aIl est temps d'annoncer les acheteurs de la partie.");
+                            Bukkit.broadcastMessage(UHC.getPrefix() + "§aIl est temps d'annoncer les acheteurs de la partie.");
                             InventoryManager.setAllPlayersLevels(0, 0f);
                             i[1] = 1;
                             main.getUHCTeamManager().clearTeams();
@@ -297,7 +297,7 @@ public class PreGameListener implements Listener {
                                     PlayerUHC owner = SlaveMarket.owners.get(i[0]);
                                     Player p = owner.getPlayer().getPlayer();
 
-                                    Bukkit.broadcastMessage(main.getPrefix() + t.getPrefix().color.getColor() + "L'acheteur de l'équipe " + t.getTeam().getDisplayName() + " sera §f" + p.getName() + t.getPrefix().color.getColor() +".");
+                                    Bukkit.broadcastMessage(UHC.getPrefix() + t.getPrefix().color.getColor() + "L'acheteur de l'équipe " + t.getTeam().getDisplayName() + " sera §f" + p.getName() + t.getPrefix().color.getColor() +".");
                                     for (Player player : Bukkit.getOnlinePlayers())
                                         player.playSound(p.getLocation(), Sound.FIREWORK_LAUNCH, 8, 1);
                                     t.add(p);

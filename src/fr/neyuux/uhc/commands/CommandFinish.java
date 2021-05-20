@@ -37,16 +37,16 @@ public class CommandFinish implements CommandExecutor {
                 InventoryManager.clearInventory(player);
                 InventoryManager.giveWaitInventory(player);
                 player.setGameMode(GameMode.ADVENTURE);
-                player.sendMessage(main.getPrefix() + "§dVous avez enregistré l'inventaire de Départ !");
+                player.sendMessage(UHC.getPrefix() + "§dVous avez enregistré l'inventaire de Départ !");
                 UHC.playPositiveSound(player);
             } else if (main.getGameConfig().deathInvModifier != null && main.getGameConfig().deathInvModifier.equals(player)) {
                 main.getGameConfig().deathInvModifier = null;
                 main.getInventoryManager().getDeathInventory().clear();
                 for (ItemStack it : player.getInventory().getContents()) if (it != null) main.getInventoryManager().getDeathInventory().add(it);
-                player.sendMessage(main.getPrefix() + "§5Vous avez enregistré l'inventaire de Mort !");
+                player.sendMessage(UHC.getPrefix() + "§5Vous avez enregistré l'inventaire de Mort !");
                 UHC.playPositiveSound(player);
             } else {
-                player.sendMessage(main.getPrefix() + "§cVous ne modifiez aucun inventaire !");
+                player.sendMessage(UHC.getPrefix() + "§cVous ne modifiez aucun inventaire !");
                 UHC.playNegativeSound(player);
             }
         }

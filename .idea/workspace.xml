@@ -1,11 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="7ce5b067-029d-4d78-abc3-13e99d4ca6f1" name="Default Changelist" comment="" />
+    <list default="true" id="7ce5b067-029d-4d78-abc3-13e99d4ca6f1" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/UHC$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/UHC$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/UHC.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/UHC.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/util/PlayerSkin.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/util/PlayerSkin.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/bin/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/GameConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/GameConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/UHC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/UHC.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/UHCWorld.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/UHCWorld.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/commands/CommandFinish.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/commands/CommandFinish.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/enums/Symbols.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/enums/Symbols.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/FightListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/FightListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/PlayerListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/PlayerListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/PreGameListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/PreGameListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/WorldListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/WorldListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/Anonymous.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/Anonymous.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/OreLimiter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/OreLimiter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/modes/Switch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/modes/Switch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/tasks/UHCRunnable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/tasks/UHCRunnable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/tasks/UHCStart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/tasks/UHCStart.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/tasks/UHCStop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/tasks/UHCStop.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/teams/UHCTeam.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/teams/UHCTeam.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/util/ItemsStack.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/util/ItemsStack.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/util/PlayerSkin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/util/PlayerSkin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/plugin.yml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1hCBeE4yYxOxS3Z0Ge9KQjhUWYk" />
   <component name="ProjectViewState">
@@ -14,10 +64,12 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="0d570cb2-96df-43cc-80da-7f777e6d0afe" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -30,22 +82,21 @@
     </task>
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="WindowStateProjectService">
-    <state x="440" y="114" key="#Project_Structure" timestamp="1599505446623">
+    <state x="460" y="294" key="SettingsEditor" timestamp="1621519846841">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="440" y="114" key="#Project_Structure/0.0.1920.1080@0.0.1920.1080" timestamp="1599505446623" />
-    <state x="768" y="392" key="FileChooserDialogImpl" timestamp="1599510577830">
-      <screen x="0" y="0" width="1920" height="1080" />
-    </state>
-    <state x="768" y="392" key="FileChooserDialogImpl/0.0.1920.1080@0.0.1920.1080" timestamp="1599510577830" />
-    <state x="625" y="244" key="NewModule_or_Project.wizard" timestamp="1599510580226">
-      <screen x="0" y="0" width="1920" height="1080" />
-    </state>
-    <state x="625" y="244" key="NewModule_or_Project.wizard/0.0.1920.1080@0.0.1920.1080" timestamp="1599510580226" />
-    <state x="440" y="114" key="SettingsEditor" timestamp="1599505768405">
-      <screen x="0" y="0" width="1920" height="1080" />
-    </state>
-    <state x="440" y="114" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1599505768405" />
+    <state x="460" y="294" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1621519846841" />
   </component>
 </project>

@@ -100,81 +100,81 @@ public class UHCRunnable extends BukkitRunnable {
             }.runTaskTimer(main, 0 , 5);
         }
 
-        if (pvpTimer == 900) Bukkit.broadcastMessage(main.getPrefix() + "§cActivation du §lPvP§c dans §615 minutes§c.");
+        if (pvpTimer == 900) Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §615 minutes§c.");
         else if (pvpTimer == 600) {
-            Bukkit.broadcastMessage(main.getPrefix() + "§cActivation du §lPvP§c dans §610 minutes§c.");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §610 minutes§c.");
             for (Player p : Bukkit.getOnlinePlayers())
                 p.playSound(p.getLocation(), Sound.WOOD_CLICK, 5, 0.5f);
-        } else if (pvpTimer == 300) Bukkit.broadcastMessage(main.getPrefix() + "§cActivation du §lPvP§c dans §65 minutes§c.");
-        else if (pvpTimer == 180) Bukkit.broadcastMessage(main.getPrefix() + "§cActivation du §lPvP§c dans §63 minutes§c.");
-        else if (pvpTimer == 120) Bukkit.broadcastMessage(main.getPrefix() + "§cActivation du §lPvP§c dans §62 minutes§c.");
+        } else if (pvpTimer == 300) Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §65 minutes§c.");
+        else if (pvpTimer == 180) Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §63 minutes§c.");
+        else if (pvpTimer == 120) Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §62 minutes§c.");
         else if (pvpTimer == 60) {
-            Bukkit.broadcastMessage(main.getPrefix() + "§cActivation du §lPvP§c dans §61 minute§c.");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §61 minute§c.");
             for (Player p : Bukkit.getOnlinePlayers())
                 p.playSound(p.getLocation(), Sound.WOOD_CLICK, 5, 0.5f);
-        } else if (pvpTimer == 30) Bukkit.broadcastMessage(main.getPrefix() + "§cActivation du §lPvP§c dans §630 secondes§c.");
+        } else if (pvpTimer == 30) Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §630 secondes§c.");
         else if (pvpTimer > 1 && pvpTimer <= 10) {
-            Bukkit.broadcastMessage(main.getPrefix() + "§cActivation du §lPvP§c dans §6"+pvpTimer+" secondes§c.");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §6"+pvpTimer+" secondes§c.");
             for (Player p : Bukkit.getOnlinePlayers())
                 p.playSound(p.getLocation(), Sound.WOOD_CLICK, 5, 0.5f);
         } else if (pvpTimer == 1) {
-            Bukkit.broadcastMessage(main.getPrefix() + "§cActivation du §lPvP§c dans §61 seconde§c.");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §61 seconde§c.");
             for (Player p : Bukkit.getOnlinePlayers())
                 p.playSound(p.getLocation(), Sound.WOOD_CLICK, 5, 0.5f);
         } else if (pvpTimer == 0) {
-            Bukkit.broadcastMessage(main.getPrefix() + "§c§lPvP activé !");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§c§lPvP activé !");
             main.world.changePVP(true);
             for (Player p : Bukkit.getOnlinePlayers())
                 p.playSound(p.getLocation(), Sound.ENDERDRAGON_GROWL, 5, 0.5f);
         }
 
-        if (borderTimer == 900) Bukkit.broadcastMessage(main.getPrefix() + "§3Activation de la §lBordure§3 dans §615 minutes§3.");
+        if (borderTimer == 900) Bukkit.broadcastMessage(UHC.getPrefix() + "§3Activation de la §lBordure§3 dans §615 minutes§3.");
         else if (borderTimer == 600) {
-            Bukkit.broadcastMessage(main.getPrefix() + "§3Activation de la §lBordure§3 dans §610 minutes§3.");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§3Activation de la §lBordure§3 dans §610 minutes§3.");
             for (Player p : Bukkit.getOnlinePlayers())
                 p.playSound(p.getLocation(), Sound.WOOD_CLICK, 5, 0.5f);
-        } else if (borderTimer == 300) Bukkit.broadcastMessage(main.getPrefix() + "§3Activation de la §lBordure§3 dans §65 minutes§3.");
-        else if (borderTimer == 180) Bukkit.broadcastMessage(main.getPrefix() + "§3Activation de la §lBordure§3 dans §63 minutes§3.");
-        else if (borderTimer == 120) Bukkit.broadcastMessage(main.getPrefix() + "§3Activation de la §lBordure§3 dans §62 minutes§3.");
+        } else if (borderTimer == 300) Bukkit.broadcastMessage(UHC.getPrefix() + "§3Activation de la §lBordure§3 dans §65 minutes§3.");
+        else if (borderTimer == 180) Bukkit.broadcastMessage(UHC.getPrefix() + "§3Activation de la §lBordure§3 dans §63 minutes§3.");
+        else if (borderTimer == 120) Bukkit.broadcastMessage(UHC.getPrefix() + "§3Activation de la §lBordure§3 dans §62 minutes§3.");
         else if (borderTimer == 60) {
-            Bukkit.broadcastMessage(main.getPrefix() + "§3Activation de la §lBordure§3 dans §61 minute§3.");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§3Activation de la §lBordure§3 dans §61 minute§3.");
             for (Player p : Bukkit.getOnlinePlayers())
                 p.playSound(p.getLocation(), Sound.WOOD_CLICK, 5, 0.5f);
-        } else if (borderTimer == 30) Bukkit.broadcastMessage(main.getPrefix() + "§3Activation de la §lBordure§3 dans §630 secondes§3.");
+        } else if (borderTimer == 30) Bukkit.broadcastMessage(UHC.getPrefix() + "§3Activation de la §lBordure§3 dans §630 secondes§3.");
         else if (borderTimer > 1 && borderTimer <= 10) {
-            Bukkit.broadcastMessage(main.getPrefix() + "§3Activation de la §lBordure§3 dans §6"+borderTimer+" secondes§3.");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§3Activation de la §lBordure§3 dans §6"+borderTimer+" secondes§3.");
             for (Player p : Bukkit.getOnlinePlayers())
                 p.playSound(p.getLocation(), Sound.WOOD_CLICK, 5, 0.5f);
         } else if (borderTimer == 1) {
-            Bukkit.broadcastMessage(main.getPrefix() + "§3Activation de la §lBordure§3 dans §61 seconde§3.");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§3Activation de la §lBordure§3 dans §61 seconde§3.");
             for (Player p : Bukkit.getOnlinePlayers())
                 p.playSound(p.getLocation(), Sound.WOOD_CLICK, 5, 0.5f);
         } else if (borderTimer == 0) {
-            Bukkit.broadcastMessage(main.getPrefix() + "§3§lBordure activée !");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§3§lBordure activée !");
             main.world.startWorldBorder();
             for (Player p : Bukkit.getOnlinePlayers())
                 p.playSound(p.getLocation(), Sound.ENDERDRAGON_GROWL, 5, 0.5f);
         }
 
-        if (invincibilityTimer == 10) Bukkit.broadcastMessage(main.getPrefix() + "§eDésactivation de l'§lInvincibilité§e dans §610 secondes§e.");
+        if (invincibilityTimer == 10) Bukkit.broadcastMessage(UHC.getPrefix() + "§eDésactivation de l'§lInvincibilité§e dans §610 secondes§e.");
         else if (invincibilityTimer == 0) {
-            Bukkit.broadcastMessage(main.getPrefix() + "§e§lInvincibilité désactivée !");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§e§lInvincibilité désactivée !");
             for (PlayerUHC pu : main.getAlivePlayers()) pu.setInvulnerable(false);
             for (Player p : Bukkit.getOnlinePlayers())
                 p.playSound(p.getLocation(), Sound.ENDERDRAGON_GROWL, 5, 0.5f);
         }
 
         if ((boolean)GameConfig.ConfigurableParams.EPISODS.getValue()) {
-            if (episodTimer == 300) Bukkit.broadcastMessage(main.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e5 minutes§6.");
-            else if (episodTimer == 60) Bukkit.broadcastMessage(main.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e1 minute§6.");
-            else if (episodTimer == 30) Bukkit.broadcastMessage(main.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e30 secondes§6.");
-            else if (episodTimer > 1 && episodTimer <= 5) Bukkit.broadcastMessage(main.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e"+episodTimer+" secondes§6.");
-            else if (episodTimer == 1) Bukkit.broadcastMessage(main.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e1 seconde§6.");
+            if (episodTimer == 300) Bukkit.broadcastMessage(UHC.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e5 minutes§6.");
+            else if (episodTimer == 60) Bukkit.broadcastMessage(UHC.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e1 minute§6.");
+            else if (episodTimer == 30) Bukkit.broadcastMessage(UHC.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e30 secondes§6.");
+            else if (episodTimer > 1 && episodTimer <= 5) Bukkit.broadcastMessage(UHC.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e"+episodTimer+" secondes§6.");
+            else if (episodTimer == 1) Bukkit.broadcastMessage(UHC.getPrefix() + "§6Fin de l'§lépisode§6 "+episod+" dans §e1 seconde§6.");
             else if (episodTimer == 0) {
-                Bukkit.broadcastMessage(main.getPrefix() + "§6Fin de l'épisode " + episod + "...");
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§6Fin de l'épisode " + episod + "...");
                 episod++;
-                Bukkit.broadcastMessage(main.getPrefix() + "§b-------------------");
-                Bukkit.broadcastMessage(main.getPrefix() + "§6§lDébut de l'épisode §e§l" + episod +" §6§l!");
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§b-------------------");
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§6§lDébut de l'épisode §e§l" + episod +" §6§l!");
                 episodTimer = (int)GameConfig.ConfigurableParams.EPISODS_TIMER.getValue();
             }
 

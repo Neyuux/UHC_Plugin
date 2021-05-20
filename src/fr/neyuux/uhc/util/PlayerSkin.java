@@ -51,7 +51,7 @@ public class PlayerSkin {
 
                 } catch (Exception e) {
                     Bukkit.getLogger().log(Level.WARNING, "Failed to apply auth property", e);
-                    Bukkit.broadcastMessage(UHC.getInstance().getPrefix() + "§cErreur lors du chargement d'un skin.");
+                    Bukkit.broadcastMessage(UHC.getPrefix() + "§cErreur lors du chargement d'un skin.");
                 }
             }
             uc.setConnectTimeout(0);

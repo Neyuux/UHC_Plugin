@@ -78,7 +78,7 @@ public class WorldListener implements Listener {
                 }
                 if (nb >= 10) {
                     e.setCancelled(true);
-                    p.sendMessage(main.getPrefix() + "§cLes towers sont désactivées.");
+                    p.sendMessage(UHC.getPrefix() + "§cLes towers sont désactivées.");
                     UHC.playNegativeSound(p);
                 } else
                     blocksTowers.add(e.getBlock());

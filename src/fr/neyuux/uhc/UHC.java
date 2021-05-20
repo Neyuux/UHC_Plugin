@@ -318,82 +318,32 @@ public class UHC extends JavaPlugin {
 	}
 
 	public static String translatePotionEffect(PotionEffectType pet) {
-		String s;
-		switch (pet.getName()) {
-			case "ABSORPTION":
-				s = "Absorption";
-				break;
-			case "BLINDNESS":
-				s = "Cécité";
-				break;
-			case "CONFUSION":
-				s = "Nausée";
-				break;
-			case "DAMAGE_RESISTANCE":
-				s = "Résistance";
-				break;
-			case "FAST_DIGGING":
-				s = "Hâte";
-				break;
-			case "FIRE_RESISTANCE":
-				s = "Résitance au Feu";
-				break;
-			case "HARM":
-				s = "Dégâts instantanés";
-				break;
-			case "HEAL":
-				s = "Soins instantanés";
-				break;
-			case "HEALTH_BOOST":
-				s = "Bonus de Vie";
-				break;
-			case "HUNGER":
-				s = "Faim";
-				break;
-			case "INCREASE_DAMAGE":
-				s = "Force";
-				break;
-			case "INVISIBILITY":
-				s = "Invisibilité";
-				break;
-			case "JUMP":
-				s = "Bonus de Saut";
-				break;
-			case "NIGHT_VISION":
-				s = "Vision Nocturne";
-				break;
-			case "POISON":
-				s = "Poison";
-				break;
-			case "REGENERATION":
-				s = "Régénération";
-				break;
-			case "SATURATION":
-				s = "Saturation";
-				break;
-			case "SLOW":
-				s = "Lenteur";
-				break;
-			case "SLOW_DIGGING":
-				s = "Fatigue";
-				break;
-			case "SPEED":
-				s = "Rapidité";
-				break;
-			case "WATER_BREATHING":
-				s = "Apnée";
-				break;
-			case "WEAKNESS":
-				s = "Faiblesse";
-				break;
-			case "WITHER":
-				s = "Wither";
-				break;
-
-			default:
-				throw new IllegalStateException("Unexpected value: " + pet);
-		}
-		return s;
+		return switch (pet.getName()) {
+			case "ABSORPTION" -> "Absorption";
+			case "BLINDNESS" -> "Cécité";
+			case "CONFUSION" -> "Nausée";
+			case "DAMAGE_RESISTANCE" -> "Résistance";
+			case "FAST_DIGGING" -> "Hâte";
+			case "FIRE_RESISTANCE" -> "Résitance au Feu";
+			case "HARM" -> "Dégâts instantanés";
+			case "HEAL" -> "Soins instantanés";
+			case "HEALTH_BOOST" -> "Bonus de Vie";
+			case "HUNGER" -> "Faim";
+			case "INCREASE_DAMAGE" -> "Force";
+			case "INVISIBILITY" -> "Invisibilité";
+			case "JUMP" -> "Bonus de Saut";
+			case "NIGHT_VISION" -> "Vision Nocturne";
+			case "POISON" -> "Poison";
+			case "REGENERATION" -> "Régénération";
+			case "SATURATION" -> "Saturation";
+			case "SLOW" -> "Lenteur";
+			case "SLOW_DIGGING" -> "Fatigue";
+			case "SPEED" -> "Rapidité";
+			case "WATER_BREATHING" -> "Apnée";
+			case "WEAKNESS" -> "Faiblesse";
+			case "WITHER" -> "Wither";
+			default -> throw new IllegalStateException("Unexpected value: " + pet);
+		};
 	}
 
 	public void setHealth(Player player) {
@@ -414,22 +364,28 @@ public class UHC extends JavaPlugin {
 		if (isHost) {
 			if (!this.whitelist.contains(player)) this.whitelist.add(player);
 			if (!this.config.hosts.contains(player.getUniqueId())) this.config.hosts.add(player.getUniqueId());
-			if (!getPlayerUHC(player).isSpec()) {
-				if (scoreboard.getTeam("Joueur").hasEntry(player.getName()))
+			if (!this.getPlayerUHC(player).isSpec()) {
+				if (scoreboard.getTeam("Joueur").hasEntry(player.getName())) {
 					scoreboard.getTeam("Host").addEntry(player.getName());
-				player.setDisplayName(scoreboard.getEntryTeam(player.getName()).getPrefix() + player.getName());
-				player.setPlayerListName(player.getDisplayName());
+					player.setDisplayName(scoreboard.getEntryTeam(player.getName()).getPrefix() + player.getName());
+					player.setPlayerListName(player.getDisplayName());
+				}
 			}
-			if (isState(Gstate.WAITING) || isState(Gstate.STARTING))fr.neyuux.uhc.InventoryManager.giveWaitInventory(player);
+			if (this.getGameConfig().deathInvModifier.equals(player))
+				this.getGameConfig().deathInvModifier = null;
+			if (this.getGameConfig().starterModifier.equals(player))
+				this.getGameConfig().starterModifier = null;
+			if (this.isState(Gstate.WAITING) || this.isState(Gstate.STARTING))fr.neyuux.uhc.InventoryManager.giveWaitInventory(player);
 		} else {
 			this.config.hosts.remove(player.getUniqueId());
-			if (!getPlayerUHC(player).isSpec()) {
-				if (scoreboard.getTeam("Host").hasEntry(player.getName()))
+			if (!this.getPlayerUHC(player).isSpec()) {
+				if (scoreboard.getTeam("Host").hasEntry(player.getName())) {
 					scoreboard.getTeam("Joueur").addEntry(player.getName());
-				player.setDisplayName(scoreboard.getTeam("Joueur").getPrefix() + player.getName() + "§r");
-				player.setPlayerListName(player.getDisplayName());
+					player.setDisplayName(scoreboard.getTeam("Joueur").getPrefix() + player.getName() + "§r");
+					player.setPlayerListName(player.getDisplayName());
+				}
 			}
-			player.getInventory().remove(Material.REDSTONE_COMPARATOR);
+			if (this.isState(Gstate.WAITING) || this.isState(Gstate.STARTING)) player.getInventory().remove(Material.REDSTONE_COMPARATOR);
 			player.closeInventory();
 		}
 	}
@@ -466,7 +422,7 @@ public class UHC extends JavaPlugin {
 		Bukkit.getPluginManager().callEvent(new PluginReloadEvent());
 		Bukkit.getScheduler().cancelTasks(this);
 
-		setState(Gstate.WAITING);
+		this.setState(Gstate.WAITING);
 		this.players.clear();
 		this.spectators.clear();
 		GameConfig.ConfigurableParams.TEAMTYPE.setValue(GameConfig.getTeamTypeString(1, false));
@@ -477,10 +433,10 @@ public class UHC extends JavaPlugin {
 		this.uhcTeamManager = new UHCTeamManager(this);
 		Scenario.removeEvents();
 		HandlerList.unregisterAll(this.config);
-		getServer().resetRecipes();
+		this.getServer().resetRecipes();
 		this.config = new GameConfig(this, this.mode);
 		this.world.changePVP(false);
-		getServer().getPluginManager().registerEvents(this.config, this);
+		this.getServer().getPluginManager().registerEvents(this.config, this);
 		UHCWorld.setAchievements(false);
 		for (Player p : Bukkit.getOnlinePlayers())
 			if (p.hasPermission("uhc.*"))
@@ -613,6 +569,15 @@ public class UHC extends JavaPlugin {
 	}
 
 
+	public static void sendActionBar(Player p, String message) {
+		IChatBaseComponent cbc = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
+		PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc, (byte) 2);
+		try {
+			((CraftPlayer) p).getHandle().playerConnection.sendPacket(ppoc);
+		} catch (NullPointerException e) {e.printStackTrace();}
+	}
+
+
 	public static void sendActionBarForAllPlayers(String message) {
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			sendActionBar(p, message);
@@ -645,15 +610,6 @@ public class UHC extends JavaPlugin {
 	public static void stopInfiniteActionBarForAllPlayers() {
 		infiniteActionBars.values().forEach(BukkitTask::cancel);
 		infiniteActionBars.clear();
-	}
-
-
-	public static void sendActionBar(Player p, String message) {
-		IChatBaseComponent cbc = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
-		PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc, (byte) 2);
-		try {
-			((CraftPlayer) p).getHandle().playerConnection.sendPacket(ppoc);
-		} catch (NullPointerException e) {e.printStackTrace();}
 	}
 
 

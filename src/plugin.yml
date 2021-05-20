@@ -1,5 +1,5 @@
 name: UHC
-version: Beta2.0
+version: Beta2.0.1
 author: Neyuux_
 main: fr.neyuux.uhc.UHC
 softdepend: [NeyGin_Core]

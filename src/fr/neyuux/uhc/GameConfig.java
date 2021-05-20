@@ -50,7 +50,7 @@ public class GameConfig implements Listener {
         this.mode = mode;
         if (!UHCWorld.isCreated()) {
             main.world.create();
-            Bukkit.broadcastMessage(main.getPrefix() + "§2Monde §a\"" + main.world.getSeed() + "\"§2 créé.");
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§2Monde §a\"" + main.world.getSeed() + "\"§2 créé.");
         }
         if (mode.equals(UHC.Modes.LG)) {
             SCOREBOARD_LIFE.setValue(false);
@@ -132,10 +132,10 @@ public class GameConfig implements Listener {
             ev.setCancelled(true);
             if (current.getType().equals(Material.GOLDEN_APPLE) && !mode.equals(UHC.Modes.UHC)) {
                 main.changeMode(UHC.Modes.UHC);
-                Bukkit.broadcastMessage(main.getPrefix() + "§b" + player.getName() + " §ea passé le mode de jeu sur " + ChatColor.translateAlternateColorCodes('&', UHC.Modes.UHC.getPrefix()));
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §ea passé le mode de jeu sur " + ChatColor.translateAlternateColorCodes('&', UHC.Modes.UHC.getPrefix()));
             } else if (current.getType().equals(Material.MONSTER_EGG) && !mode.equals(UHC.Modes.LG)) {
                 main.changeMode(UHC.Modes.LG);
-                Bukkit.broadcastMessage(main.getPrefix() + "§b" + player.getName() + " §ea passé le mode de jeu sur " + ChatColor.translateAlternateColorCodes('&', UHC.Modes.LG.getPrefix()));
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §ea passé le mode de jeu sur " + ChatColor.translateAlternateColorCodes('&', UHC.Modes.LG.getPrefix()));
             }
 
             if (current.equals(getReturnArrow()))
@@ -157,7 +157,7 @@ public class GameConfig implements Listener {
             if (current.getType().equals(Material.STAINED_CLAY))
                 if (current.getDurability() == 5) {
                     main.rel();
-                    Bukkit.broadcastMessage(main.getPrefix() + "§b" + player.getName() + " §ea reset la map !");
+                    Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §ea reset la map !");
                     player.closeInventory();
                 } else if (current.getDurability() == 14)
                     player.openInventory(getGameConfigInv(player));
@@ -195,14 +195,14 @@ public class GameConfig implements Listener {
                 Scenarios sc = Scenarios.getByDisplayName(current.getItemMeta().getDisplayName());
                 if (!sc.isActivated()) {
                     if (Scenarios.haveModeScenarios() && sc.isModeScenario()) {
-                        player.sendMessage(main.getPrefix() + "§cImpossible de rajouter le mode de jeu §6\"" + sc.getDisplayName() + "§6\" §calors qu'il y a déjà un mode de jeu activé !");
+                        player.sendMessage(UHC.getPrefix() + "§cImpossible de rajouter le mode de jeu §6\"" + sc.getDisplayName() + "§6\" §calors qu'il y a déjà un mode de jeu activé !");
                     } else {
                         try {
                             Class<?> c = sc.getScenarioClass();
                             c.getMethod("activateScenario").invoke(c.newInstance());
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Bukkit.broadcastMessage(main.getPrefix() + "§4[§cErreur§4] §cErreur lors de l'activation du Scénario " + sc.getDisplayName());
+                            Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cErreur lors de l'activation du Scénario " + sc.getDisplayName());
                         }
                         ItemMeta itm = current.getItemMeta();
                         itm.setLore(getScenInvLore(sc));
@@ -216,7 +216,7 @@ public class GameConfig implements Listener {
                             c.getMethod("desactivateScenario").invoke(c.newInstance());
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Bukkit.broadcastMessage(main.getPrefix() + "§4[§cErreur§4] §cErreur lors de la désactivation du Scénario " + sc.getDisplayName());
+                            Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cErreur lors de la désactivation du Scénario " + sc.getDisplayName());
                         }
                         ItemMeta itm = current.getItemMeta();
                         itm.setLore(getScenInvLore(sc));
@@ -294,7 +294,7 @@ public class GameConfig implements Listener {
                                         it = new ItemsStack(prit);
                             inv.setItem(4, it.toItemStack());
                         } catch (Exception e) {
-                            Bukkit.broadcastMessage(main.getPrefix() + "§4[§cErreur§4] §cErreur lors de la modification de la valeur du scenario");
+                            Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cErreur lors de la modification de la valeur du scenario");
                             e.printStackTrace();
                         }
                     } else {
@@ -313,7 +313,7 @@ public class GameConfig implements Listener {
                                         it = new ItemsStack(prit);
                             inv.setItem(4, it.toItemStack());
                         } catch (Exception e) {
-                            Bukkit.broadcastMessage(main.getPrefix() + "§4[§cErreur§4] §cErreur lors de la modification de la valeur du scenario");
+                            Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cErreur lors de la modification de la valeur du scenario");
                             e.printStackTrace();
                         }
                     }
@@ -497,7 +497,7 @@ public class GameConfig implements Listener {
                     }
                     if (param.equals(TEAMTYPE)) {
                         if (mode.equals(UHC.Modes.LG)) {
-                            player.sendMessage(main.getPrefix() + "§cImpossible de changer la taille des équipes avec ce mode.");
+                            player.sendMessage(UHC.getPrefix() + "§cImpossible de changer la taille des équipes avec ce mode.");
                             player.closeInventory();
                             return;
                         }
@@ -534,23 +534,23 @@ public class GameConfig implements Listener {
                 if (current.getItemMeta().getDisplayName().startsWith("§a§lModifier l'invetaire de ")) {
                     if (current.getItemMeta().getDisplayName().endsWith("Départ")) {
                         if (starterModifier != null) {
-                            player.sendMessage(main.getPrefix() + "§c\"§4§l" + starterModifier.getDisplayName() + "§c\" modifie déjà l'inventaire !");
+                            player.sendMessage(UHC.getPrefix() + "§c\"§4§l" + starterModifier.getDisplayName() + "§c\" modifie déjà l'inventaire !");
                             UHC.playNegativeSound(player);
                             return;
                         }
                         starterModifier = player;
-                        player.sendMessage(main.getPrefix() + "§6Vous allez modifier l'inventaire de Départ. §9Pour le quiiter effectuez la commande §7§l/finish§9. §9Pour enchanter un objet, utiliez §7§l/enchant§9.");
+                        player.sendMessage(UHC.getPrefix() + "§6Vous allez modifier l'inventaire de Départ. §9Pour le quiiter effectuez la commande §7§l/finish§9. §9Pour enchanter un objet, utiliez §7§l/enchant§9.");
                         player.setGameMode(GameMode.CREATIVE);
                         InventoryManager.clearInventory(starterModifier);
                         main.getInventoryManager().giveStartInventory(starterModifier);
                     } else {
                         if (deathInvModifier != null) {
-                            player.sendMessage(main.getPrefix() + "§c\"§4§l" + deathInvModifier.getDisplayName() + "§c\" modifie déjà l'inventaire !");
+                            player.sendMessage(UHC.getPrefix() + "§c\"§4§l" + deathInvModifier.getDisplayName() + "§c\" modifie déjà l'inventaire !");
                             UHC.playNegativeSound(player);
                             return;
                         }
                         deathInvModifier = player;
-                        player.sendMessage(main.getPrefix() + "§6Vous allez modifier l'inventaire de Mort. §9Pour le quiiter effectuez la commande §7§l/finish§9. §9Pour enchanter un objet, utiliez §7§l/enchant§9.");
+                        player.sendMessage(UHC.getPrefix() + "§6Vous allez modifier l'inventaire de Mort. §9Pour le quiiter effectuez la commande §7§l/finish§9. §9Pour enchanter un objet, utiliez §7§l/enchant§9.");
                         player.setGameMode(GameMode.CREATIVE);
                         InventoryManager.clearInventory(deathInvModifier);
                         InventoryManager.giveDeathInventory(deathInvModifier);
@@ -561,10 +561,10 @@ public class GameConfig implements Listener {
                     if (current.getItemMeta().getDisplayName().endsWith("Départ")) {
                         InventoryManager.startInventory = new ItemStack[]{};
                         main.getInventoryManager().getStartArmor().clear();
-                        player.sendMessage(main.getPrefix() + "§cVous avez supprimé l'inventaire de Départ.");
+                        player.sendMessage(UHC.getPrefix() + "§cVous avez supprimé l'inventaire de Départ.");
                     } else {
                         main.getInventoryManager().getDeathInventory().clear();
-                        player.sendMessage(main.getPrefix() + "§cVous avez supprimé l'inventaire de Mort.");
+                        player.sendMessage(UHC.getPrefix() + "§cVous avez supprimé l'inventaire de Mort.");
                     }
                     UHC.playPositiveSound(player);
                     player.closeInventory();
@@ -704,15 +704,15 @@ public class GameConfig implements Listener {
 
             if (current.getType().equals(Material.BANNER)) {
                 if (getTeamTypeInt((String)TEAMTYPE.getValue()) <= 1) {
-                    player.sendMessage(main.getPrefix() + "§cLes équipes sont désactivées.");
+                    player.sendMessage(UHC.getPrefix() + "§cLes équipes sont désactivées.");
                     UHC.playNegativeSound(player);
                     return;
                 }
                 player.openInventory(getModifTeamPlayerInv(p, 1, inv.getItem(4)));
             } else if (current.getType().equals(Material.DIODE)) {
                 main.setPlayerHost(p, !puhc.isHost());
-                if (puhc.isHost()) Bukkit.broadcastMessage(main.getPrefix() + player.getDisplayName() + " §6a mit §a§l" + p.getName() + " §6§lHost§6 de la partie.");
-                else Bukkit.broadcastMessage(main.getPrefix() + player.getDisplayName() + "§6 a retiré la fonction de §lHost§6 à §c§l" + p.getName());
+                if (puhc.isHost()) Bukkit.broadcastMessage(UHC.getPrefix() + player.getDisplayName() + " §6a mit §a§l" + p.getName() + " §6§lHost§6 de la partie.");
+                else Bukkit.broadcastMessage(UHC.getPrefix() + player.getDisplayName() + "§6 a retiré la fonction de §lHost§6 à §c§l" + p.getName());
                 UHC.playPositiveSound(p);
                 UHC.playPositiveSound(player);
                 player.closeInventory();
@@ -728,8 +728,8 @@ public class GameConfig implements Listener {
                     p.setPlayerListName(p.getDisplayName());
                     InventoryManager.giveWaitInventory(p);
 
-                    p.sendMessage(main.getPrefix() + player.getDisplayName() + "§6 vous a retiré du mode Spectateur");
-                    player.sendMessage(main.getPrefix() + "§6Vous avez retiré " + p.getDisplayName() + " §6du mode Spectateur.");
+                    p.sendMessage(UHC.getPrefix() + player.getDisplayName() + "§6 vous a retiré du mode Spectateur");
+                    player.sendMessage(UHC.getPrefix() + "§6Vous avez retiré " + p.getDisplayName() + " §6du mode Spectateur.");
                 } else {
                     main.spectators.add(p);
                     p.setGameMode(GameMode.SPECTATOR);
@@ -738,15 +738,15 @@ public class GameConfig implements Listener {
                     InventoryManager.clearInventory(p);
                     puhc.heal();
 
-                    p.sendMessage(main.getPrefix() + player.getDisplayName() + " §6a établi votre mode de jeu en spectateur.");
-                    p.sendMessage(main.getPrefix() + "§7Pour revenir au mode non-spectateur, utilisez la commande §6§l/uhc spec off§7.");
-                    player.sendMessage(main.getPrefix() + "§6Vous avez placé " + p.getDisplayName() + " §6en mode Spectateur.");
+                    p.sendMessage(UHC.getPrefix() + player.getDisplayName() + " §6a établi votre mode de jeu en spectateur.");
+                    p.sendMessage(UHC.getPrefix() + "§7Pour revenir au mode non-spectateur, utilisez la commande §6§l/uhc spec off§7.");
+                    player.sendMessage(UHC.getPrefix() + "§6Vous avez placé " + p.getDisplayName() + " §6en mode Spectateur.");
                 }
                 UHC.playPositiveSound(p);
                 UHC.playPositiveSound(player);
                 player.closeInventory();
             } else if (current.getType().equals(Material.BARRIER) && ev.getClick().equals(ClickType.DROP)) {
-                Bukkit.broadcastMessage(main.getPrefix() + player.getDisplayName() + "§c a exclu §b" + p.getName() + "§c.");
+                Bukkit.broadcastMessage(UHC.getPrefix() + player.getDisplayName() + "§c a exclu §b" + p.getName() + "§c.");
                 UHC.playPositiveSound(player);
                 player.closeInventory();
                 p.kickPlayer("§cExclu par " + player.getDisplayName());
@@ -773,9 +773,9 @@ public class GameConfig implements Listener {
             else if (current.getType().equals(Material.BANNER)) {
                 if (current.getItemMeta().getDisplayName().startsWith("§fRéinitialiser l'équipe de §b")) {
                     if (puhc.getTeam() != null) {
-                        player.sendMessage(main.getPrefix() + "§eVous avez bien réinitialisé l'équipe de §b" + p.getName() + "§e.");
+                        player.sendMessage(UHC.getPrefix() + "§eVous avez bien réinitialisé l'équipe de §b" + p.getName() + "§e.");
                         UHC.playPositiveSound(player);
-                        p.sendMessage(main.getPrefix() + player.getDisplayName() + " §ea réinitialisé votre équipe.");
+                        p.sendMessage(UHC.getPrefix() + player.getDisplayName() + " §ea réinitialisé votre équipe.");
                         UHC.playPositiveSound(p);
                         puhc.getTeam().leave(puhc);
                         BannerMeta bm = (BannerMeta)p.getInventory().getItem(4).getItemMeta();
@@ -790,9 +790,9 @@ public class GameConfig implements Listener {
                     UHCTeam t = main.getUHCTeamManager().getTeamByDisplayName(current.getItemMeta().getDisplayName());
                     if (puhc.getTeam() != null && puhc.getTeam().equals(t)) return;
 
-                    player.sendMessage(main.getPrefix() + "§eVous avez bien mit §b" + p.getName() + " §edans l'équipe " + t.getTeam().getDisplayName() + "§e.");
+                    player.sendMessage(UHC.getPrefix() + "§eVous avez bien mit §b" + p.getName() + " §edans l'équipe " + t.getTeam().getDisplayName() + "§e.");
                     UHC.playPositiveSound(player);
-                    p.sendMessage(main.getPrefix() + player.getDisplayName() + " §evous a mit dans l'équipe " + t.getTeam().getDisplayName() + "§e.");
+                    p.sendMessage(UHC.getPrefix() + player.getDisplayName() + " §evous a mit dans l'équipe " + t.getTeam().getDisplayName() + "§e.");
                     UHC.playPositiveSound(p);
                     if (puhc.getTeam() != null) puhc.getTeam().leave(puhc);
                     t.add(p);
@@ -892,7 +892,7 @@ public class GameConfig implements Listener {
                 ord++;
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
                 e.printStackTrace();
-                Bukkit.broadcastMessage(main.getPrefix() + "§4[§cErreur§4] §cUne erreur s'est produite lors du chargement du menu des scénarios, veuillez en informer Neyuux_ !");
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cUne erreur s'est produite lors du chargement du menu des scénarios, veuillez en informer Neyuux_ !");
                 return inv;
             }
         }
@@ -975,7 +975,7 @@ public class GameConfig implements Listener {
                 ord++;
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
                 e.printStackTrace();
-                Bukkit.broadcastMessage(main.getPrefix() + "§4[§cErreur§4] §cUne erreur s'est produite lors du chargement du menu des scénarios, veuillez en informer Neyuux_ !");
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cUne erreur s'est produite lors du chargement du menu des scénarios, veuillez en informer Neyuux_ !");
                 return inv;
             }
         }
@@ -1179,7 +1179,7 @@ public class GameConfig implements Listener {
             scit.setLore(lore);
         } catch (Exception e) {
             e.printStackTrace();
-            Bukkit.broadcastMessage(main.getPrefix() + "§4[§cErreur§4] §cErreur lors de l'activation du Scénario " + sc.getDisplayName());
+            Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cErreur lors de l'activation du Scénario " + sc.getDisplayName());
         }
 
         lore.add(" ");
@@ -1557,15 +1557,11 @@ public class GameConfig implements Listener {
     }
 
     public static int getTeamTypeInt(String teamtype) {
-        switch (teamtype) {
-            case "FFA":
-                return 1;
-            case "SlaveMarket":
-                return 0;
-            case "TrueLove":
-                return TrueLove.teamSize;
-            default:
-                return Integer.parseInt(teamtype.replace("Random ", "").replace("To", ""));
-        }
+        return switch (teamtype) {
+            case "FFA" -> 1;
+            case "SlaveMarket" -> 0;
+            case "TrueLove" -> TrueLove.teamSize;
+            default -> Integer.parseInt(teamtype.replace("Random ", "").replace("To", ""));
+        };
     }
 }

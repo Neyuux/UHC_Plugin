@@ -26,7 +26,7 @@ public class Switch extends Scenario implements Listener {
     }
 
     public static int firstSwitch = 1200, switchFrequency = 900, randomTimeLimit = 0;
-    public static boolean hasInvSwitch = false, hasSoloSwitch = true, hasTeamBalancing = false;
+    public static boolean hasInvSwitch = false, hasSoloSwitch = true, hasTeamBalancing = false; //TODO
 
     public static int[] IGtimers = {0};
 

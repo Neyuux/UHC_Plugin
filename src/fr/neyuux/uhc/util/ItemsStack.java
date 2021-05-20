@@ -1,13 +1,11 @@
 package fr.neyuux.uhc.util;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.*;
@@ -192,22 +190,6 @@ public class ItemsStack {
         return item;
     }
 
-    public ItemStack toItemStackwithColorAndUnbreakable(Color color) {
-        ItemStack item = this.item;
-
-        LeatherArmorMeta itemMeta = (LeatherArmorMeta) item.getItemMeta();
-
-        itemMeta.spigot().setUnbreakable(true);
-        itemMeta.setDisplayName(this.name);
-        itemMeta.setLore(this.lore);
-        itemMeta.setColor(color);
-        item.setItemMeta(itemMeta);
-        item.setAmount(this.amount);
-        item.setDurability(this.durabilite);
-
-        return item;
-    }
-
     public ItemStack toItemStackwithItemFlag(ItemFlag... itemflag) {
 
         ItemStack item = this.item;
@@ -341,7 +323,7 @@ public class ItemsStack {
         return this.durabilite;
     }
 
-    public void setDurability(short durabilite) {
-        this.durabilite = durabilite;
+    public void setDurability(short durability) {
+        this.durabilite = durability;
     }
 }
