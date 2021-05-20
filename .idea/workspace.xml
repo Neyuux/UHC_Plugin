@@ -20,34 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7ce5b067-029d-4d78-abc3-13e99d4ca6f1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/UHC$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/UHC$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/UHC.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/UHC.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/util/PlayerSkin.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/util/PlayerSkin.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/bin/plugin.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/GameConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/GameConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/UHC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/UHC.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/UHCWorld.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/UHCWorld.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/commands/CommandFinish.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/commands/CommandFinish.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/enums/Symbols.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/enums/Symbols.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/FightListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/FightListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/PlayerListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/PlayerListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/PreGameListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/PreGameListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/WorldListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/listeners/WorldListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/Anonymous.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/Anonymous.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/OreLimiter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/OreLimiter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/modes/Switch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/modes/Switch.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/tasks/UHCRunnable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/tasks/UHCRunnable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/tasks/UHCStart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/tasks/UHCStart.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/tasks/UHCStop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/tasks/UHCStop.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/teams/UHCTeam.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/teams/UHCTeam.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/util/ItemsStack.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/util/ItemsStack.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/util/PlayerSkin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/util/PlayerSkin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,11 +66,16 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="460" y="294" key="SettingsEditor" timestamp="1621519846841">
+    <state x="710" y="444" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1621522323095">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="460" y="294" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1621519846841" />
+    <state x="710" y="444" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1621522323095" />
+    <state x="460" y="228" key="SettingsEditor" timestamp="1621522829193">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="460" y="228" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1621522829193" />
   </component>
 </project>

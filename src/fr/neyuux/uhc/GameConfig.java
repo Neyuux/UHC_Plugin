@@ -1557,11 +1557,15 @@ public class GameConfig implements Listener {
     }
 
     public static int getTeamTypeInt(String teamtype) {
-        return switch (teamtype) {
-            case "FFA" -> 1;
-            case "SlaveMarket" -> 0;
-            case "TrueLove" -> TrueLove.teamSize;
-            default -> Integer.parseInt(teamtype.replace("Random ", "").replace("To", ""));
-        };
+        switch (teamtype) {
+            case "FFA":
+                return 1;
+            case "SlaveMarket":
+                return 0;
+            case "TrueLove":
+                return TrueLove.teamSize;
+            default:
+                return Integer.parseInt(teamtype.replace("Random ", "").replace("To", ""));
+        }
     }
 }

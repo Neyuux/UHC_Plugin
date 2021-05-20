@@ -318,32 +318,82 @@ public class UHC extends JavaPlugin {
 	}
 
 	public static String translatePotionEffect(PotionEffectType pet) {
-		return switch (pet.getName()) {
-			case "ABSORPTION" -> "Absorption";
-			case "BLINDNESS" -> "Cécité";
-			case "CONFUSION" -> "Nausée";
-			case "DAMAGE_RESISTANCE" -> "Résistance";
-			case "FAST_DIGGING" -> "Hâte";
-			case "FIRE_RESISTANCE" -> "Résitance au Feu";
-			case "HARM" -> "Dégâts instantanés";
-			case "HEAL" -> "Soins instantanés";
-			case "HEALTH_BOOST" -> "Bonus de Vie";
-			case "HUNGER" -> "Faim";
-			case "INCREASE_DAMAGE" -> "Force";
-			case "INVISIBILITY" -> "Invisibilité";
-			case "JUMP" -> "Bonus de Saut";
-			case "NIGHT_VISION" -> "Vision Nocturne";
-			case "POISON" -> "Poison";
-			case "REGENERATION" -> "Régénération";
-			case "SATURATION" -> "Saturation";
-			case "SLOW" -> "Lenteur";
-			case "SLOW_DIGGING" -> "Fatigue";
-			case "SPEED" -> "Rapidité";
-			case "WATER_BREATHING" -> "Apnée";
-			case "WEAKNESS" -> "Faiblesse";
-			case "WITHER" -> "Wither";
-			default -> throw new IllegalStateException("Unexpected value: " + pet);
-		};
+		String s;
+		String name = pet.getName();
+		switch (name) {
+			case "ABSORPTION":
+				s = "Absorption";
+				break;
+			case "BLINDNESS":
+				s = "Cécité";
+				break;
+			case "CONFUSION":
+				s = "Nausée";
+				break;
+			case "DAMAGE_RESISTANCE":
+				s = "Résistance";
+				break;
+			case "FAST_DIGGING":
+				s = "Hâte";
+				break;
+			case "FIRE_RESISTANCE":
+				s = "Résitance au Feu";
+				break;
+			case "HARM":
+				s = "Dégâts instantanés";
+				break;
+			case "HEAL":
+				s = "Soins instantanés";
+				break;
+			case "HEALTH_BOOST":
+				s = "Bonus de Vie";
+				break;
+			case "HUNGER":
+				s = "Faim";
+				break;
+			case "INCREASE_DAMAGE":
+				s = "Force";
+				break;
+			case "INVISIBILITY":
+				s = "Invisibilité";
+				break;
+			case "JUMP":
+				s = "Bonus de Saut";
+				break;
+			case "NIGHT_VISION":
+				s = "Vision Nocturne";
+				break;
+			case "POISON":
+				s = "Poison";
+				break;
+			case "REGENERATION":
+				s = "Régénération";
+				break;
+			case "SATURATION":
+				s = "Saturation";
+				break;
+			case "SLOW":
+				s = "Lenteur";
+				break;
+			case "SLOW_DIGGING":
+				s = "Fatigue";
+				break;
+			case "SPEED":
+				s = "Rapidité";
+				break;
+			case "WATER_BREATHING":
+				s = "Apnée";
+				break;
+			case "WEAKNESS":
+				s = "Faiblesse";
+				break;
+			case "WITHER":
+				s = "Wither";
+				break;
+			default:
+				throw new IllegalStateException("Unexpected value: " + pet);
+		}
+		return s;
 	}
 
 	public void setHealth(Player player) {
