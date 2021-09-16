@@ -43,7 +43,7 @@ public class FastGetaway extends Scenario implements Listener {
         if (ev.getKiller() != null && ev.getKiller().getPlayer().isOnline()) {
             Player k = ev.getKiller().getPlayer().getPlayer();
             k.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration * 20, level - 1, true, true));
-            k.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §bVous venez de recevoir l'effet §lSpeed " + level + " §bpendant §l" + duration + " §bsecondes.");
+            k.sendMessage(getPrefix() + "§bVous venez de recevoir l'effet §lSpeed " + level + " §bpendant §l" + duration + " §bsecondes.");
         }
     }
 }

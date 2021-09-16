@@ -154,7 +154,6 @@ public class PlayerListener implements Listener {
     public void onPlayerCraft(CraftItemEvent e){
         ItemStack result = e.getRecipe().getResult();
         Player player = (Player)e.getWhoClicked();
-        System.out.println(e + " " + UHCRunnable.timer + " " + e.getRecipe().getResult().getAmount() + " " + e.getCurrentItem().getAmount());
         if (result == null || result.getType() == null) return;
 
         if (e.getCurrentItem().isSimilar(new ItemStack(Material.GOLDEN_APPLE, 1, (short) 1))) {

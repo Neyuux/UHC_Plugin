@@ -41,7 +41,7 @@ public class BowLess extends Scenario implements Listener {
     public void onCraft(CraftItemEvent ev) {
         if (ev.getInventory().getResult().getType().equals(Material.BOW)) {
             ev.setCancelled(true);
-            ev.getWhoClicked().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de l'arc est désactivé.");
+            ev.getWhoClicked().sendMessage(getPrefix() + "§cLe craft de l'arc est désactivé.");
             UHC.playNegativeSound((Player)ev.getWhoClicked());
         }
     }
@@ -50,7 +50,7 @@ public class BowLess extends Scenario implements Listener {
     public void onPickUp(PlayerPickupItemEvent ev) {
         if(ev.getItem().getItemStack().getType().equals(Material.BOW)) {
             ev.setCancelled(true);
-            ev.getPlayer().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cL'arc est désactivé.");
+            ev.getPlayer().sendMessage(getPrefix() + "§cL'arc est désactivé.");
             UHC.playNegativeSound(ev.getPlayer());
         }
     }
@@ -60,7 +60,7 @@ public class BowLess extends Scenario implements Listener {
         if (ev.getEntity().getType().equals(EntityType.ARROW) && ev.getEntity().getShooter() instanceof Player) {
             Player p = (Player) ev.getEntity().getShooter();
             ev.setCancelled(true);
-            p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de l'arc est désactivé.");
+            p.sendMessage(getPrefix() + "§cLe craft de l'arc est désactivé.");
             UHC.playNegativeSound(p);
         }
     }

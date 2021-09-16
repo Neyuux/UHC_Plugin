@@ -1,7 +1,7 @@
 package fr.neyuux.uhc.scenario.classes;
 
-import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.Bukkit;
@@ -9,7 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class HasteyBoys extends Scenario implements Listener {
@@ -32,7 +32,8 @@ public class HasteyBoys extends Scenario implements Listener {
         for (PlayerUHC pu : UHC.getInstance().getAlivePlayers())
             if (pu.getPlayer().isOnline())
                 for (ItemStack it : pu.getPlayer().getPlayer().getInventory().getContents())
-                    if (isUpgradable(it.getType())) enchantItem(it);
+                    if (it != null)
+                        if (this.isUpgradable(it.getType())) enchantItem(it);
     }
 
     @Override
@@ -42,9 +43,9 @@ public class HasteyBoys extends Scenario implements Listener {
 
 
     @EventHandler
-    public void onCraft(CraftItemEvent e) {
-        if (isUpgradable(e.getCurrentItem().getType()))
-            e.setCurrentItem(enchantItem(e.getCurrentItem()));
+    public void onCraft(PrepareItemCraftEvent e) {
+        if (this.isUpgradable(e.getInventory().getResult().getType()))
+            e.getInventory().setResult(enchantItem(e.getInventory().getResult()));
     }
 
     public Boolean isUpgradable(Material type) {

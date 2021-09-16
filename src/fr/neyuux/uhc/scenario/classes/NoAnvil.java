@@ -41,7 +41,7 @@ public class NoAnvil extends Scenario implements Listener {
     public void onCraft(CraftItemEvent ev) {
         if (ev.getInventory().getResult().getType().equals(Material.ANVIL)) {
             ev.setCancelled(true);
-            ev.getWhoClicked().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de l'enclume est désactivé.");
+            ev.getWhoClicked().sendMessage(getPrefix() + "§cLe craft de l'enclume est désactivé.");
             UHC.playNegativeSound((Player)ev.getWhoClicked());
         }
     }
@@ -50,7 +50,7 @@ public class NoAnvil extends Scenario implements Listener {
     public void onPickUp(PlayerPickupItemEvent ev) {
         if(ev.getItem().getItemStack().getType().equals(Material.ANVIL)) {
             ev.setCancelled(true);
-            ev.getPlayer().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cL'enclume est désactivée.");
+            ev.getPlayer().sendMessage(getPrefix() + "§cL'enclume est désactivée.");
             UHC.playNegativeSound(ev.getPlayer());
         }
     }
@@ -60,7 +60,7 @@ public class NoAnvil extends Scenario implements Listener {
         if (!(e.getWhoClicked() instanceof Player)) return;
         Player p = (Player) e.getWhoClicked();
         if (e.getClickedInventory() instanceof AnvilInventory) {
-            p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cL'utilisation de l'enclume est désactivée.");
+            p.sendMessage(getPrefix() + "§cL'utilisation de l'enclume est désactivée.");
             UHC.playNegativeSound(p);
             e.setCancelled(true);
             p.closeInventory();

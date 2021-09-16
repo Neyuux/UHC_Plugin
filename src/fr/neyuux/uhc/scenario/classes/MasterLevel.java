@@ -23,7 +23,7 @@ public class MasterLevel extends Scenario {
         for (PlayerUHC pu : UHC.getInstance().getAlivePlayers())
             if (pu.getPlayer().isOnline()) {
                 pu.getPlayer().getPlayer().setLevel(10000);
-                pu.getPlayer().getPlayer().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§aVous gagnez 10000 niveaux.");
+                pu.getPlayer().getPlayer().sendMessage(getPrefix() + "§aVous gagnez 10000 niveaux.");
             }
     }
 

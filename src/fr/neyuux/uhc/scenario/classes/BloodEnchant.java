@@ -44,7 +44,7 @@ public class BloodEnchant extends Scenario implements Listener {
             ev.getEnchanter().damage(0);
             if (ev.getEnchanter().getHealth() > damage * 2.0) ev.getEnchanter().setHealth(ev.getEnchanter().getHealth() - damage * 2.0);
             else new FightListener(UHC.getInstance()).eliminate(ev.getEnchanter(), true, null, ev.getEnchanter().getDisplayName() + " §da trop enchanté.");
-            UHC.sendActionBar(ev.getEnchanter(), UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§4Vous perdez " + damage + Symbols.HEARTH + "  en enchantant.");
+            UHC.sendActionBar(ev.getEnchanter(), getPrefix() + "§4Vous perdez " + damage + Symbols.HEARTH + "  en enchantant.");
         }
     }
 }

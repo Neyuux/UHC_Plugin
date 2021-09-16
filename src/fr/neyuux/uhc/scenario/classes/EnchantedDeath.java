@@ -42,7 +42,7 @@ public class EnchantedDeath extends Scenario implements Listener {
     public void onCraft(CraftItemEvent ev) {
         if (ev.getInventory().getResult().getType().equals(Material.ENCHANTMENT_TABLE)) {
             ev.setCancelled(true);
-            ev.getWhoClicked().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLe craft de la table d'enchantement est désactivé.");
+            ev.getWhoClicked().sendMessage(getPrefix() + "§cLe craft de la table d'enchantement est désactivé.");
             UHC.playNegativeSound((Player)ev.getWhoClicked());
         }
     }

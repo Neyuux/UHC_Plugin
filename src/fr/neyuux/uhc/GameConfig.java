@@ -720,6 +720,7 @@ public class GameConfig implements Listener {
                 if (puhc.isSpec()) {
                     main.spectators.remove(p);
                     p.setGameMode(GameMode.ADVENTURE);
+                    p.teleport(main.world.getPlatformLoc());
                     if (puhc.isHost())
                         Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Host").addEntry(p.getName());
                     else

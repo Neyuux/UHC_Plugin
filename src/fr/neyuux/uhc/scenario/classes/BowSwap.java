@@ -58,8 +58,8 @@ public class BowSwap extends Scenario implements Listener {
                 p1.teleport(l2);
                 p2.teleport(l1);
 
-                p1.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §6Vous avez swappé avec " + p2.getDisplayName() +"§6.");
-                p2.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §6Vous avez swappé avec " + p1.getDisplayName() +"§6.");
+                p1.sendMessage(getPrefix() + "§6Vous avez swappé avec " + p2.getDisplayName() +"§6.");
+                p2.sendMessage(getPrefix() + "§6Vous avez swappé avec " + p1.getDisplayName() +"§6.");
             }
         }
     }

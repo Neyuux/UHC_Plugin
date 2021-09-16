@@ -41,7 +41,7 @@ public class RodLess extends Scenario implements Listener {
         if(!(ev.getEntity() instanceof Player)) return;
         FishHook a = (FishHook) ev.getDamager();
         if(!(a.getShooter() instanceof Player)) return;
-        ((Player)a.getShooter()).sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cLa canne à pêche est désactivée en PvP !");
+        ((Player)a.getShooter()).sendMessage(getPrefix() + "§cLa canne à pêche est désactivée en PvP !");
         ev.setCancelled(true);
     }
 }

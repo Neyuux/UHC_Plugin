@@ -30,7 +30,7 @@ public class TimeBomb extends Scenario implements Listener {
 
     @Override
     public void activate() {
-        if ((boolean) GameConfig.ConfigurableParams.BARRIER_HEAD.getValue()) Bukkit.broadcastMessage(UHC.getPrefix() + "§cVeuillez désactiver l'apparition d'un poteau au kill pour que " + scenario.getDisplayName() + " §cpuisse fonctionner.");
+        if ((boolean) GameConfig.ConfigurableParams.BARRIER_HEAD.getValue()) Bukkit.broadcastMessage(UHC.getPrefix() + "§cVeuillez désactiver l'apparition d'un poteau au kill pour que " + this.scenario.getDisplayName() + " §cpuisse fonctionner.");
     }
 
     @Override

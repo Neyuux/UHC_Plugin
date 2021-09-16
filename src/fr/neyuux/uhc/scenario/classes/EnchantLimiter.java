@@ -59,7 +59,7 @@ public class EnchantLimiter extends Scenario implements Listener {
             if (en.getKey().equals(Enchantment.ARROW_KNOCKBACK) && en.getValue() > punchMax) i = punchMax;
             if (en.getKey().equals(Enchantment.ARROW_INFINITE) && en.getValue() > infinityMax) i = infinityMax;
 
-            ev.getEnchanter().sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais comme il dépassait le niveau maximal, il sera de niveau §6§l" + i + "§c.");
+            ev.getEnchanter().sendMessage(getPrefix() + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais comme il dépassait le niveau maximal, il sera de niveau §6§l" + i + "§c.");
             if (i != -1) if (i != 0) {
                 en.setValue(i);
             } else {
@@ -88,21 +88,21 @@ public class EnchantLimiter extends Scenario implements Listener {
                 for (Map.Entry<Enchantment, Integer> en : result.getEnchantments().entrySet()) {
                     int i = -1;
                     if (en.getKey().equals(Enchantment.DAMAGE_ALL) && en.getValue() > sharpnessMax) i = sharpnessMax;
-                    if (en.getKey().equals(Enchantment.PROTECTION_ENVIRONMENTAL) && en.getValue() > protectionMax) i = protectionMax;
-                    if (en.getKey().equals(Enchantment.PROTECTION_FALL) && en.getValue() > featherfallingMax) i = featherfallingMax;
-                    if (en.getKey().equals(Enchantment.THORNS) && en.getValue() > thornsMax) i = thornsMax;
-                    if (en.getKey().equals(Enchantment.KNOCKBACK) && en.getValue() > knockbackMax) i = knockbackMax;
-                    if (en.getKey().equals(Enchantment.ARROW_DAMAGE) && en.getValue() > powerMax) i = powerMax;
-                    if (en.getKey().equals(Enchantment.ARROW_KNOCKBACK) && en.getValue() > punchMax) i = punchMax;
-                    if (en.getKey().equals(Enchantment.ARROW_INFINITE) && en.getValue() > infinityMax) i = infinityMax;
+                    else if (en.getKey().equals(Enchantment.PROTECTION_ENVIRONMENTAL) && en.getValue() > protectionMax) i = protectionMax;
+                    else if (en.getKey().equals(Enchantment.PROTECTION_FALL) && en.getValue() > featherfallingMax) i = featherfallingMax;
+                    else if (en.getKey().equals(Enchantment.THORNS) && en.getValue() > thornsMax) i = thornsMax;
+                    else if (en.getKey().equals(Enchantment.KNOCKBACK) && en.getValue() > knockbackMax) i = knockbackMax;
+                    else if (en.getKey().equals(Enchantment.ARROW_DAMAGE) && en.getValue() > powerMax) i = powerMax;
+                    else if (en.getKey().equals(Enchantment.ARROW_KNOCKBACK) && en.getValue() > punchMax) i = punchMax;
+                    else if (en.getKey().equals(Enchantment.ARROW_INFINITE) && en.getValue() > infinityMax) i = infinityMax;
 
                     if (i != -1) {
                         result.removeEnchantment(en.getKey());
                         if (i != 0) {
-                            p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais comme il dépassait le niveau maximal, il sera de niveau §6§l" + i + "§c.");
+                            p.sendMessage(getPrefix() + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais comme il dépassait le niveau maximal, il sera de niveau §6§l" + i + "§c.");
                             result.addEnchantment(en.getKey(), i);
                         } else
-                            p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais cet enchantement est désactivé. Il a donc été supprimé");
+                            p.sendMessage(getPrefix() + "§cVous étiez censé avoir §6§l" + CommandEnchant.translateEnchantName(en.getKey()) + " " + en.getValue() + " §cmais cet enchantement est désactivé. Il a donc été supprimé");
                     }
                 }
             }

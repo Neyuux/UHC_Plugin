@@ -1,9 +1,6 @@
 package fr.neyuux.uhc.listeners;
 
-import fr.neyuux.uhc.UHC;
-import fr.neyuux.uhc.InventoryManager;
-import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.GameConfig;
+import fr.neyuux.uhc.*;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.events.GameStartEvent;
 import fr.neyuux.uhc.scenario.Scenarios;
@@ -101,7 +98,7 @@ public class PreGameListener implements Listener {
             main.getUHCTeamManager().getScoreboard().getTeam("Joueur").addEntry(player.getName());
         }
         player.setPlayerListName(player.getDisplayName());
-        player.teleport(new Location(Bukkit.getWorld("Core"), -565, 23.2, 850));
+        player.teleport(main.world.getPlatformLoc());
         main.setLobbyScoreboard(player);
 
         InventoryManager.giveWaitInventory(player);

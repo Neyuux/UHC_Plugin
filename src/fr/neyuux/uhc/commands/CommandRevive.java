@@ -68,13 +68,13 @@ public class CommandRevive implements CommandExecutor {
                                 if (playerUHC.getTeam() != null) playerUHC.getTeam().revive(playerUHC);
                                 for (Player pl : Bukkit.getOnlinePlayers())
                                     pl.playSound(pl.getLocation(), Sound.CHICKEN_EGG_POP, 7f, 2f);
-                                Bukkit.broadcastMessage(main.getPrefix() + "§b" + sender.getName() + " §6a revive " + player.getDisplayName() + "§6.");
+                                Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + sender.getName() + " §6a revive " + player.getDisplayName() + "§6.");
                                 for (Map.Entry<PlayerUHC, ScoreboardSign> en : main.boards.entrySet())
                                     if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA"))
                                         en.getValue().setLine(3, "§7§lJoueurs §7: §f" + main.getAlivePlayers().size());
                                     else
                                         en.getValue().setLine(3, "§7§lTeams : §f" + main.getUHCTeamManager().getAliveTeams().size() + "§8/§7" + UHCTeamManager.baseteams + " §8(§7" + main.getAlivePlayers().size() + "§8 joueurs)");
-                                player.sendMessage(main.getPrefix() + "§6Vous êtes invincible pendant 5 secondes.");
+                                player.sendMessage(UHC.getPrefix() + "§6Vous êtes invincible pendant 5 secondes.");
                                 new BukkitRunnable() {
                                     int i = 5;
 
@@ -86,12 +86,12 @@ public class CommandRevive implements CommandExecutor {
                                         i--;
                                     }
                                 }.runTaskTimer(main, 0, 20);
-                            } else sender.sendMessage(main.getPrefix() + "§cImpossible de ressuciter ce joueur.");
-                        } else sender.sendMessage(main.getPrefix() + "§cImpossible de ressuciter ce joueur.");
-                    } else sender.sendMessage(main.getPrefix() + "§cLe joueur §4\"§e" + args[0] + "§4\" §cn'existe pas.");
-                } else sender.sendMessage(main.getPrefix() + "§cVeuillez renseigner un joueur.");
-            else sender.sendMessage(main.getPrefix() + "§cVous ne pouvez pas utiliser cette commande si la partie n'est pas commencé.");
-        } else sender.sendMessage(main.getPrefix() + "§cVous n'avez pas la permission d'utiliser cette commande.");
+                            } else sender.sendMessage(UHC.getPrefix() + "§cImpossible de ressuciter ce joueur.");
+                        } else sender.sendMessage(UHC.getPrefix() + "§cImpossible de ressuciter ce joueur.");
+                    } else sender.sendMessage(UHC.getPrefix() + "§cLe joueur §4\"§e" + args[0] + "§4\" §cn'existe pas.");
+                } else sender.sendMessage(UHC.getPrefix() + "§cVeuillez renseigner un joueur.");
+            else sender.sendMessage(UHC.getPrefix() + "§cVous ne pouvez pas utiliser cette commande si la partie n'est pas commencé.");
+        } else sender.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'utiliser cette commande.");
         return true;
     }
 }

@@ -88,7 +88,7 @@ public class Truite extends Scenario implements Listener {
             else if (percent <= 85) {
                 p.setMaxHealth(p.getMaxHealth() - 10);
                 effects.put(pu, PotionEffectType.HARM);
-                pu.getPlayer().getPlayer().sendMessage(UHC.getPrefix() + Scenarios.TRUITE.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §9Vous perdez §45 coeurs permanent §9pendant §l30 §9secondes !");
+                pu.getPlayer().getPlayer().sendMessage(getPrefix() + "§9Vous perdez §45 coeurs permanent §9pendant §l30 §9secondes !");
                 new BukkitRunnable() {
                     @Override
                     public void run() {

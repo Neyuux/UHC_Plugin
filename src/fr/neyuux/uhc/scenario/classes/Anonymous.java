@@ -53,7 +53,7 @@ public class Anonymous extends Scenario implements Listener {
         for (PlayerUHC pu : main.players) if (!pu.isSpec() && pu.getPlayer().isOnline())
             choosable.add(pu);
         if (usedName.equals("")) usedName = choosable.get(new Random().nextInt(choosable.size())).getPlayer().getName();
-        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §6Identité sélectionnée pour la partie : §b§l" + usedName + "§6.");
+        Bukkit.broadcastMessage(getPrefix() + "§6Identité sélectionnée pour la partie : §b§l" + usedName + "§6.");
 
         for (PlayerUHC pl : choosable) changeNameAndSkin(pl.getPlayer().getPlayer(), "§kAnonymous" + used + "§r", usedName);
     }

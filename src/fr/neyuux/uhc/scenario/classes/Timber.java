@@ -5,6 +5,7 @@ import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
@@ -43,33 +44,35 @@ public class Timber extends Scenario implements Listener {
         Material mat = event.getBlock().getType();
         if (mat == Material.LOG || mat == Material.LOG_2) {
             final List<Block> bList = new ArrayList<>();
-
-            List<ItemStack> finalItems = new ArrayList<>();
             bList.add(event.getBlock());
 
+            event.setCancelled(true);
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    for (int i = 0; i < bList.size(); i++) {
-                        Block block = bList.get(i);
-                        if (block.getType() == Material.LOG || block.getType() == Material.LOG_2) {
-                            List<ItemStack> items = new ArrayList<>(block.getDrops());
-                            block.setType(Material.AIR);
-                            finalItems.addAll(items);
-                        }
-                        for (BlockFace face : BlockFace.values())
-                            if (block.getRelative(face).getType() == Material.LOG
-                                    || block.getRelative(face).getType() == Material.LOG_2)
-                                bList.add(block.getRelative(face));
-                        bList.remove(block);
+                    Block block = bList.get(0);
+                    addBlock(block, bList);
+                    if (block.getType() == Material.LOG || block.getType() == Material.LOG_2) {
+                        for (ItemStack it : block.getDrops())
+                            event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation().add(0.5, 0, 0.5), it);
+                        block.setType(Material.AIR);
+                        block.getWorld().playSound(block.getLocation(), Sound.DIG_WOOD, 1f, 1f);
                     }
-                    if (bList.size() == 0) {
-                        for(ItemStack item : finalItems)
-                            event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation().add(0.5, 0, 0.5), item);
-                        cancel();
-                    }
+                    bList.remove(block);
+                    if (bList.size() == 0) cancel();
                 }
             }.runTaskTimer(UHC.getInstance(), 1, 1);
         }
+    }
+
+
+
+    private void addBlock(Block b, List<Block> bList) {
+        bList.add(b);
+        for (BlockFace face : BlockFace.values())
+            if (b.getRelative(face).getType() == Material.LOG
+                    || b.getRelative(face).getType() == Material.LOG_2)
+                if (!bList.contains(b.getRelative(face)))
+                    addBlock(b.getRelative(face), bList);
     }
 }

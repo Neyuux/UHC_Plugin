@@ -43,7 +43,7 @@ public class SkyHigh extends Scenario implements Listener {
             public void run() {
                 IGtimers[0]--;
                 if (IGtimers[0] == 0) {
-                    Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cActivation du Scénario ! §cTous les joueurs qui ne sont pas au dessus de la couche "+highMin+" recevront §4§l" + damage + Symbols.HEARTH + " §6de dégâts toutes les 30 secondes à compter de maintenant.");
+                    Bukkit.broadcastMessage(getPrefix() + "§cActivation du Scénario ! §cTous les joueurs qui ne sont pas au dessus de la couche "+highMin+" recevront §4§l" + damage + Symbols.HEARTH + " §6de dégâts toutes les 30 secondes à compter de maintenant.");
                     IGtimers[0] = SkyHigh.timer;
                     new BukkitRunnable() {
                         @Override
@@ -56,7 +56,7 @@ public class SkyHigh extends Scenario implements Listener {
                                         p.damage(0);
                                         if (p.getHealth() > damage * 2.0) p.setHealth(p.getHealth() - damage * 2.0);
                                         else new FightListener(UHC.getInstance()).eliminate(p, true, null, p.getDisplayName() + " §dest resté trop longtemps en dessous de la couche "+highMin+".");
-                                        UHC.sendActionBar(p, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§4Vous perdez " + damage + Symbols.HEARTH + "  en étant en dessous de la couche "+highMin+".");
+                                        UHC.sendActionBar(p, getPrefix() + "§4Vous perdez " + damage + Symbols.HEARTH + "  en étant en dessous de la couche "+highMin+".");
                                     }
                                 IGtimers[1] = 30;
                             }
@@ -92,9 +92,10 @@ public class SkyHigh extends Scenario implements Listener {
     
     @EventHandler
     public void onElimination(PlayerEliminationEvent ev) {
-        if (ev.getKiller() != null && hasStuffDropOnKiller)
-            if (ev.getKiller().getPlayer().isOnline())
-                ev.setStuffLocation(ev.getKiller().getPlayer().getPlayer().getLocation());
-            else ev.setStuffLocation(ev.getKiller().getLastLocation());
+        PlayerUHC killer = ev.getKiller();
+        if (killer != null && hasStuffDropOnKiller)
+            if (killer.getPlayer().isOnline())
+                ev.setStuffLocation(killer.getPlayer().getPlayer().getLocation());
+            else ev.setStuffLocation(killer.getLastLocation());
     }
 }

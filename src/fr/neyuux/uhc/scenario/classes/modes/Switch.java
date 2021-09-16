@@ -46,15 +46,15 @@ public class Switch extends Scenario implements Listener {
             public void run() {
                 IGtimers[0]--;
                 if (IGtimers[0] == 300 && randomTimeLimit == 0)
-                    Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSwitch dans 5 minutes !");
+                    Bukkit.broadcastMessage(getPrefix() + "§eSwitch dans 5 minutes !");
                 else if (IGtimers[0] == 60 && randomTimeLimit == 0)
-                    Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSwitch dans 1 minute !");
+                    Bukkit.broadcastMessage(getPrefix() + "§eSwitch dans 1 minute !");
                 else if (IGtimers[0] < 6 && IGtimers[0] > 1)
-                    Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSwitch dans "+IGtimers[0]+" secondes !");
+                    Bukkit.broadcastMessage(getPrefix() + "§eSwitch dans "+IGtimers[0]+" secondes !");
                 else if (IGtimers[0] == 1)
-                    Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSwitch dans 1 seconde !");
+                    Bukkit.broadcastMessage(getPrefix() + "§eSwitch dans 1 seconde !");
                 else if (IGtimers[0] == 0) {
-                    Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eActivation du Scénario !");
+                    Bukkit.broadcastMessage(getPrefix() + "§eActivation du Scénario !");
                     switchTeams();
                     IGtimers[0] = switchFrequency - randomTimeLimit + new SecureRandom().nextInt(randomTimeLimit + 1);
                 }

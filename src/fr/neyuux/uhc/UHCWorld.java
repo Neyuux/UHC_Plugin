@@ -27,9 +27,11 @@ import java.util.Random;
 public class UHCWorld {
 
     private static World world;
-    //private static boolean loaded = false;
+    private static boolean loaded = false;
     private static YamlConfiguration yconfig;
     private static final List<Location> spawns = new ArrayList<>();
+
+    public static String MAIN_WORLD = "Core";
 
     private final UHC main;
 
@@ -50,6 +52,8 @@ public class UHCWorld {
 
         System.out.println(world);
         world = Bukkit.createWorld(new WorldCreator(seed.toString()).seed(seed));
+        MAIN_WORLD = world.getName();
+        this.createBarrierPlatform();
         System.out.println(world);
         spawns.clear();
         return this;
@@ -86,8 +90,9 @@ public class UHCWorld {
 
     public void delete() {
         if (world == null) return;
+        MAIN_WORLD = "Core";
         for (Player p : world.getPlayers())
-            p.teleport(new Location(Bukkit.getWorld("Core"), -565, 23.2, 850));
+            p.teleport(this.getPlatformLoc());
         long seed = world.getSeed();
         world.setAutoSave(false);
         //loaded = false;
@@ -96,6 +101,22 @@ public class UHCWorld {
             FileUtils.deleteDirectory(world.getWorldFolder());
         } catch (IOException ignored) { }
         world = null;
+    }
+
+    public void createBarrierPlatform() {
+        World w = Bukkit.getWorld(MAIN_WORLD);
+
+        for (int x = -25; x <= 25; x++)
+            for (int z = -25; z <= 25; z++) {
+                w.getBlockAt(x, 130, z).setType(Material.BARRIER);
+                if (x == 25 || x == -25 || z == 25 || z == -25)
+                    w.getBlockAt(x, 132, z).setType(Material.BARRIER);
+            }
+        if (!MAIN_WORLD.equals("Core")) this.loadChunks();
+    }
+
+    public Location getPlatformLoc() {
+        return new Location(Bukkit.getWorld(MAIN_WORLD), new Random().nextInt(50)-24, 131.5, new Random().nextInt(50)-24);
     }
 
     /*public boolean isLoaded() {
@@ -151,16 +172,19 @@ public class UHCWorld {
     }*/
 
     public void loadChunks() {
-        DecimalFormat df = new DecimalFormat();
-        df.setMaximumFractionDigits(1);
-        double d = 0;
-        for (Location l : spawns) {
-            loadLocationChunks(l, true);
-            d++;
-            Bukkit.broadcastMessage(UHC.getPrefix() + "§2Chargement du monde : §a§l" + df.format(d / (main.getAlivePlayers().size() + 1) * 100) + "%§2.");
+        if (loaded) {
+            DecimalFormat df = new DecimalFormat();
+            df.setMaximumFractionDigits(1);
+            double d = 0;
+            for (Location l : spawns) {
+                loadLocationChunks(l, true);
+                d++;
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§2Chargement du monde : §a§l" + df.format(d / (main.getAlivePlayers().size() + 1) * 100) + "%§2.");
+            }
         }
         loadLocationChunks(new Location(world, 0, 70, 0), true);
         Bukkit.broadcastMessage(UHC.getPrefix() + "§2Chargement du monde : §a§l100%§2.");
+        loaded = true;
     }
 
     private static List<Chunk> loadLocationChunks(Location loc, Boolean load) {

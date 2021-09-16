@@ -43,7 +43,7 @@ public class BloodDiamond extends Scenario implements Listener {
             ev.getPlayer().damage(0);
             if (ev.getPlayer().getHealth() > damage * 2.0) ev.getPlayer().setHealth(ev.getPlayer().getHealth() - damage * 2.0);
             else new FightListener(UHC.getInstance()).eliminate(ev.getPlayer(), true, null, ev.getPlayer().getDisplayName() + " §da miné trop de diamants.");
-            UHC.sendActionBar(ev.getPlayer(), UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§4Vous perdez " + damage + " coeurs en minant du diamant.");
+            UHC.sendActionBar(ev.getPlayer(), getPrefix() + "§4Vous perdez " + damage + " coeurs en minant du diamant.");
         }
     }
 }

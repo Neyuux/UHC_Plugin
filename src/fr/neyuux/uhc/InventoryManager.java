@@ -143,7 +143,7 @@ public class InventoryManager {
 
         if(!explosion) return;
 
-        ArmorStand ar = UHCWorld.getArmorStand(new Location(chest.getWorld(), chest.getX(), chest.getY()+1, chest.getZ()));
+        ArmorStand ar = UHCWorld.getArmorStand(new Location(chest.getWorld(), chest.getX() + 0.5, chest.getY()+1, chest.getZ() + 0.5));
         ar.setSmall(true);
         new BukkitRunnable() {
             int time = timer;

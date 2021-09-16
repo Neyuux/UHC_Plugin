@@ -33,7 +33,7 @@ public class FinalHeal extends Scenario {
             public void run() {
                 IGtimers[0]--;
                 if (IGtimers[0] == 0) {
-                    Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §dActivation du Scénario !");
+                    Bukkit.broadcastMessage(getPrefix() + "§dActivation du Scénario !");
                     CommandHeal.healAll();
                     IGtimers[0] = FinalHeal.timer;
                     cancel();

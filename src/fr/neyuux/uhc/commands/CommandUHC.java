@@ -132,6 +132,32 @@ public class CommandUHC implements CommandExecutor {
                             } else player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");
                         } else player.sendMessage(UHC.getPrefix() + "§cVous ne pouvez pas regarder le classement des minerais tant que vous êtes en vie !");
                         break;
+                    case "kt":
+                    case "killtotal":
+                    case "killstotal":
+                        if (main.isState(Gstate.PLAYING)) {
+                            Comparator<Map.Entry<PlayerUHC, Integer>> valueComparator = (e1, e2) -> {
+                                Integer v1 = e1.getValue();
+                                Integer v2 = e2.getValue();
+                                return v1.compareTo(v2);
+                            };
+                            List<Map.Entry<PlayerUHC, Integer>> listOfEntries = new ArrayList<>();
+                            for (PlayerUHC pu : UHCTeamManager.baseplayers)
+                                listOfEntries.add(new AbstractMap.SimpleEntry<>(pu, pu.getKills()));
+                            listOfEntries.sort(valueComparator.reversed());
+
+                            player.sendMessage(UHC.getPrefix() + "§6Liste totale des kills de la game :");
+                            for(Map.Entry<PlayerUHC, Integer> en : listOfEntries) {
+                                int kills = en.getValue();
+                                PlayerUHC pu = en.getKey();
+                                if (kills == 0) continue;
+
+                                if (pu.getPlayer().isOnline())
+                                    player.sendMessage(" - " + pu.getPlayer().getPlayer().getDisplayName() + " §f" + Symbols.ARROW_RIGHT_FULL + " §c§l" + kills + " §ckill" + (kills != 1 ? "s" : ""));
+                                else player.sendMessage(" - §b" + pu.getPlayer().getName() + " §f" + Symbols.ARROW_RIGHT_FULL + " §c§l" + kills + " §ckill" + (kills != 1 ? "s" : ""));
+                            }
+                        } else player.sendMessage(UHC.getPrefix() + "§cCette commande n'est disponible qu'en jeu.");
+                        break;
                     case "rules":
                     case "rule":
                     case "uhc":
@@ -192,7 +218,7 @@ public class CommandUHC implements CommandExecutor {
                                 } else sbl.append("§cIl n'y a aucune équipe dans la partie.");
                                 player.sendMessage(sbl.toString());
                             } else if (args[1].equals("info")) {
-                                StringBuilder sbi = new StringBuilder(main.getPrefix());
+                                StringBuilder sbi = new StringBuilder(UHC.getPrefix());
                                 if (playerUHC.getTeam() != null) {
                                     UHCTeam t = playerUHC.getTeam();
                                     sbi.append("§6Informations sur l'équipe ").append(t.getTeam().getDisplayName()).append(" §6: \n");
@@ -287,6 +313,7 @@ public class CommandUHC implements CommandExecutor {
                                 if (main.spectators.contains(player)) {
                                     if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) {
                                         main.spectators.remove(player);
+                                        player.teleport(main.world.getPlatformLoc());
                                         player.setGameMode(GameMode.ADVENTURE);
                                         if (playerUHC.isHost())
                                             Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Host").addEntry(player.getName());
@@ -464,20 +491,20 @@ public class CommandUHC implements CommandExecutor {
                                 if (args[1].equals("candidate")) {
                                     if (!SlaveMarket.candidates.contains(playerUHC)) {
                                         if (!SlaveMarket.owners.contains(playerUHC)) {
-                                            player.sendMessage(UHC.getInstance().getPrefix() + "§aVous avez bien émis une candidature pour devenir acheteur.");
+                                            player.sendMessage(UHC.getPrefix() + "§aVous avez bien émis une candidature pour devenir acheteur.");
                                             UHC.playPositiveSound(player);
                                             SlaveMarket.candidates.add(playerUHC);
                                             SlaveMarket.candidsInv.setItem(SlaveMarket.candidsInv.firstEmpty(), new ItemsStack(Material.SKULL_ITEM, (short) 3, playerUHC.getPlayer().getPlayer().getDisplayName(), "§7Ce joueur ce propose pour être acheteur.", "", "§b>>Cliquer pour accepter").toItemStackwithSkullMeta(playerUHC.getPlayer().getPlayer().getName()));
                                         } else {
-                                            player.sendMessage(UHC.getInstance().getPrefix() + "§cVous êtes déjà un acheteur.");
+                                            player.sendMessage(UHC.getPrefix() + "§cVous êtes déjà un acheteur.");
                                             UHC.playNegativeSound(player);
                                         }
                                     } else {
-                                        player.sendMessage(UHC.getInstance().getPrefix() + "§cVous êtes déjà candidat pour être acheteur.");
+                                        player.sendMessage(UHC.getPrefix() + "§cVous êtes déjà candidat pour être acheteur.");
                                     }
                                 } else if (args[1].equals("view")) {
                                     if (playerUHC.isHost()) player.openInventory(SlaveMarket.candidsInv);
-                                    else player.sendMessage(UHC.getInstance().getPrefix() + "§cVous n'avez pas la permissions d'exécuter cette commande");
+                                    else player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permissions d'exécuter cette commande");
                                 }
                             } else player.sendMessage(UHC.getPrefix() + "§cImpossible d'utiliser cette commande en jeu.");
 
@@ -726,7 +753,6 @@ public class CommandUHC implements CommandExecutor {
                             player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'utiliser cette commande.");
                             UHC.playNegativeSound(player);
                         }
-                        break;
                     default:
                         player.sendMessage(UHC.getPrefix() + helpmessage);
                         break;

@@ -36,11 +36,11 @@ public class CommandScenario implements CommandExecutor {
                         inv.addItem(it.toItemStack());
                     } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
                         e.printStackTrace();
-                        Bukkit.broadcastMessage(main.getPrefix() + "§4[§cErreur§4] §cUne erreur s'est produite lors du chargement du menu des scénarios activés, veuillez en informer Neyuux_ !");
+                        Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cUne erreur s'est produite lors du chargement du menu des scénarios activés, veuillez en informer Neyuux_ !");
                     }
                 }
                 player.openInventory(inv);
-            } else player.sendMessage(main.getPrefix() + "§cAucun Scénario n'a été activé.");
+            } else player.sendMessage(UHC.getPrefix() + "§cAucun Scénario n'a été activé.");
         }
 
         return true;

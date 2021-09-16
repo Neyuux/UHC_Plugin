@@ -48,86 +48,86 @@ public class ArmorLimiter extends Scenario implements Listener {
             switch (current.getType()) {
                 case LEATHER_HELMET:
                     if (helmetMax.equals(ArmorTypes.NULL))
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de casque en cuir.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de casque en cuir.", player);
                     break;
                 case GOLD_HELMET:
                     if (helmetMax.ordinal() < 2)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de casque en or.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de casque en or.", player);
                     break;
                 case CHAINMAIL_HELMET:
                     if (helmetMax.ordinal() < 3)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de casque en maille.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de casque en maille.", player);
                     break;
                 case IRON_HELMET:
                     if (helmetMax.ordinal() < 4)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de casque en fer.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de casque en fer.", player);
                     break;
                 case DIAMOND_HELMET:
                     if (helmetMax.ordinal() != 5)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de casque en diamant.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de casque en diamant.", player);
                     break;
 
                 case LEATHER_CHESTPLATE:
                     if (chestplateMax.equals(ArmorTypes.NULL))
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de plastron en cuir.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de plastron en cuir.", player);
                     break;
                 case GOLD_CHESTPLATE:
                     if (chestplateMax.ordinal() < 2)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de plastron en or.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de plastron en or.", player);
                     break;
                 case CHAINMAIL_CHESTPLATE:
                     if (chestplateMax.ordinal() < 3)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de plastron en maille.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de plastron en maille.", player);
                     break;
                 case IRON_CHESTPLATE:
                     if (chestplateMax.ordinal() < 4)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de plastron en fer.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de plastron en fer.", player);
                     break;
                 case DIAMOND_CHESTPLATE:
                     if (chestplateMax.ordinal() != 5)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de plastron en diamant.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de plastron en diamant.", player);
                     break;
 
                 case LEATHER_LEGGINGS:
                     if (leggingsMax.equals(ArmorTypes.NULL))
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de pantalon en cuir.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de pantalon en cuir.", player);
                     break;
                 case GOLD_LEGGINGS:
                     if (leggingsMax.ordinal() < 2)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de pantalon en or.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de pantalon en or.", player);
                     break;
                 case CHAINMAIL_LEGGINGS:
                     if (leggingsMax.ordinal() < 3)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de pantalon en chain.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de pantalon en chain.", player);
                     break;
                 case IRON_LEGGINGS:
                     if (leggingsMax.ordinal() < 4)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de pantalon en fer.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de pantalon en fer.", player);
                     break;
                 case DIAMOND_LEGGINGS:
                     if (leggingsMax.ordinal() != 5)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de pantalon en diamant.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de pantalon en diamant.", player);
                     break;
 
                 case LEATHER_BOOTS:
                     if (bootsMax.equals(ArmorTypes.NULL))
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de bottes en cuir.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de bottes en cuir.", player);
                     break;
                 case GOLD_BOOTS:
                     if (bootsMax.ordinal() < 2)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de bottes en or.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de bottes en or.", player);
                     break;
                 case CHAINMAIL_BOOTS:
                     if (bootsMax.ordinal() < 3)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de bottes en maille.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de bottes en maille.", player);
                     break;
                 case IRON_BOOTS:
                     if (bootsMax.ordinal() < 4)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de bottes en fer.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de bottes en fer.", player);
                     break;
                 case DIAMOND_BOOTS:
                     if (bootsMax.ordinal() != 5)
-                        cancel(ev, UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§cVous ne pouvez pas porter de bottes en diamant.", player);
+                        cancel(ev, getPrefix() + "§cVous ne pouvez pas porter de bottes en diamant.", player);
                     break;
             }
 

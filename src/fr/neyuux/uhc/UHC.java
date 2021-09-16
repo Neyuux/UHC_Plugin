@@ -196,7 +196,7 @@ public class UHC extends JavaPlugin {
 			ss.setLine(2, "ßeßl…quipe ße: " +(getPlayerUHC(player).getTeam() != null ? getPlayerUHC(player).getTeam().getTeam().getDisplayName() : "ßcAucune"));
 		}
 		ss.setLine(3, "ß4");
-		ss.setLine(4, "ß6ßlSlots ß6: ßf" + Bukkit.getServer().getOnlinePlayers().size() + "ß6/ße" + GameConfig.ConfigurableParams.SLOTS.getValue());
+		ss.setLine(4, "ß6ßlJoueurs ß6: ßf" + Bukkit.getServer().getOnlinePlayers().size() + "ß6/ße" + GameConfig.ConfigurableParams.SLOTS.getValue());
 		ss.setLine(5, "ß8------------");
 		ss.setLine(6, "ß5ßoMap by ßcßlßoNeyuux_");
 		this.boards.put(getPlayerUHC(player), ss);
@@ -243,6 +243,7 @@ public class UHC extends JavaPlugin {
 		}
 		this.boards.put(playerUHC, ss);
 	}
+
 	public void setKillsScoreboard(Player player) {
 		if (this.boards.containsKey(getPlayerUHC(player))) this.boards.get(getPlayerUHC(player)).destroy();
 		ScoreboardSign scoreboard = new ScoreboardSign(player, "ß4ßlKills");
@@ -262,7 +263,7 @@ public class UHC extends JavaPlugin {
 		for(Map.Entry<PlayerUHC, Integer> en : listOfEntries) {
 			if (limit <= 15) {
 				String name;
-				if (en.getKey().getTeam()!= null)
+				if (en.getKey().getTeam() != null)
 					name = en.getKey().getTeam().getTeam().getPrefix() + en.getKey().getPlayer().getName() + en.getKey().getTeam().getTeam().getSuffix();
 				else name = en.getKey().getPlayer().getName();
 				if (en.getValue() != 0)scoreboard.setLine(limit, name + " ß7: ße" + en.getValue());
@@ -421,9 +422,9 @@ public class UHC extends JavaPlugin {
 					player.setPlayerListName(player.getDisplayName());
 				}
 			}
-			if (this.getGameConfig().deathInvModifier.equals(player))
+			if (this.getGameConfig().deathInvModifier != null && this.getGameConfig().deathInvModifier.equals(player))
 				this.getGameConfig().deathInvModifier = null;
-			if (this.getGameConfig().starterModifier.equals(player))
+			if (this.getGameConfig().starterModifier != null && this.getGameConfig().starterModifier.equals(player))
 				this.getGameConfig().starterModifier = null;
 			if (this.isState(Gstate.WAITING) || this.isState(Gstate.STARTING))fr.neyuux.uhc.InventoryManager.giveWaitInventory(player);
 		} else {
@@ -497,7 +498,7 @@ public class UHC extends JavaPlugin {
 
 			for (Player p2 : Bukkit.getOnlinePlayers())
 				p.showPlayer(p2);
-			p.teleport(new Location(Bukkit.getWorld("Core"), -565, 23.2, 850));
+			p.teleport(world.getPlatformLoc());
 			fr.neyuux.uhc.InventoryManager.clearInventory(p);
 			p.getInventory().clear();
 			p.updateInventory();

@@ -2,6 +2,7 @@ package fr.neyuux.uhc.scenario;
 
 import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.GameConfig;
+import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.util.ItemsStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -83,6 +84,10 @@ public abstract class Scenario {
             if (scenario.equals(Scenarios.RANDOM_TEAM)) GameConfig.ConfigurableParams.TEAMTYPE.setValue(GameConfig.getTeamTypeString(GameConfig.getTeamTypeInt((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()), false));
             if (scenario.equals(Scenarios.SLAVE_MARKET)) GameConfig.ConfigurableParams.TEAMTYPE.setValue(GameConfig.getTeamTypeString(0, Scenarios.RANDOM_TEAM.isActivated()));
         }
+    }
+
+    public String getPrefix() {
+        return UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " ";
     }
 
     public static HashMap<String, Field> getCache() {

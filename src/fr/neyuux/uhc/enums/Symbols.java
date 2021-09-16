@@ -23,6 +23,7 @@ public class Symbols {
     public static final String SOUTHWEST_ARROW = "\u2B0B";
     public static final String NORTH_ARROW = "\u2B06";
     public static final String SOUTHEAST_ARROW = "\u2B0A";
+    public static final String LITTE_ARROW = "\u2023";
 
 
 }

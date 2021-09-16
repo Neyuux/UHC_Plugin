@@ -55,23 +55,23 @@ public class OreLimiter extends Scenario implements Listener {
                 b.getWorld().dropItem(b.getLocation().add(0.5, 0.5, 0.5), new ItemStack(Material.GOLD_INGOT, o));
                 ExperienceOrb orb = b.getWorld().spawn(b.getLocation().add(0.5, 0.5, 0.5), ExperienceOrb.class);
                 orb.setExperience(e.getExpToDrop());
-                player.sendMessage(UHC.getPrefix() + Scenarios.ORE_LIMITER.getDisplayName() + "§8§l" + Symbols.DOUBLE_ARROW + " §bVous avez dépassé la limite de dimants. Vous avez reçu §6" + o + " d'or§b à place.");
+                player.sendMessage(getPrefix() + "§bVous avez dépassé la limite de dimants. Vous avez reçu §6" + o + " d'or§b à place.");
             } else if (up.getDiamonds() == diamonds)
-                player.sendMessage(UHC.getPrefix() + Scenarios.ORE_LIMITER.getDisplayName() + "§8§l" + Symbols.DOUBLE_ARROW + "§b La limite de diamants a été atteinte. Désormais lorsque vous minerez du diamant, vous receverez 1 ou 2 ors.");
+                player.sendMessage(getPrefix() + "§bLa limite de diamants a été atteinte. Désormais lorsque vous minerez du diamant, vous receverez 1 ou 2 ors.");
         if (b.getType().equals(Material.GOLD_ORE))
                 if (up.getGolds() > golds) {
                     e.setCancelled(true);
                     b.setType(Material.AIR);
-                    player.sendMessage(UHC.getPrefix() + Scenarios.ORE_LIMITER.getDisplayName() + "§8§l" + Symbols.DOUBLE_ARROW + " §eVous avez dépassé la limite d'ors.");
+                    player.sendMessage(getPrefix() + "§eVous avez dépassé la limite d'ors.");
                 } else if (up.getGolds() == golds)
-                    player.sendMessage(UHC.getPrefix() + Scenarios.ORE_LIMITER.getDisplayName() + "§8§l" + Symbols.DOUBLE_ARROW + "§e La limite de d'ors a été atteinte.");
+                    player.sendMessage(getPrefix() + "§eLa limite de d'ors a été atteinte.");
         if (b.getType().equals(Material.IRON_ORE))
                 if (up.getIrons() > irons) {
                     e.setCancelled(true);
                     b.setType(Material.AIR);
-                    player.sendMessage(UHC.getPrefix() + Scenarios.ORE_LIMITER.getDisplayName() + "§8§l" + Symbols.DOUBLE_ARROW + " §fVous avez dépassé la limite de fers.");
+                    player.sendMessage(getPrefix() + "§fVous avez dépassé la limite de fers.");
                 } else if (up.getIrons() == irons)
-                    player.sendMessage(UHC.getPrefix() + Scenarios.ORE_LIMITER.getDisplayName() + "§8§l" + Symbols.DOUBLE_ARROW + "§f La limite de fers a été atteinte.");
+                    player.sendMessage(getPrefix() + "§fLa limite de fers a été atteinte.");
 
     }
 }

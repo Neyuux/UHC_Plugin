@@ -80,24 +80,24 @@ public class Moles extends Scenario implements Listener {
             public void run() {
                 if (!hasChoosedMoles) {
                     if (IGtimers[0] == 900)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 15 minutes !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 15 minutes !");
                     else if (IGtimers[0] == 600)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 10 minutes !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 10 minutes !");
                     else if (IGtimers[0] == 300)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 5 minutes !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 5 minutes !");
                     else if (IGtimers[0] == 60)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 1 minute !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 1 minute !");
                     else if (IGtimers[0] == 30)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 30 secondes !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 30 secondes !");
                     else if (IGtimers[0] == 10)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 10 secondes !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 10 secondes !");
                     else if (IGtimers[0] > 1 && IGtimers[0] < 5)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans " + IGtimers[0] + " secondes !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans " + IGtimers[0] + " secondes !");
                     else if (IGtimers[0] == 1)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes dans 1 seconde !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 1 seconde !");
                     IGtimers[0]--;
                     if (IGtimers[0] == -1) {
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des taupes...");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes...");
                         giveMoles();
 
                         IGtimers[0] = Moles.timer;
@@ -108,24 +108,24 @@ public class Moles extends Scenario implements Listener {
                 
                 if (hasChoosedMoles && !hasChoosedSuperMoles && superMoles) {
                     if (IGtimers[1] == 900)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 15 minutes !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 15 minutes !");
                     else if (IGtimers[1] == 600)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 10 minutes !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 10 minutes !");
                     else if (IGtimers[1] == 300)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 5 minutes !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 5 minutes !");
                     else if (IGtimers[1] == 60)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 1 minute !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 1 minute !");
                     else if (IGtimers[1] == 30)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 30 secondes !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 30 secondes !");
                     else if (IGtimers[1] == 10)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 10 secondes !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 10 secondes !");
                     else if (IGtimers[1] > 1 && IGtimers[1] < 5)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans " + IGtimers[1] + " secondes !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans " + IGtimers[1] + " secondes !");
                     else if (IGtimers[1] == 1)
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e dans 1 seconde !");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 1 seconde !");
                     IGtimers[1]--;
                     if (IGtimers[1] == -1) {
-                        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eSélection des §c§lSuper Taupes§e...");
+                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e...");
                         giveSuperMoles();
 
                         IGtimers[1] = (int) (Moles.timer * 1.5);

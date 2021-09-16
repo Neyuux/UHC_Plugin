@@ -45,7 +45,7 @@ public class NoCleanUP extends Scenario implements Listener {
             if (ku.getPlayer().isOnline()) {
                 Player k = ku.getPlayer().getPlayer();
                 k.setHealth(Math.min((k.getHealth() + a), k.getMaxHealth()));
-                k.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §dVous venez de récupérer §4§l" +  healthAdded + Symbols.HEARTH + " §d!");
+                k.sendMessage(getPrefix() + "§dVous venez de récupérer §4§l" +  healthAdded + Symbols.HEARTH + " §d!");
             } else ku.health = Math.min((ku.health + a), ku.maxHealth);
         }
     }

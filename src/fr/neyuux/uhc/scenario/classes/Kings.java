@@ -55,8 +55,8 @@ public class Kings extends Scenario implements Listener {
                     PlayerUHC ku = UHC.getInstance().getPlayerUHC(king);
                     king.setDisplayName(team.getPrefix().toString() + "§l" + king.getName());
                     king.setPlayerListName(king.getDisplayName());
-                    king.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §6Vous avez été désigné comme Roi de l'équipe " + team.getTeam().getDisplayName() + " §6. Vous obtenez donc les effets : force, rapidité, résistance, résistance au feu, hâte et double vie. Si vous mourrez, le reste de votre équipe aura un effet de poison puissant pendant quelques secondes.");
-                    team.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + team.getPrefix().color.getColor() + " Le roi de votre équipe est " + king.getDisplayName() + ".");
+                    king.sendMessage(getPrefix() + "§6Vous avez été désigné comme Roi de l'équipe " + team.getTeam().getDisplayName() + " §6. Vous obtenez donc les effets : force, rapidité, résistance, résistance au feu, hâte et double vie. Si vous mourrez, le reste de votre équipe aura un effet de poison puissant pendant quelques secondes.");
+                    team.sendMessage(getPrefix() + team.getPrefix().color.getColor() + "Le roi de votre équipe est " + king.getDisplayName() + ".");
 
                     king.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0, true, true));
                     king.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 0, true, true));
@@ -95,7 +95,7 @@ public class Kings extends Scenario implements Listener {
             for (PlayerUHC u : team.getAlivePlayers()) {
                 Player p = u.getPlayer().getPlayer();
                 if (p != null) {
-                    p.sendMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVotre roi est Mort. Vous obtenez un effet de poison pendant 30 secondes.");
+                    p.sendMessage(getPrefix() + "§cVotre roi est Mort. Vous obtenez un effet de poison pendant 30 secondes.");
                     p.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 600, 3, true, true));
                 }
             }

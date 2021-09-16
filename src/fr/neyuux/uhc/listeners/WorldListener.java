@@ -1,9 +1,9 @@
 package fr.neyuux.uhc.listeners;
 
-import fr.neyuux.uhc.UHC;
-import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.UHCWorld;
 import fr.neyuux.uhc.GameConfig;
+import fr.neyuux.uhc.PlayerUHC;
+import fr.neyuux.uhc.UHC;
+import fr.neyuux.uhc.UHCWorld;
 import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
