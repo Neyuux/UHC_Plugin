@@ -65,7 +65,9 @@ public class Switch extends Scenario implements Listener {
 
     @Override
     public boolean checkStart() {
-        return !GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA");
+        boolean check = !GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA");
+        if (hasInvSwitch && hasTeamBalancing) check = false;
+        return check;
     }
 
 
@@ -75,25 +77,32 @@ public class Switch extends Scenario implements Listener {
         HashMap<PlayerUHC, UHCTeam> baseTeams = new HashMap<>();
         HashMap<PlayerUHC, ItemStack[]> inventories = new HashMap<>();
         Random random = new SecureRandom();
+
         random.setSeed(System.currentTimeMillis());
+
         for (UHCTeam t : UHC.getInstance().getUHCTeamManager().getAliveTeams()) {
             if (!hasSoloSwitch && t.getAlivePlayers().size() == 1) continue;
             PlayerUHC pu = new ArrayList<>(t.getAlivePlayers()).get(random.nextInt(t.getAlivePlayers().size()));
+
             playersToSwitch.add(pu);
             baseTeams.put(pu, pu.getTeam());
             inventories.put(pu, pu.getPlayer().getPlayer().getInventory().getContents());
             pu.setLastLocation(pu.getPlayer().getPlayer().getLocation());
         }
+
         Collections.shuffle(playersToSwitch);
 
         for (int e = 0; e < playersToSwitch.size(); e++) {
             PlayerUHC player1UHC = playersToSwitch.get(e);
             PlayerUHC player2UHC;
+
             if (e == playersToSwitch.size() - 1) player2UHC = playersToSwitch.get(0);
             else player2UHC = playersToSwitch.get(e + 1);
+
             Player player1 = player1UHC.getPlayer().getPlayer();
             Player player2 = player2UHC.getPlayer().getPlayer();
             List<ItemStack> stuff = Arrays.asList(inventories.get(player2UHC));
+
             if (hasInvSwitch) for (int i = 9; i < stuff.size(); i++) player1.getInventory().setItem(i, stuff.get(i));
             player1.teleport(player2UHC.getLastLocation().clone());
             player1UHC.getTeam().leave(player1UHC);
