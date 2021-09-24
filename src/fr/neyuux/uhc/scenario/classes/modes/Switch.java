@@ -15,6 +15,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.SecureRandom;
 import java.util.*;
 
@@ -80,6 +82,8 @@ public class Switch extends Scenario implements Listener {
 
         random.setSeed(System.currentTimeMillis());
 
+        if (hasTeamBalancing) balanceTeams();
+
         for (UHCTeam t : UHC.getInstance().getUHCTeamManager().getAliveTeams()) {
             if (!hasSoloSwitch && t.getAlivePlayers().size() == 1) continue;
             PlayerUHC pu = new ArrayList<>(t.getAlivePlayers()).get(random.nextInt(t.getAlivePlayers().size()));
@@ -103,12 +107,58 @@ public class Switch extends Scenario implements Listener {
             Player player2 = player2UHC.getPlayer().getPlayer();
             List<ItemStack> stuff = Arrays.asList(inventories.get(player2UHC));
 
-            if (hasInvSwitch) for (int i = 9; i < stuff.size(); i++) player1.getInventory().setItem(i, stuff.get(i));
+            if (hasInvSwitch)
+                for (int i = 9; i < stuff.size(); i++) player1.getInventory().setItem(i, stuff.get(i));
             player1.teleport(player2UHC.getLastLocation().clone());
             player1UHC.getTeam().leave(player1UHC);
             baseTeams.get(player2UHC).add(player1);
             player1.sendMessage(UHC.getPrefix() + Scenarios.SWITCH.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous avez switch avec " + baseTeams.get(player2UHC).getTeam().getPrefix() + player2.getName() + " §e!");
             player1.playSound(player1.getLocation(), Sound.ENDERMAN_TELEPORT, 8, 1f);
+        }
+    }
+
+    public static void balanceTeams() {
+        int alivePlayers = UHC.getInstance().getAlivePlayers().size();
+        List<UHCTeam> aliveTeams = UHC.getInstance().getUHCTeamManager().getAliveTeams();
+        double size = (double) alivePlayers / aliveTeams.size();
+        int maxPerTeam = GameConfig.getTeamTypeInt((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue());
+        List<UHCTeam> teamsNeedMore = new ArrayList<>();
+        List<UHCTeam> teamsNeedLess = new ArrayList<>();
+
+        if (size > maxPerTeam) {
+            int i = 1;
+
+            while (size > maxPerTeam) {
+                size = (double) alivePlayers / (aliveTeams.size() + i);
+                i++;
+            }
+        } else size = new BigDecimal(size).setScale(0, RoundingMode.DOWN).doubleValue();
+
+        int newTeams = (int) (alivePlayers / size - aliveTeams.size());
+
+        for (int i = newTeams; i > 0; i--) {
+            UHCTeam team = UHC.getInstance().getUHCTeamManager().createTeam();
+
+            aliveTeams.add(team);
+        }
+
+        for (UHCTeam team : aliveTeams)
+            if (team.getAlivePlayers().size() > size) teamsNeedLess.add(team);
+            else if (team.getAlivePlayers().size() < size) teamsNeedMore.add(team);
+
+        while (!teamsNeedLess.isEmpty()) {
+            if (!teamsNeedMore.isEmpty()) {
+                Random random = new Random();
+                UHCTeam needLess = teamsNeedLess.get(random.nextInt(teamsNeedLess.size()));
+                UHCTeam needMore = teamsNeedMore.get(random.nextInt(teamsNeedMore.size()));
+
+                PlayerUHC playerUHC = needLess.getListAlivePlayers().get(random.nextInt(needLess.getAlivePlayers().size()));
+
+                needLess.leave(playerUHC);
+                needMore.add(playerUHC.getPlayer().getPlayer());
+                if (needMore.getAlivePlayers().size() >= size) teamsNeedMore.remove(needMore);
+                if (needLess.getAlivePlayers().size() <= size) teamsNeedLess.remove(needLess);
+            } else break;
         }
     }
 }
