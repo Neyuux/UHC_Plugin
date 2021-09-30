@@ -209,7 +209,7 @@ public class CommandUHC implements CommandExecutor {
                         if (args.length > 1) {
                             if (args[1].equals("list")) {
                                 StringBuilder sbl = new StringBuilder(UHC.getPrefix() + "§6Informations sur les équipes de la partie : \n");
-                                if (main.getUHCTeamManager().getTeams().size() > 0) {
+                                if (main.getUHCTeamManager().getAliveTeams().size() > 0) {
                                     for (UHCTeam t : main.getUHCTeamManager().getTeams()) {
                                         sbl.append(t.getTeam().getDisplayName()).append(" §6(§e").append(t.getAlivePlayers().size()).append(" joueurs§6) (§c").append(t.getKills()).append(" kills§6) : \n");
                                         for (PlayerUHC pu : t.getAlivePlayers())
@@ -715,7 +715,7 @@ public class CommandUHC implements CommandExecutor {
                             Bukkit.broadcastMessage("§7------------------------------");
                             Bukkit.broadcastMessage("");
                             for (UHCTeam t : main.getUHCTeamManager().getAliveTeams())
-                                if (AssaultAndBattery.hasRole(t.getListPlayers().get(0))) {
+                                if (AssaultAndBattery.hasRole(t.getListAlivePlayers().get(0))) {
                                     Bukkit.broadcastMessage(" §0" + Symbols.SQUARE + " " + t.getTeam().getDisplayName() + "§8(§7" + t.getPlayers().size() + "§8) §6:");
                                     for (PlayerUHC pu : t.getPlayers()) {
                                         String details = " §8(";

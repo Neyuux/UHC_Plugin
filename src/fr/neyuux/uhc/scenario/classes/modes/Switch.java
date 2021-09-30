@@ -28,7 +28,7 @@ public class Switch extends Scenario implements Listener {
     }
 
     public static int firstSwitch = 1200, switchFrequency = 900, randomTimeLimit = 0;
-    public static boolean hasInvSwitch = false, hasSoloSwitch = true, hasTeamBalancing = false; //TODO
+    public static boolean hasInvSwitch = false, hasSoloSwitch = true, hasTeamBalancing = false;
 
     public static int[] IGtimers = {0};
 
@@ -67,9 +67,7 @@ public class Switch extends Scenario implements Listener {
 
     @Override
     public boolean checkStart() {
-        boolean check = !GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA");
-        if (hasInvSwitch && hasTeamBalancing) check = false;
-        return check;
+        return !GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA");
     }
 
 

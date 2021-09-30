@@ -47,7 +47,7 @@ public class AssaultAndBattery extends Scenario implements Listener {
         Bukkit.getScheduler().runTaskLater(UHC.getInstance(), () -> {
             if (hasRandomChoice) {
                 for (UHCTeam t : UHC.getInstance().getUHCTeamManager().getAliveTeams()) {
-                    List<PlayerUHC> ps = new ArrayList<>(t.getListPlayers());
+                    List<PlayerUHC> ps = new ArrayList<>(t.getListAlivePlayers());
                     PlayerUHC assault = ps.remove(new Random().nextInt(2));
                     if (ps.size() != 0) {
                         PlayerUHC battery = ps.remove(0);
@@ -87,7 +87,7 @@ public class AssaultAndBattery extends Scenario implements Listener {
                 UHC.sendActionBar(d, getPrefix() + "§cVous ne pouvez pas frapper au corps-à-corps !");
                 UHC.playNegativeSound(d);
             } else if (!batteries.contains(du) && !assaults.contains(du) && !hasRandomChoice) {
-                List<PlayerUHC> ps = new ArrayList<>(du.getTeam().getListPlayers());
+                List<PlayerUHC> ps = new ArrayList<>(du.getTeam().getListAlivePlayers());
                 ps.remove(du);
                 PlayerUHC battery = ps.remove(0);
                 assaults.add(du);
@@ -104,7 +104,7 @@ public class AssaultAndBattery extends Scenario implements Listener {
                 UHC.sendActionBar(d, getPrefix() + "§cVous ne pouvez pas utiliser de projectiles !");
                 UHC.playNegativeSound(d);
             } else if (!batteries.contains(du) && !assaults.contains(du) && !hasRandomChoice) {
-                List<PlayerUHC> ps = new ArrayList<>(du.getTeam().getListPlayers());
+                List<PlayerUHC> ps = new ArrayList<>(du.getTeam().getListAlivePlayers());
                 ps.remove(du);
                 PlayerUHC assault = ps.remove(0);
                 batteries.add(du);
@@ -118,7 +118,7 @@ public class AssaultAndBattery extends Scenario implements Listener {
 
     @EventHandler
     public void onDeath(PlayerEliminationEvent ev) {
-        List<PlayerUHC> ps = new ArrayList<>(ev.getPlayerUHC().getTeam().getListPlayers());
+        List<PlayerUHC> ps = new ArrayList<>(ev.getPlayerUHC().getTeam().getListAlivePlayers());
         ps.remove(ev.getPlayerUHC());
         if (ps.size() != 0) {
             PlayerUHC te = ps.remove(0);
@@ -132,7 +132,7 @@ public class AssaultAndBattery extends Scenario implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onRevive(PlayerReviveEvent ev) {
         if (!ev.isCancelled()) {
-            List<PlayerUHC> ps = new ArrayList<>(ev.getPlayerUHC().getTeam().getListPlayers());
+            List<PlayerUHC> ps = new ArrayList<>(ev.getPlayerUHC().getTeam().getListAlivePlayers());
             ps.remove(ev.getPlayerUHC());
             PlayerUHC te = ps.remove(0);
             if (assaults.contains(ev.getPlayerUHC())) {
