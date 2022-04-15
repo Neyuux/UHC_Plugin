@@ -5,6 +5,7 @@ import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
+import fr.neyuux.uhc.events.GameEndEvent;
 import fr.neyuux.uhc.events.PlayerEliminationEvent;
 import fr.neyuux.uhc.listeners.FightListener;
 import fr.neyuux.uhc.scenario.Scenario;
@@ -120,6 +121,11 @@ public class TrueLove extends Scenario implements Listener {
             waitList.get(playerUHC).add(player);
             UHC.sendTitle(playerUHC.getPlayer().getPlayer(), "§d§lTrue Love", waitList.get(playerUHC).getPrefix().color.getColor() + " Vous rejoignez l'équipe " + waitList.get(playerUHC).getTeam().getDisplayName() + " !", 23, 40, 7);
         }
+    }
+
+    @EventHandler
+    public void onWin(GameEndEvent ev) {
+        if (UHC.getInstance().getAlivePlayers().size() > teamSize * 2) ev.setCancelled(true);
     }
 
 

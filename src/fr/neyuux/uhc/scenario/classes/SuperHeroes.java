@@ -45,6 +45,8 @@ public class SuperHeroes extends Scenario implements Listener {
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
+        powers.clear();
+        needPower.clear();
 
         new BukkitRunnable() {
             @Override
@@ -98,12 +100,12 @@ public class SuperHeroes extends Scenario implements Listener {
         if (ev.getEntityType().equals(EntityType.PLAYER)) {
             PlayerUHC pu = UHC.getInstance().getPlayerUHC((Player)ev.getEntity());
             if (pu.isAlive() && powers.containsKey(pu) && powers.get(pu).equals(PotionEffectType.DAMAGE_RESISTANCE)) {
-                Bukkit.broadcastMessage(ev.getFinalDamage() + "");
+                /*Bukkit.broadcastMessage(ev.getFinalDamage() + "");
                 Bukkit.broadcastMessage("Réz : " + ev.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE));
                 //NERF  : 40% >> 30%
                 ev.setDamage(EntityDamageEvent.DamageModifier.RESISTANCE, -(ev.getDamage() - (ev.getDamage() * 0.7)));
                 Bukkit.broadcastMessage("§d" + ev.getFinalDamage() + "");
-                Bukkit.broadcastMessage("§dRéz : " + ev.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE));
+                Bukkit.broadcastMessage("§dRéz : " + ev.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE));*/
             }
         }
     }
