@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact name="UHC:jar">
-    <output-path>$PROJECT_DIR$/classes/artifacts/UHC_jar</output-path>
+  <artifact name="UHC.jar">
+    <output-path>$PROJECT_DIR$/../../Serv/plugins</output-path>
     <root id="root">
       <element id="archive" name="UHC.jar">
         <element id="module-output" name="UHC" />
