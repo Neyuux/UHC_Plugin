@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -75,10 +76,32 @@ public class Anonymous extends Scenario implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
-        if(main.getPlayerUHC(p).isSpec())
-            return;
+        if(!main.getPlayerUHC(p).isSpec()) {
+            changeNameAndSkin(p, "§kAnonymous" + used + "§r", usedName);
+        }
+    }
 
-        changeNameAndSkin(p, "§kAnonymous" + used + "§r", usedName);
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onCommand(PlayerCommandPreprocessEvent ev) {
+        String message = ev.getMessage();
+        String[] messageWords = message.split(" ");
+        List<String> broadcastAliases = new ArrayList<>(Arrays.asList("/b", "/broadcast", "/bd", "/bc", "/annonce", "/announce", "/ann", "/say"));
+        List<String> directMessageAliases = new ArrayList<>(Arrays.asList("/msg", "/m", "/message", "/tell"));
+
+        if (directMessageAliases.contains(messageWords[0])) {
+            String receiver = messageWords[1];
+
+            for (Map.Entry<PlayerUHC, String> name : realName.entrySet())
+                if (receiver.equalsIgnoreCase(name.getValue()))
+                    message = message.replace(receiver, name.getKey().getPlayer().getName());
+
+        } else if (!broadcastAliases.contains(messageWords[0])) {
+
+            for (Map.Entry<PlayerUHC, String> name : realName.entrySet())
+                message = message.replaceAll("(?i)" + name.getValue(), name.getKey().getPlayer().getName());
+        }
+
+        ev.setMessage(message);
     }
 
     @EventHandler
