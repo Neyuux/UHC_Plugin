@@ -1,9 +1,9 @@
 package fr.neyuux.uhc.listeners;
 
-import fr.neyuux.uhc.UHC;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.InventoryManager;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.GameConfig;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.GameEndEvent;
@@ -42,10 +42,10 @@ public class FightListener implements Listener {
     }
 
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onDamage(EntityDamageEvent ev) {
         Entity e = ev.getEntity();
-        double fdamage = ev.getFinalDamage();
+        double fdamage = ev.getFinalDamage() - ev.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION);
 
         if (e.getType().equals(EntityType.PLAYER) && main.isState(Gstate.PLAYING)) {
             Player player = (Player)e;
@@ -58,6 +58,7 @@ public class FightListener implements Listener {
             playerUHC.absorption = (float) (((CraftPlayer) player).getHandle().getAbsorptionHearts() - fdamage);
             if (playerUHC.health < 0) playerUHC.health = 0;
             if (playerUHC.absorption < 0) playerUHC.absorption = 0;
+            playerUHC.health = playerUHC.health - playerUHC.absorption;
 
             if (playerUHC.health <= 0.0) {
                 ev.setCancelled(true);
@@ -68,7 +69,7 @@ public class FightListener implements Listener {
                         deathmessage = player.getDisplayName() + "§c s'est fait 1v1 par un Cactus.";
                         break;
                     case SUFFOCATION:
-                        deathmessage = player.getDisplayName() + "§cs'est fait BLOCKé hahaha";
+                        deathmessage = player.getDisplayName() + "§c a suffoqué.";
                         break;
                     case FALL:
                         deathmessage = player.getDisplayName() + "§c a chuté.";
@@ -77,17 +78,13 @@ public class FightListener implements Listener {
                         deathmessage = player.getDisplayName() + "§c s'est enflammé.";
                         break;
                     case FIRE_TICK:
-                        deathmessage = player.getDisplayName() + "§c est parti en fumée.";
-                        break;
                     case LAVA:
-                        deathmessage = player.getDisplayName() + "§c s'est LAVÉ hahahaha";
+                        deathmessage = player.getDisplayName() + "§c est parti en fumée.";
                         break;
                     case DROWNING:
                         deathmessage = player.getDisplayName() + "§c s'est suicidé... Enfin il est mort de noyade, qui meurt comme ça sérieux ?";
                         break;
                     case BLOCK_EXPLOSION:
-                        deathmessage = player.getDisplayName() + "§c s'est fait pété par un block.";
-                        break;
                     case ENTITY_EXPLOSION:
                         deathmessage = player.getDisplayName() + "§c a pété.";
                         break;
@@ -95,7 +92,7 @@ public class FightListener implements Listener {
                         deathmessage = player.getDisplayName() + "§c a tourné dans le vide.";
                         break;
                     case LIGHTNING:
-                        deathmessage = player.getDisplayName() + "§c est désormais ÉCLAIRÉ hahahahahahaha";
+                        deathmessage = player.getDisplayName() + "§c s'est pris un éclair.";
                         break;
                     case SUICIDE:
                         deathmessage = player.getDisplayName() + "§c s'est fait /kill ez";
@@ -104,13 +101,13 @@ public class FightListener implements Listener {
                         deathmessage = player.getDisplayName() + "§c est mort de faim. (Faites des dons)";
                         break;
                     case MAGIC:
-                        deathmessage = player.getDisplayName() + "§c est mort par des effets de substances liquides mystérieuses...";
+                        deathmessage = player.getDisplayName() + "§c est mort par magie.";
                         break;
                     case WITHER:
                         deathmessage = player.getDisplayName() + "§c est mort de l'effet du Wither.";
                         break;
                     case FALLING_BLOCK:
-                        deathmessage = player.getDisplayName() + "§c s'est fait tombé dessus (par un block ouais).";
+                        deathmessage = player.getDisplayName() + "§c s'est fait aplatir par un block.";
                         break;
                     default:
                         el = false;
@@ -134,15 +131,15 @@ public class FightListener implements Listener {
                 Player dp = (Player)((Arrow)d).getShooter();
                 NumberFormat format = NumberFormat.getInstance();
                 format.setRoundingMode(RoundingMode.UP);
-                format.setMaximumFractionDigits(1);
+                format.setMaximumFractionDigits(2);
 
                 String formattedPlayerHealth;
                 if (Scenarios.TEAM_HEALTH.isActivated()) {
                     formattedPlayerHealth = format.format(playerUHC.getTeam().getHealth() - ev.getFinalDamage());
                     dp.sendMessage(UHC.getPrefix() + "§fL'équipe " + playerUHC.getTeam().getTeam().getDisplayName() + " §fpossède en tout §4§l" + formattedPlayerHealth + Symbols.HEARTH + "§f.");
                 } else {
-                    formattedPlayerHealth = format.format(playerUHC.health + playerUHC.absorption - ev.getFinalDamage());
-                    dp.sendMessage(UHC.getPrefix() + player.getDisplayName() + " §fpossède en actuellement §4§l" + formattedPlayerHealth + Symbols.HEARTH + "§f.");
+                    formattedPlayerHealth = format.format(playerUHC.health + playerUHC.absorption);
+                    dp.sendMessage(UHC.getPrefix() + player.getDisplayName() + " §fpossède actuellement §4§l" + formattedPlayerHealth + Symbols.HEARTH + "§f.");
                 }
             }
 

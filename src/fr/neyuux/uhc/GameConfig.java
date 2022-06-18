@@ -1325,7 +1325,7 @@ public class GameConfig implements Listener {
         COORDS_F3("§eF3 Coords", ParamParts.PLAYERRULES, Material.PAPER, true, "§7Activer les coordonnées F3"),
         ACHIEVEMENTS("§2Achievements", ParamParts.PLAYERRULES, Material.GOLD_NUGGET, true, "§7Annonce des succès dans le chat."),
         SPECTATORS("§7Specs", ParamParts.PLAYERRULES, Material.GLASS, true,  "§7Mode spectateur"),
-        ABSORPTION("§eAbsorption", ParamParts.PLAYERRULES, Material.GOLDEN_APPLE, 2.0, 1024.0, 00.0, new double[]{0.5, 1.0, 2.0, 4.0}),
+        ABSORPTION("§eAbsorption", ParamParts.PLAYERRULES, Material.GOLDEN_APPLE, true),
         SCOREBOARD_LIFE("§dVie dans le Tab", ParamParts.PLAYERRULES, Material.APPLE, true, "§7Pourcentage de vie dans le tab"),
 
         INVINCIBILITY("§eInvincibilité", ParamParts.PvP, Material.DIAMOND_CHESTPLATE, 30, Integer.MAX_VALUE, 1, new int[]{1, 10, 30}),
@@ -1479,7 +1479,6 @@ public class GameConfig implements Listener {
                 }
             } else if (value instanceof Boolean) return getStringBoolean(((boolean) value));
             if (this.getPart().equals(ParamParts.DROPS) || this.equals(STRENGTH_NERF)) return value.toString() + '%';
-            if (this.equals(ABSORPTION)) return value.toString() + " " + Symbols.HEARTH;
             if (this.equals(BORDERSPEED)) return value.toString() + " blocs par secondes";
             return value.toString();
         }

@@ -6,6 +6,7 @@ import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
+import fr.neyuux.uhc.events.GameEndEvent;
 import fr.neyuux.uhc.events.PlayerEliminationEvent;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.scenario.classes.Anonymous;
@@ -201,20 +202,20 @@ public class PlayerListener implements Listener {
         }
 
         if(item.getType() == Material.GOLDEN_APPLE){
+            p.removePotionEffect(PotionEffectType.ABSORPTION);
+
             if(item.equals(UHC.getGoldenHead(item.getAmount()))) { // GOLDEN HEAD
                 p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, 1, true, true));
                 main.getPlayerUHC(p).absorption = 2.0f;
             }
 
-            double abso = (double)GameConfig.ConfigurableParams.ABSORPTION.getValue() * 2;
-            if(abso != 4.0) if (abso != 0) {
-                ((CraftPlayer) p).getHandle().setAbsorptionHearts((float) abso);
-                main.getPlayerUHC(p).absorption = (float) abso;
-            } else Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {
-                    p.removePotionEffect(PotionEffectType.ABSORPTION);
-                    main.getPlayerUHC(p).absorption = 0f;
-                    main.setHealth(p);
-                }, (long) 0.01);
+            if (!(boolean)GameConfig.ConfigurableParams.ABSORPTION.getValue()) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {
+                        p.removePotionEffect(PotionEffectType.ABSORPTION);
+                        main.getPlayerUHC(p).absorption = 0f;
+                        main.setHealth(p);
+                    }, (long) 0.01);
+            }
             main.setHealth(p);
         }
     }
@@ -232,6 +233,7 @@ public class PlayerListener implements Listener {
     public void onPlayerHealth(EntityRegainHealthEvent e) {
         if (e.getEntityType().equals(EntityType.PLAYER) && main.isState(Gstate.PLAYING))
             main.getPlayerUHC((Player)e.getEntity()).health = ((Player) e.getEntity()).getHealth() + e.getAmount();
+        Bukkit.broadcastMessage("a" + ((Player) e.getEntity()).getHealth() + e.getAmount());
     }
 
     @EventHandler
