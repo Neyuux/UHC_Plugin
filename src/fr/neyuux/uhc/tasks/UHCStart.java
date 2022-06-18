@@ -1,11 +1,7 @@
 package fr.neyuux.uhc.tasks;
 
 import com.google.common.collect.Lists;
-import fr.neyuux.uhc.UHC;
-import fr.neyuux.uhc.InventoryManager;
-import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.UHCWorld;
-import fr.neyuux.uhc.GameConfig;
+import fr.neyuux.uhc.*;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.GameStartEvent;
@@ -27,7 +23,8 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ConcurrentModificationException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UHCStart extends BukkitRunnable {
 
@@ -107,8 +104,10 @@ public class UHCStart extends BukkitRunnable {
             for (PlayerUHC p : main.players)
                 if (!p.isSpec())
                     p.setAlive(true);
+
             if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString().startsWith("Random"))
                 main.getUHCTeamManager().randomTeams();
+
             UHCTeamManager.baseplayers = main.getAlivePlayers();
             for (PlayerUHC playerUHC : main.getAlivePlayers()) {
                 if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) != 1 && playerUHC.getTeam() == null) {
@@ -118,11 +117,12 @@ public class UHCStart extends BukkitRunnable {
                 }
                 InventoryManager.clearInventory(playerUHC.getPlayer().getPlayer());
             }
-            try {
-                for (UHCTeam t : main.getUHCTeamManager().getTeams())
-                    if (t.getPlayers().size() == 0) main.getUHCTeamManager().removeTeam(t);
-                    else System.out.println(t.getTeam().getDisplayName() + " / " + t.getPlayers());
-            } catch (ConcurrentModificationException ignored) {}
+
+            List<UHCTeam> toDelete = new ArrayList<>();
+            for (UHCTeam t : main.getUHCTeamManager().getTeams())
+                if (t.getPlayers().size() == 0) toDelete.add(t);
+                else System.out.println(t.getTeam().getDisplayName() + " / " + t.getPlayers());
+            toDelete.forEach(uhcTeam -> main.getUHCTeamManager().removeTeam(uhcTeam));
             UHCTeamManager.baseteams = main.getUHCTeamManager().getTeams().size();
 
             InventoryManager.clearAllPlayersEffects();

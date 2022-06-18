@@ -141,12 +141,8 @@ public class Moles extends Scenario implements Listener {
 
     @Override
     public boolean checkStart() {
-        boolean canStart = true;
-        if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") ||
-                !(boolean) GameConfig.ConfigurableParams.FRIENDLY_FIRE.getValue()) {
-            canStart = false;
-        }
-        return canStart;
+        return !GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA") &&
+                (boolean) GameConfig.ConfigurableParams.FRIENDLY_FIRE.getValue();
     }
 
 

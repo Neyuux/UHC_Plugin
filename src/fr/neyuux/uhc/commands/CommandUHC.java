@@ -100,7 +100,7 @@ public class CommandUHC implements CommandExecutor {
 
                                     for (OfflinePlayer p : main.getWhitelist())
                                         swl.append("\n").append(" §e- §l").append(p.getName());
-                                    player.sendMessage(UHC.getPrefix() + "§6Liste des joueurs whitelistés :" + swl.toString());
+                                    player.sendMessage(UHC.getPrefix() + "§6Liste des joueurs whitelistés :" + swl);
 
                                 } else if (args[1].equalsIgnoreCase("clear")) {
                                     main.getWhitelist().clear();
@@ -285,7 +285,7 @@ public class CommandUHC implements CommandExecutor {
                                 for (PlayerUHC pu : main.players)
                                     if (pu.isHost())
                                         swl.append("\n").append(" §e- §l").append(pu.getPlayer().getName());
-                                player.sendMessage(UHC.getPrefix() + "§6Liste des hosts de la partie :" + swl.toString());
+                                player.sendMessage(UHC.getPrefix() + "§6Liste des hosts de la partie :" + swl);
                             }
                         } else player.sendMessage(UHC.getPrefix() + helphostmessage);
                         break;
@@ -332,7 +332,7 @@ public class CommandUHC implements CommandExecutor {
 
                                 for (Player p : main.spectators)
                                     swl.append("\n").append(" §e- §l").append(p.getName());
-                                player.sendMessage(UHC.getPrefix() + "§6Liste des spectateurs de la partie :" + swl.toString());
+                                player.sendMessage(UHC.getPrefix() + "§6Liste des spectateurs de la partie :" + swl);
                             }
                         } else player.sendMessage(UHC.getPrefix() + helpspecmessage);
                         break;
@@ -603,16 +603,20 @@ public class CommandUHC implements CommandExecutor {
                                 Bukkit.broadcastMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + player.getDisplayName() + " §cse révèle être une taupe faisant partie de l'équipe " + Moles.taupes.get(playerUHC).getTeam().getDisplayName() + "§c !");
                                 for (Player p : Bukkit.getOnlinePlayers())
                                     p.playSound(p.getLocation(), Sound.GHAST_SCREAM, 8f, 2f);
+
                                 playerUHC.getTeam().getPlayers().remove(playerUHC);
                                 playerUHC.getTeam().getAlivePlayers().remove(playerUHC);
+
                                 if (playerUHC.getTeam().getAlivePlayers().size() == 0)
                                     Bukkit.broadcastMessage(UHC.getPrefix() + "§6L'équipe " + playerUHC.getTeam().getTeam().getDisplayName() + " §6est éliminée...");
+
                                 Moles.taupes.get(playerUHC).add(player);
                                 Moles.alreadyReveal.add(playerUHC);
                                 InventoryManager.give(player, null, new ItemStack(GOLDEN_APPLE));
                                 main.boards.get(playerUHC).setLine(0, player.getDisplayName());
                                 for (PlayerUHC pu : main.players)
                                     main.boards.get(pu).setLine(3, "§7§lTeams : §f" + main.getUHCTeamManager().getAliveTeams().size() + "§8/§7" + UHCTeamManager.baseteams + " §8(§7" + main.getAlivePlayers().size() + "§8 joueurs)");
+
                                 FightListener.checkWin();
                             } else player.sendMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous n'êtes pas une taupe ! (Demander à quelqu'un d'autre de lire ce message est interdit, je te vois venir)");
                         } else player.sendMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous êtes déjà reveal !");

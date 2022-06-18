@@ -50,8 +50,8 @@ public class UHCTeam {
     private void setupTeam() {
         Scoreboard scoreboard = main.getUHCTeamManager().getScoreboard();
         if (!prefix.isTaupePrefix()) {
-            team = scoreboard.registerNewTeam(prefix.toString() + prefix.color.getName());
-            team.setDisplayName(prefix.toString() + prefix.color.getDisplayName());
+            team = scoreboard.registerNewTeam(prefix + prefix.color.getName());
+            team.setDisplayName(prefix + prefix.color.getDisplayName());
         } else {
             if (!prefix.isSuperTaupePrefix()) {
                 team = scoreboard.registerNewTeam("AB" + prefix.color.getColor() + "Taupe " + prefix.symbol.charAt(8));
@@ -118,16 +118,19 @@ public class UHCTeam {
                 main.getUHCTeamManager().removeTeam(this);*/
         if (pu.getPlayer().isOnline()) {
             Player player = pu.getPlayer().getPlayer();
+
             if (((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To")) {
                 player.sendMessage(UHC.getPrefix() + prefix.color.getColor() + "Vous avez bien quitté l'équipe " + team.getDisplayName() + " !");
                 player.setDisplayName(player.getName());
                 player.setPlayerListName(player.getDisplayName());
+
                 if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) {
                     BannerMeta bm = (BannerMeta) player.getInventory().getItem(4).getItemMeta();
                     bm.setPatterns(Collections.emptyList());
                     bm.setBaseColor(DyeColor.WHITE);
                     player.getInventory().getItem(4).setItemMeta(bm);
                 }
+
             }
             team.removeEntry(pu.getPlayer().getName());
             if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) {
@@ -144,10 +147,12 @@ public class UHCTeam {
         } else {
             OfflinePlayer player = pu.getPlayer();
             team.removeEntry(pu.getPlayer().getName());
+
             if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) if (pu.isHost())
                 Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Host").addEntry(player.getName());
             else
                 Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Joueur").addEntry(player.getName());
+
             players.remove(main.getPlayerUHC(player));
             alivePlayers.remove(main.getPlayerUHC(player));
         }
@@ -212,64 +217,76 @@ public class UHCTeam {
             }
 
         DyeColor c = bm.getBaseColor();
-        if (getPrefix().symbol.equals(Symbols.HEARTH + " ")) {
-            bm.addPattern(new Pattern(BLACK, CIRCLE_MIDDLE));
-            bm.addPattern(new Pattern(c, TRIANGLE_TOP));
-        } else if (getPrefix().symbol.equals(Symbols.STARBALL + " ")) {
-            bm.addPattern(new Pattern(BLACK, RHOMBUS_MIDDLE));
-            bm.addPattern(new Pattern(BLACK, CREEPER));
-            bm.addPattern(new Pattern(c, TRIANGLE_BOTTOM));
-            bm.addPattern(new Pattern(BLACK, CIRCLE_MIDDLE));
-        } else if (getPrefix().symbol.equals(Symbols.ARROW_RIGHT_FULL + " ")) {
-            bm.addPattern(new Pattern(BLACK, RHOMBUS_MIDDLE));
-            bm.addPattern(new Pattern(BLACK, STRIPE_LEFT));
-            bm.addPattern(new Pattern(c, SQUARE_TOP_LEFT));
-            bm.addPattern(new Pattern(c, SQUARE_BOTTOM_LEFT));
-            bm.addPattern(new Pattern(c, BORDER));
-        } else if (getPrefix().symbol.equals(Symbols.SNOWMAN + " ")) {
-            int d = c.ordinal();
-            bm.setBaseColor(BLACK);
-            DyeColor bc = DyeColor.values()[d];
-            bm.addPattern(new Pattern(bc, STRIPE_TOP));
-            bm.addPattern(new Pattern(bc, CURLY_BORDER));
-            bm.addPattern(new Pattern(bc, CURLY_BORDER));
-            bm.addPattern(new Pattern(bc, CURLY_BORDER));
-            bm.addPattern(new Pattern(bc, BORDER));
-        } else if (getPrefix().symbol.equals(Symbols.CROSS + " ")) {
-            bm.addPattern(new Pattern(BLACK, CROSS));
-            bm.addPattern(new Pattern(c, BORDER));
-            bm.addPattern(new Pattern(c, BORDER));
-            bm.addPattern(new Pattern(c, CURLY_BORDER));
-        } else if (getPrefix().symbol.equals(Symbols.OK + " ")) {
-            bm.addPattern(new Pattern(BLACK, RHOMBUS_MIDDLE));
-            bm.addPattern(new Pattern(c, HALF_HORIZONTAL));
-            bm.addPattern(new Pattern(c, CIRCLE_MIDDLE));
-            bm.addPattern(new Pattern(c, STRIPE_LEFT));
-        } else if (getPrefix().symbol.equals(Symbols.NUCLEAR + " ")) {
-            int d = c.ordinal();
-            bm.setBaseColor(BLACK);
-            DyeColor bc = DyeColor.values()[d];
-            bm.addPattern(new Pattern(bc, HALF_HORIZONTAL_MIRROR));
-            bm.addPattern(new Pattern(BLACK, TRIANGLE_BOTTOM));
-            bm.addPattern(new Pattern(bc, TRIANGLE_TOP));
-            bm.addPattern(new Pattern(bc, STRIPE_TOP));
-            bm.addPattern(new Pattern(bc, STRIPE_BOTTOM));
-            bm.addPattern(new Pattern(bc, CURLY_BORDER));
-        } else if (getPrefix().symbol.equals(Symbols.INFINITE + " ")) {
-            bm.addPattern(new Pattern(BLACK, STRIPE_BOTTOM));
-            bm.addPattern(new Pattern(BLACK, STRIPE_TOP));
-            bm.addPattern(new Pattern(c, RHOMBUS_MIDDLE));
-            bm.addPattern(new Pattern(c, BORDER));
-            bm.addPattern(new Pattern(BLACK, CROSS));
-            bm.addPattern(new Pattern(c, CURLY_BORDER));
-        } else if (getPrefix().symbol.equals(Symbols.CERCLED_S + " ")) {
-            bm.addPattern(new Pattern(BLACK, STRIPE_BOTTOM));
-            bm.addPattern(new Pattern(c, DIAGONAL_RIGHT_MIRROR));
-            bm.addPattern(new Pattern(BLACK, STRIPE_TOP));
-            bm.addPattern(new Pattern(c, RHOMBUS_MIDDLE));
-            bm.addPattern(new Pattern(BLACK, STRIPE_DOWNRIGHT));
-            bm.addPattern(new Pattern(c, BORDER));
-            bm.addPattern(new Pattern(c, CURLY_BORDER));
+        switch (getPrefix().symbol) {
+            case Symbols.HEARTH + " ":
+                bm.addPattern(new Pattern(BLACK, CIRCLE_MIDDLE));
+                bm.addPattern(new Pattern(c, TRIANGLE_TOP));
+                break;
+            case Symbols.STARBALL + " ":
+                bm.addPattern(new Pattern(BLACK, RHOMBUS_MIDDLE));
+                bm.addPattern(new Pattern(BLACK, CREEPER));
+                bm.addPattern(new Pattern(c, TRIANGLE_BOTTOM));
+                bm.addPattern(new Pattern(BLACK, CIRCLE_MIDDLE));
+                break;
+            case Symbols.ARROW_RIGHT_FULL + " ":
+                bm.addPattern(new Pattern(BLACK, RHOMBUS_MIDDLE));
+                bm.addPattern(new Pattern(BLACK, STRIPE_LEFT));
+                bm.addPattern(new Pattern(c, SQUARE_TOP_LEFT));
+                bm.addPattern(new Pattern(c, SQUARE_BOTTOM_LEFT));
+                bm.addPattern(new Pattern(c, BORDER));
+                break;
+            case Symbols.SNOWMAN + " ": {
+                int d = c.ordinal();
+                bm.setBaseColor(BLACK);
+                DyeColor bc = DyeColor.values()[d];
+                bm.addPattern(new Pattern(bc, STRIPE_TOP));
+                bm.addPattern(new Pattern(bc, CURLY_BORDER));
+                bm.addPattern(new Pattern(bc, CURLY_BORDER));
+                bm.addPattern(new Pattern(bc, CURLY_BORDER));
+                bm.addPattern(new Pattern(bc, BORDER));
+                break;
+            }
+            case Symbols.CROSS + " ":
+                bm.addPattern(new Pattern(BLACK, CROSS));
+                bm.addPattern(new Pattern(c, BORDER));
+                bm.addPattern(new Pattern(c, BORDER));
+                bm.addPattern(new Pattern(c, CURLY_BORDER));
+                break;
+            case Symbols.OK + " ":
+                bm.addPattern(new Pattern(BLACK, RHOMBUS_MIDDLE));
+                bm.addPattern(new Pattern(c, HALF_HORIZONTAL));
+                bm.addPattern(new Pattern(c, CIRCLE_MIDDLE));
+                bm.addPattern(new Pattern(c, STRIPE_LEFT));
+                break;
+            case Symbols.NUCLEAR + " ": {
+                int d = c.ordinal();
+                bm.setBaseColor(BLACK);
+                DyeColor bc = DyeColor.values()[d];
+                bm.addPattern(new Pattern(bc, HALF_HORIZONTAL_MIRROR));
+                bm.addPattern(new Pattern(BLACK, TRIANGLE_BOTTOM));
+                bm.addPattern(new Pattern(bc, TRIANGLE_TOP));
+                bm.addPattern(new Pattern(bc, STRIPE_TOP));
+                bm.addPattern(new Pattern(bc, STRIPE_BOTTOM));
+                bm.addPattern(new Pattern(bc, CURLY_BORDER));
+                break;
+            }
+            case Symbols.INFINITE + " ":
+                bm.addPattern(new Pattern(BLACK, STRIPE_BOTTOM));
+                bm.addPattern(new Pattern(BLACK, STRIPE_TOP));
+                bm.addPattern(new Pattern(c, RHOMBUS_MIDDLE));
+                bm.addPattern(new Pattern(c, BORDER));
+                bm.addPattern(new Pattern(BLACK, CROSS));
+                bm.addPattern(new Pattern(c, CURLY_BORDER));
+                break;
+            case Symbols.CERCLED_S + " ":
+                bm.addPattern(new Pattern(BLACK, STRIPE_BOTTOM));
+                bm.addPattern(new Pattern(c, DIAGONAL_RIGHT_MIRROR));
+                bm.addPattern(new Pattern(BLACK, STRIPE_TOP));
+                bm.addPattern(new Pattern(c, RHOMBUS_MIDDLE));
+                bm.addPattern(new Pattern(BLACK, STRIPE_DOWNRIGHT));
+                bm.addPattern(new Pattern(c, BORDER));
+                bm.addPattern(new Pattern(c, CURLY_BORDER));
+                break;
         }
         bm.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
 
