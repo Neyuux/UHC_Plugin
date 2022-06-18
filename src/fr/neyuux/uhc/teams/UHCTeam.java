@@ -328,7 +328,7 @@ public class UHCTeam {
         return deathPlayers;
     }
 
-    public ArrayList<PlayerUHC> getListPlayers(){
+    public ArrayList<PlayerUHC> getListAlivePlayers(){
         return new ArrayList<>(alivePlayers);
     }
 

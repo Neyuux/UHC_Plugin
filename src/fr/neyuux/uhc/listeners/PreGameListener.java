@@ -383,7 +383,7 @@ public class PreGameListener implements Listener {
             it.setLore("§eJoueurs : ");
             for (int p = 0; p < GameConfig.getTeamTypeInt((String)TEAMTYPE.getValue()); p++)
                 if (t.getPlayers().size() - 1 >= p)
-                    it.addLore(t.getPrefix().color.getColor() + " - " + t.getListPlayers().get(p).getPlayer().getPlayer().getPlayerListName());
+                    it.addLore(t.getPrefix().color.getColor() + " - " + t.getListAlivePlayers().get(p).getPlayer().getPlayer().getPlayerListName());
                 else it.addLore(t.getPrefix().color.getColor() + " - ");
             it.addLore("", "§b>>Cliquez rejoindre cette équipe.");
             inv.setItem(i, it.toItemStack());
