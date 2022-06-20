@@ -81,29 +81,31 @@ public class UHCTeam {
     }
 
     public void add(Player player) {
+        PlayerUHC playerUHC = main.getPlayerUHC(player);
+        
         if (((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To") && players.size() >= GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) && !prefix.isTaupePrefix() && !(main.isState(Gstate.PLAYING) && (Scenarios.SWITCH.isActivated() || Scenarios.TRUE_LOVE.isActivated()))) {
             player.sendMessage(UHC.getPrefix() + "ßcL'Èquipe " + team.getDisplayName() + " ßcest pleine !");
             return;
         }
-        if (hasPlayer(main.getPlayerUHC(player))) return;
+        if (hasPlayer(playerUHC)) return;
         team.addEntry(player.getName());
 
         if (((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To")) {
             player.sendMessage(UHC.getPrefix() + prefix.color.getColor() + "Vous avez rejoint l'Èquipe " + team.getDisplayName() + " !");
             sendMessage(UHC.getPrefix() + player.getDisplayName() + prefix.color.getColor() + " a rejoint votre Èquipe !");
         }
-        players.add(main.getPlayerUHC(player));
-        alivePlayers.add(main.getPlayerUHC(player));
-        main.getPlayerUHC(player).setTeam(this);
+        players.add(playerUHC);
+        if (playerUHC.isAlive()) alivePlayers.add(playerUHC);
+        playerUHC.setTeam(this);
 
         player.setDisplayName(prefix.toString() + player.getName());
-        if (main.getPlayerUHC(player).isHost() && !main.isState(Gstate.PLAYING))
+        if (playerUHC.isHost() && !main.isState(Gstate.PLAYING))
             player.setDisplayName(TeamPrefix.getHostPrefix() + player.getDisplayName());
         player.setPlayerListName(player.getDisplayName());
-        if (!Scenarios.SLAVE_MARKET.isActivated() || main.isState(Gstate.PLAYING))main.boards.get(main.getPlayerUHC(player)).setLine(2, "ßeßl…quipe ße: " + team.getDisplayName());
-        main.boards.get(main.getPlayerUHC(player)).setLine(0, player.getDisplayName());
+        if (!Scenarios.SLAVE_MARKET.isActivated() || main.isState(Gstate.PLAYING))main.boards.get(playerUHC).setLine(2, "ßeßl…quipe ße: " + team.getDisplayName());
+        main.boards.get(playerUHC).setLine(0, player.getDisplayName());
 
-        Bukkit.getPluginManager().callEvent(new TeamChangeEvent(main.getPlayerUHC(player), this));
+        Bukkit.getPluginManager().callEvent(new TeamChangeEvent(playerUHC, this));
     }
 
     public void reconnect(Player player) {

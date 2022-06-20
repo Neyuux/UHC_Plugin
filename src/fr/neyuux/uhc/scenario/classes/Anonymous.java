@@ -106,7 +106,7 @@ public class Anonymous extends Scenario implements Listener {
         ev.setMessage(message);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEnd(GameEndEvent ev) {
         if (!ev.isCancelled())
             resetNamesAndSkins();
