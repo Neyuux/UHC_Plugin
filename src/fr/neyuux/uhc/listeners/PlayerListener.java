@@ -233,7 +233,6 @@ public class PlayerListener implements Listener {
     public void onPlayerHealth(EntityRegainHealthEvent e) {
         if (e.getEntityType().equals(EntityType.PLAYER) && main.isState(Gstate.PLAYING))
             main.getPlayerUHC((Player)e.getEntity()).health = ((Player) e.getEntity()).getHealth() + e.getAmount();
-        Bukkit.broadcastMessage("a" + ((Player) e.getEntity()).getHealth() + e.getAmount());
     }
 
     @EventHandler
