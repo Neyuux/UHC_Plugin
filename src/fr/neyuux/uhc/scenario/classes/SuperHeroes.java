@@ -106,7 +106,7 @@ public class SuperHeroes extends Scenario implements Listener {
                 ev.setDamage(EntityDamageEvent.DamageModifier.RESISTANCE, -(ev.getDamage() - (ev.getDamage() * 0.7)));
                 Bukkit.broadcastMessage("§d" + ev.getFinalDamage() + "");
                 Bukkit.broadcastMessage("§dRéz : " + ev.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE));*/
-            }
+            } //TODO fix rez
         }
     }
 
@@ -139,6 +139,7 @@ public class SuperHeroes extends Scenario implements Listener {
                 p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 0, true, true));
                 p.sendMessage(getPrefix() + "§eVous obtenez le pouvoir §b§lRapidité 2§e!");
             } else if (power.equals(PotionEffectType.HEALTH_BOOST)) {
+                pu.maxHealth *= 2;
                 p.setMaxHealth(p.getMaxHealth() * 2);
                 p.setHealth(p.getMaxHealth());
                 p.sendMessage(getPrefix() + "§eVous obtenez le pouvoir §c§lDouble Vie §e!");
