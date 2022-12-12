@@ -45,7 +45,7 @@ public class FightListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onDamage(EntityDamageEvent ev) {
         Entity e = ev.getEntity();
-        double fdamage = ev.getFinalDamage() - ev.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION);
+        double fdamage = ev.getFinalDamage();
 
         if (e.getType().equals(EntityType.PLAYER) && main.isState(Gstate.PLAYING)) {
             Player player = (Player)e;
@@ -54,11 +54,8 @@ public class FightListener implements Listener {
             if (playerUHC.isInvulnerable()) ev.setCancelled(true);
             if (ev.isCancelled()) return;
 
-            playerUHC.health = player.getHealth() + playerUHC.absorption - fdamage;
-            playerUHC.absorption = (float) (((CraftPlayer) player).getHandle().getAbsorptionHearts() - fdamage);
+            playerUHC.health = playerUHC.health + playerUHC.getAbsorption() - fdamage;
             if (playerUHC.health < 0) playerUHC.health = 0;
-            if (playerUHC.absorption < 0) playerUHC.absorption = 0;
-            playerUHC.health = playerUHC.health - playerUHC.absorption;
 
             if (playerUHC.health <= 0.0) {
                 ev.setCancelled(true);
@@ -138,7 +135,7 @@ public class FightListener implements Listener {
                     formattedPlayerHealth = format.format(playerUHC.getTeam().getHealth() - ev.getFinalDamage());
                     dp.sendMessage(UHC.getPrefix() + "§fL'équipe " + playerUHC.getTeam().getTeam().getDisplayName() + " §fpossède en tout §4§l" + formattedPlayerHealth + Symbols.HEARTH + "§f.");
                 } else {
-                    formattedPlayerHealth = format.format(playerUHC.health + playerUHC.absorption);
+                    formattedPlayerHealth = format.format(playerUHC.health + playerUHC.getAbsorption());
                     dp.sendMessage(UHC.getPrefix() + player.getDisplayName() + " §fpossède actuellement §4§l" + formattedPlayerHealth + Symbols.HEARTH + "§f.");
                 }
             }

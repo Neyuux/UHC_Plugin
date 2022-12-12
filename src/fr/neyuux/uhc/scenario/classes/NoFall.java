@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
@@ -33,9 +34,11 @@ public class NoFall extends Scenario implements Listener {
     }
 
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onFall(EntityDamageEvent ev) {
-        if (ev.getEntityType().equals(EntityType.PLAYER) && ev.getCause().equals(EntityDamageEvent.DamageCause.FALL))
+        if (ev.getEntityType().equals(EntityType.PLAYER) && ev.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
             ev.setCancelled(true);
+            ev.setDamage(0);
+        }
     }
 }

@@ -31,7 +31,7 @@ public class UHCTeam {
 
     private Team team;
     private final TeamPrefix prefix;
-    private final Set<PlayerUHC> players;
+    private final List<PlayerUHC> players;
     private final Set<PlayerUHC> alivePlayers;
     private final Set<PlayerUHC> deathPlayers;
     private final UHC main;
@@ -39,7 +39,7 @@ public class UHCTeam {
     public UHCTeam(UHC main, TeamPrefix prefix) {
         this.main = main;
         this.prefix = prefix;
-        this.players = new HashSet<>();
+        this.players = new ArrayList<>();
         this.alivePlayers = new HashSet<>();
         this.deathPlayers = new HashSet<>();
         this.id = main.getUHCTeamManager().getTeams().size() + 1;
@@ -112,6 +112,9 @@ public class UHCTeam {
         alivePlayers.add(main.getPlayerUHC(player));
         player.setDisplayName(prefix.toString() + player.getName());
         player.setPlayerListName(player.getDisplayName());
+        if (!team.hasEntry(player.getName()))
+            team.addEntry(player.getName());
+        main.getPlayerUHC(player).setTeam(this);
     }
 
     public void leave(PlayerUHC pu) {
@@ -190,7 +193,7 @@ public class UHCTeam {
     public double getHealth() {
         int health = 0;
         for (PlayerUHC pu : alivePlayers)
-            health += pu.health + pu.absorption;
+            health += pu.health + pu.getAbsorption();
         return health;
     }
 
@@ -318,7 +321,7 @@ public class UHCTeam {
         return prefix;
     }
 
-    public Set<PlayerUHC> getPlayers() {
+    public List<PlayerUHC> getPlayers() {
         return players;
     }
 

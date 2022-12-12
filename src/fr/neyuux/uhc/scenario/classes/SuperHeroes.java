@@ -31,7 +31,7 @@ public class SuperHeroes extends Scenario implements Listener {
         super(Scenarios.SUPER_HEROES, new ItemStack(Material.NETHER_STAR));
     }
 
-    public static boolean hasResistance = true, hasStrength = true, hasSpeed = true, hasJumpBoost = true, hasDoubleHealth = true, hasInvisibility;
+    public static boolean hasResistance = false, hasStrength = true, hasSpeed = true, hasJumpBoost = true, hasDoubleHealth = true, hasInvisibility = false;
     public static HashMap<PlayerUHC, PotionEffectType> powers = new HashMap<>();
     private static final HashMap<PlayerUHC, PotionEffectType> needPower = new HashMap<>();
 

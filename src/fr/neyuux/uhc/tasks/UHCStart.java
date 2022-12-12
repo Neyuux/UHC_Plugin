@@ -141,8 +141,10 @@ public class UHCStart extends BukkitRunnable {
                 health.setDisplaySlot(DisplaySlot.PLAYER_LIST);
                 healthBelow.setDisplaySlot(DisplaySlot.BELOW_NAME);
             } else {
-                health.unregister();
-                healthBelow.unregister();
+                if (health != null && healthBelow != null) {
+                    health.unregister();
+                    healthBelow.unregister();
+                }
             }
             Bukkit.broadcastMessage(UHC.getPrefix() + "§2Lancement de la Pré-Génération du monde...");
             for (PlayerUHC p : main.getAlivePlayers()) {
@@ -255,7 +257,8 @@ public class UHCStart extends BukkitRunnable {
                 p.getPlayer().getPlayer().teleport(main.world.getSpawns().remove(0));
                 for (Player pl : Bukkit.getOnlinePlayers())
                     pl.playSound(pl.getLocation(), Sound.CHICKEN_EGG_POP, 7f ,2f);
-                Bukkit.broadcastMessage(UHC.getPrefix() + p.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
+                if (!Scenarios.ANONYMOUS.isActivated())
+                    Bukkit.broadcastMessage(UHC.getPrefix() + p.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
                 p.setLastLocation(p.getPlayer().getPlayer().getLocation().add(0, -38, 0));
             }
             else {
@@ -269,7 +272,8 @@ public class UHCStart extends BukkitRunnable {
                         playerUHC.getPlayer().getPlayer().setPlayerListName(playerUHC.getPlayer().getPlayer().getDisplayName());
                         for (Player pl : Bukkit.getOnlinePlayers())
                             pl.playSound(pl.getLocation(), Sound.CHICKEN_EGG_POP, 7f ,2f);
-                        Bukkit.broadcastMessage(UHC.getPrefix() + playerUHC.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
+                        if (!Scenarios.ANONYMOUS.isActivated())
+                            Bukkit.broadcastMessage(UHC.getPrefix() + playerUHC.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
                         playerUHC.setLastLocation(playerUHC.getPlayer().getPlayer().getLocation().add(0, -39, 0));
                     }
                     t.getTeam().setAllowFriendlyFire((boolean)GameConfig.ConfigurableParams.FRIENDLY_FIRE.getValue());

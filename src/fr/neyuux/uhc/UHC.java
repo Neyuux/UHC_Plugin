@@ -105,8 +105,17 @@ public class UHC extends JavaPlugin {
 			if (System.getProperty("RELOAD").equals("TRUE"))
 				return;
 
+
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvents(new PreGameListener(this), this);
+		pm.registerEvents(new WorldListener(this), this);
+		pm.registerEvents(new PlayerListener(this), this);
+		pm.registerEvents(new FightListener(this), this);
+		pm.registerEvents(new ArmorListener(Collections.emptyList()), this);
+
 		instance = this;
 		this.config = new GameConfig(this, Modes.UHC);
+		pm.registerEvents(this.config, this);
 		System.out.println("UHC enabling");
 
 		File file = new File(getDataFolder(), "config.yml");
@@ -126,13 +135,6 @@ public class UHC extends JavaPlugin {
 		getCommand("enchant").setExecutor(new CommandEnchant(this));
 		getCommand("scenario").setExecutor(new CommandScenario(this));
 		getCommand("helpop").setExecutor(new CommandHelpOp(this));
-		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(new PreGameListener(this), this);
-		pm.registerEvents(new WorldListener(this), this);
-		pm.registerEvents(new PlayerListener(this), this);
-		pm.registerEvents(new FightListener(this), this);
-		pm.registerEvents(new ArmorListener(Collections.emptyList()), this);
-		pm.registerEvents(this.config, this);
 
 		reloadScoreboard();
 		rel();
@@ -221,13 +223,13 @@ public class UHC extends JavaPlugin {
 			ss.setLine(7, "§6§lPvP §6: §c§l" + getTimer((int)GameConfig.ConfigurableParams.PVP.getValue()));
 			ss.setLine(8, "§6§lBordure §6: §3§l" + getTimer((int)GameConfig.ConfigurableParams.BORDER_TIMER.getValue()));
 			ss.setLine(9, "§8");
-			ss.setLine(10, "§b§lTaille de la bordure §b: " + Symbols.PLUS_MINUS + "§3" + "bordr" + "§b/§3" + "bordr");
-			ss.setLine(11, "§9§lCentre : §6" + "centerdist" + " blocks " + "Arrowto00");
+			ss.setLine(10, "§b§lTaille de la bordure §b: " + Symbols.PLUS_MINUS + "§3" + "x" + "§b/§3" + "x");
+			ss.setLine(11, "§9§lCentre : §6" + "x" + " blocks " + " ");
 			ss.setLine(12, "§8------------");
 			ss.setLine(13, "§5§oMap by §c§l§oNeyuux_");
 		} else if (this.mode.equals(Modes.LG)) {
 			ss.setLine(1, "§0");
-			ss.setLine(2, "§9§lRôle §9: " + "roledisplayname");
+			ss.setLine(2, "§9§lRôle §9: " + "§cAucun");
 			ss.setLine(3, "§7§lJoueurs §7: §f" + getAlivePlayers().size());
 			ss.setLine(4, "§c§lKills §c: §l" + playerUHC.getKills());
 			ss.setLine(5, "§5");
@@ -237,7 +239,7 @@ public class UHC extends JavaPlugin {
 			ss.setLine(9, "§6§lPvP §6:§c§l " + getTimer((int) GameConfig.ConfigurableParams.PVP.getValue()));
 			ss.setLine(10, "§6§lBordure §6:§3§l " + getTimer((int) GameConfig.ConfigurableParams.BORDER_TIMER.getValue()));
 			ss.setLine(11, "§5");
-			ss.setLine(12, "§b§lTaille de la bordure §b: " + Symbols.PLUS_MINUS + "§3" + "bordr" + "§b/§3" + "bordr");
+			ss.setLine(12, "§b§lTaille de la bordure §b: " + Symbols.PLUS_MINUS + "§3" + "x" + "§b/§3" + "x");
 			ss.setLine(13, "§8------------");
 			ss.setLine(14, "§5§oMap by §c§l§oNeyuux_");
 		}

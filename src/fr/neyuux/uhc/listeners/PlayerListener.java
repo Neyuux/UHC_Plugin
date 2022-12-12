@@ -206,13 +206,11 @@ public class PlayerListener implements Listener {
 
             if(item.equals(UHC.getGoldenHead(item.getAmount()))) { // GOLDEN HEAD
                 p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, 1, true, true));
-                main.getPlayerUHC(p).absorption = 2.0f;
             }
 
             if (!(boolean)GameConfig.ConfigurableParams.ABSORPTION.getValue()) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {
                         p.removePotionEffect(PotionEffectType.ABSORPTION);
-                        main.getPlayerUHC(p).absorption = 0f;
                         main.setHealth(p);
                     }, (long) 0.01);
             }
@@ -229,7 +227,7 @@ public class PlayerListener implements Listener {
             }
         } catch (Exception ignored){}
     }
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerHealth(EntityRegainHealthEvent e) {
         if (e.getEntityType().equals(EntityType.PLAYER) && main.isState(Gstate.PLAYING))
             main.getPlayerUHC((Player)e.getEntity()).health = ((Player) e.getEntity()).getHealth() + e.getAmount();

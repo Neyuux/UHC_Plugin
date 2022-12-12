@@ -23,11 +23,13 @@ import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import static org.bukkit.Material.GOLDEN_APPLE;
@@ -51,6 +53,36 @@ public class CommandUHC implements CommandExecutor {
             if (args.length > 0) {
 
                 switch (args[0].toLowerCase()) {
+
+                    case "admin":
+                        if (playerUHC.isHost()) {
+                            player.sendMessage(UHC.getPrefix() + "ßcListe des commandes admin : \n" +
+                                    "ß6/uhc taupelist ßc: Affiche la liste des taupes de la partie \n" +
+                                    "ß6/uhc aablist ßcAffiche la liste des assaults and battery de la partie");
+
+                            StringBuilder message = new StringBuilder("ßc…quipes en vies : \n");
+                            for (UHCTeam t : main.getUHCTeamManager().getAliveTeams()) {
+                                message.append(t.getTeam().getName()).append(" ß8(ß7").append(t.getAlivePlayers()).append("ß8) ß7:");
+                                for (PlayerUHC alivePlayer : t.getAlivePlayers()) {
+                                    message.append(alivePlayer.getPlayer().getName()).append(" \n");
+                                }
+                            }
+                            message = new StringBuilder("ß6…quipes : \n");
+                            for (UHCTeam t : main.getUHCTeamManager().getTeams()) {
+                                message.append(t.getTeam().getName()).append(" ß8(ß7").append(t.getAlivePlayers()).append("ß8) ß7:");
+                                for (PlayerUHC alivePlayer : t.getPlayers()) {
+                                    message.append(alivePlayer.getPlayer().getName()).append(" \n");
+                                }
+                            }
+                            player.sendMessage(message.toString());
+                            Bukkit.getLogger().log(Level.INFO, message.toString());
+
+                            ExperienceOrb orb = player.getWorld().spawn(player.getLocation().add(5, 1, 0), ExperienceOrb.class);
+                            orb.setExperience(Integer.parseInt(args[1]));
+
+                            player.openInventory(main.getGameConfig().getGameConfigInv(player));
+                        }
+                    break;
 
                     case "whitelist":
                     case "wl":

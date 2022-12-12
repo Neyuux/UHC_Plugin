@@ -32,10 +32,10 @@ public class CutClean extends Scenario implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
 
-        VarsLoot.getBlocksLoots().put(Material.GOLD_ORE, new Loot(1.2, Lists.newArrayList(
+        VarsLoot.getBlocksLoots().put(Material.GOLD_ORE, new Loot(2.2, Lists.newArrayList(
                 new LootItem(new ItemStack(Material.GOLD_INGOT, 1), 100.0, new Interval<>(1, 1)))));
 
-        VarsLoot.getBlocksLoots().put(Material.IRON_ORE, new Loot(1.5, Lists.newArrayList(
+        VarsLoot.getBlocksLoots().put(Material.IRON_ORE, new Loot(1.6, Lists.newArrayList(
                 new LootItem(new ItemStack(Material.IRON_INGOT, 1), 100.0, new Interval<>(1, 1)))));
     }
 

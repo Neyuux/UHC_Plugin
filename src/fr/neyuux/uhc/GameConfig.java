@@ -1,6 +1,5 @@
 package fr.neyuux.uhc;
 
-import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.scenario.classes.ArmorLimiter;
@@ -134,8 +133,10 @@ public class GameConfig implements Listener {
                 main.changeMode(UHC.Modes.UHC);
                 Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §ea passé le mode de jeu sur " + ChatColor.translateAlternateColorCodes('&', UHC.Modes.UHC.getPrefix()));
             } else if (current.getType().equals(Material.MONSTER_EGG) && !mode.equals(UHC.Modes.LG)) {
-                main.changeMode(UHC.Modes.LG);
-                Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §ea passé le mode de jeu sur " + ChatColor.translateAlternateColorCodes('&', UHC.Modes.LG.getPrefix()));
+                //main.changeMode(UHC.Modes.LG);
+                //Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §ea passé le mode de jeu sur " + ChatColor.translateAlternateColorCodes('&', UHC.Modes.LG.getPrefix()));
+                UHC.playNegativeSound(player);
+                player.sendMessage(UHC.getPrefix() + "§cCe mode n'est pas disponible !");
             }
 
             if (current.equals(getReturnArrow()))
@@ -809,7 +810,7 @@ public class GameConfig implements Listener {
     }
 
 
-    private Inventory getGameConfigInv(HumanEntity player) {
+    public Inventory getGameConfigInv(HumanEntity player) {
         Inventory inv = Bukkit.createInventory(null, 45, "§c§lConfiguration");
         List<String> ops = new ArrayList<>();
         setInvCoin(inv, (byte)14);
@@ -1084,7 +1085,7 @@ public class GameConfig implements Listener {
             it.setLore("§eJoueurs : ");
             for (int p = 0; p < getTeamTypeInt((String)TEAMTYPE.getValue()); p++)
                 if (t.getPlayers().size() - 1 >= p)
-                    it.addLore(t.getPrefix().color.getColor() + " - " + t.getListAlivePlayers().get(p).getPlayer().getPlayer().getPlayerListName());
+                    it.addLore(t.getPrefix().color.getColor() + " - " + t.getPlayers().get(p).getPlayer().getPlayer().getPlayerListName());
                 else it.addLore(t.getPrefix().color.getColor() + " - ");
             it.addLore("", "§b>>Cliquez pour mettre §f" + player.getName(), "§bdans cette équipe.");
             inv.setItem(i, it.toItemStack());

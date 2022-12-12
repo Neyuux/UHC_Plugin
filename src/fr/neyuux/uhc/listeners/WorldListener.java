@@ -5,13 +5,13 @@ import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.UHCWorld;
 import fr.neyuux.uhc.scenario.Scenarios;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -20,9 +20,14 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.WorldEvent;
+import org.bukkit.event.world.WorldInitEvent;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.generator.BlockPopulator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class WorldListener implements Listener {
 
@@ -86,6 +91,47 @@ public class WorldListener implements Listener {
                 blocksTowers.add(e.getBlock());
         }
 
+    }
+
+    @EventHandler
+    public void onWorldLoad(WorldInitEvent ev) {
+        World world = ev.getWorld();
+
+        if (!UHCWorld.MAIN_WORLD.equals("Core")) return;
+
+        BlockPopulator populator = new BlockPopulator() {
+            @Override
+            public void populate(World world, Random random, Chunk chunk) {
+                int nchecks = 20;
+
+                for (int i = 0; i < nchecks; i++) {
+                    int negative = (random.nextBoolean() ? -1 : 1);
+                    int x = random.nextInt(16) * negative;
+                    int z = random.nextInt(16) * negative;
+                    Block block = chunk.getBlock(x, world.getHighestBlockYAt(x, z), z);
+                    Material type = block.getType();
+                    int bx = block.getX();
+                    int by = block.getY();
+                    int bz = block.getZ();
+                    boolean checkWater = false;
+
+                    for (Block nearbyBlock : UHCWorld.getNearbyBlocks(block.getLocation(), 1)) {
+                        if (nearbyBlock.getType().equals(Material.WATER) || nearbyBlock.getType().equals(Material.STATIONARY_WATER)) {
+                            checkWater = true;
+                        }
+                    }
+
+                    if (!checkWater) return;
+
+                    if (type.equals(Material.GRASS) || type.equals(Material.SAND) || type.equals(Material.DIRT))
+                        for (int y = by + 1; y < random.nextInt(5) + 2 + by; y++) {
+                            chunk.getBlock(bx, y, bz).setType(Material.SUGAR_CANE_BLOCK);
+                        }
+                }
+            }
+        };
+
+        world.getPopulators().add(populator);
     }
 
 

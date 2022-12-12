@@ -139,6 +139,7 @@ public class PreGameListener implements Listener {
         if (action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK) || action.equals(Action.PHYSICAL))
             if (current.equals(UHC.getSpecTear())) {
                 main.spectators.add(player);
+                main.players.remove(main.getPlayerUHC(player));
                 player.setGameMode(GameMode.SPECTATOR);
                 player.setDisplayName("§8[§7Spectateur§8] §7" + player.getName());
                 player.setPlayerListName(player.getDisplayName());
@@ -383,7 +384,7 @@ public class PreGameListener implements Listener {
             it.setLore("§eJoueurs : ");
             for (int p = 0; p < GameConfig.getTeamTypeInt((String)TEAMTYPE.getValue()); p++)
                 if (t.getPlayers().size() - 1 >= p)
-                    it.addLore(t.getPrefix().color.getColor() + " - " + t.getListAlivePlayers().get(p).getPlayer().getPlayer().getPlayerListName());
+                    it.addLore(t.getPrefix().color.getColor() + " - " + t.getPlayers().get(p).getPlayer().getPlayer().getPlayerListName());
                 else it.addLore(t.getPrefix().color.getColor() + " - ");
             it.addLore("", "§b>>Cliquez rejoindre cette équipe.");
             inv.setItem(i, it.toItemStack());

@@ -14,8 +14,13 @@ import fr.neyuux.uhc.teams.TeamPrefix;
 import fr.neyuux.uhc.teams.UHCTeam;
 import fr.neyuux.uhc.util.ItemsStack;
 import fr.neyuux.uhc.util.PlayerSkin;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R3.PacketPlayOutRespawn;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -81,7 +86,7 @@ public class Anonymous extends Scenario implements Listener {
         if(!main.getPlayerUHC(p).isSpec()) changeNameAndSkin(p, "§kAnonymous" + used + "§r", usedName);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onCommand(PlayerCommandPreprocessEvent ev) {
         String message = ev.getMessage();
         String[] messageWords = message.split(" ");
@@ -147,6 +152,7 @@ public class Anonymous extends Scenario implements Listener {
             }
             main.getPlayerUHC(p).setPlayer(p);
             if (t != null) t.add(p);
+            reloadSkinForSelf(p);
         } catch (Exception e) {
             e.printStackTrace();
             Bukkit.broadcastMessage(UHC.getPrefix() + "§cErreur lors du changement du skin de " + p.getName());
@@ -187,10 +193,32 @@ public class Anonymous extends Scenario implements Listener {
                     }
                     en.getKey().setPlayer(p);
                     if (t != null) t.add(p);
+                    reloadSkinForSelf(p);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Bukkit.broadcastMessage(UHC.getPrefix() + "§cErreur lors du changement du skin de " + p.getName());
                 }
             }
+    }
+
+    public static void reloadSkinForSelf(Player player) {
+        EntityPlayer ep = ((CraftPlayer) player).getHandle();
+        PacketPlayOutPlayerInfo removeInfo = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, ep);
+        PacketPlayOutPlayerInfo addInfo = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, ep);
+        Location loc = player.getLocation().clone();
+
+        ep.playerConnection.sendPacket(removeInfo);
+        ep.playerConnection.sendPacket(addInfo);
+
+        player.teleport(new Location(Bukkit.getWorld("Core"), 0, 100, 0));
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.teleport(loc);
+                ep.playerConnection.sendPacket(new PacketPlayOutRespawn(ep.dimension, ep.getWorld().getDifficulty(), ep.getWorld().getWorldData().getType(), ep.playerInteractManager.getGameMode()));
+                player.updateInventory();
+            }
+        }.runTaskLater(UHC.getInstance(), 2L);
     }
 }

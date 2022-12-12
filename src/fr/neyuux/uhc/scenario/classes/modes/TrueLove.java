@@ -105,9 +105,8 @@ public class TrueLove extends Scenario implements Listener {
     public void onElim(PlayerEliminationEvent ev) {
         if (ev.getPlayerUHC().getTeam() != null) {
             UHCTeam team = ev.getPlayerUHC().getTeam();
-            List<PlayerUHC> players = new ArrayList<>(team.getPlayers());
-            players.removeAll(team.getDeathPlayers());
-            if (players.size() < GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()))
+            List<PlayerUHC> players = new ArrayList<>(team.getAlivePlayers());
+            if (players.size() == teamSize)
                 for (PlayerUHC pu : players) lovers.remove(pu);
         }
     }

@@ -90,7 +90,7 @@ public class CommandRevive implements CommandExecutor {
                         } else sender.sendMessage(UHC.getPrefix() + "§cImpossible de ressuciter ce joueur.");
                     } else sender.sendMessage(UHC.getPrefix() + "§cLe joueur §4\"§e" + args[0] + "§4\" §cn'existe pas.");
                 } else sender.sendMessage(UHC.getPrefix() + "§cVeuillez renseigner un joueur.");
-            else sender.sendMessage(UHC.getPrefix() + "§cVous ne pouvez pas utiliser cette commande si la partie n'est pas commencé.");
+            else sender.sendMessage(UHC.getPrefix() + "§cVous ne pouvez pas utiliser cette commande si la partie n'est pas commencée.");
         } else sender.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'utiliser cette commande.");
         return true;
     }

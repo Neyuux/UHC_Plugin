@@ -3,6 +3,7 @@ version: Beta2.0.1b
 author: Neyuux_
 main: fr.neyuux.uhc.UHC
 softdepend: [NeyGin_Core]
+load: STARTUP
 commands:
   uhc:
     description: Commande Principale

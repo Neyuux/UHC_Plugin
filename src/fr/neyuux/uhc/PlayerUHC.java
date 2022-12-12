@@ -32,7 +32,6 @@ public class PlayerUHC {
     private int monsters;
     public double maxHealth;
     public double health;
-    public float absorption;
     public int foodLevel;
     private boolean isAlive, isInvulnerable;
     private UHCTeam team;
@@ -45,10 +44,14 @@ public class PlayerUHC {
         this.main = main;
         this.kills = 0; this.diamonds = 0; this.golds = 0;
         this.irons = 0; this.monsters = 0; this.animals = 0;
-        this.maxHealth = 20.0; this.health = maxHealth; this.absorption = 0; this.foodLevel = 20;
+        this.maxHealth = 20.0; this.health = maxHealth; this.foodLevel = 20;
         this.isAlive = false; this.isInvulnerable = false;
     }
 
+
+    public float getAbsorption() {
+        return ((CraftPlayer) player).getHandle().getAbsorptionHearts();
+    }
 
     public OfflinePlayer getPlayer() {
         return player;
