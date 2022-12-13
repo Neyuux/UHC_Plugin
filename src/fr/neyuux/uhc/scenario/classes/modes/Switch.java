@@ -150,7 +150,7 @@ public class Switch extends Scenario implements Listener {
                 UHCTeam needLess = teamsNeedLess.get(random.nextInt(teamsNeedLess.size()));
                 UHCTeam needMore = teamsNeedMore.get(random.nextInt(teamsNeedMore.size()));
 
-                PlayerUHC playerUHC = needLess.getListAlivePlayers().get(random.nextInt(needLess.getAlivePlayers().size()));
+                PlayerUHC playerUHC = needLess.getAlivePlayers().get(random.nextInt(needLess.getAlivePlayers().size()));
 
                 needLess.leave(playerUHC);
                 needMore.add(playerUHC.getPlayer().getPlayer());

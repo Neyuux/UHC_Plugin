@@ -68,8 +68,9 @@ public class UHCTeamManager {
 
     public List<UHCTeam> getAliveTeams() {
         List<UHCTeam> l = new ArrayList<>();
-        for (UHCTeam t : getTeams())
+        for (UHCTeam t : getTeams()) {
             if (t.getAlivePlayers().size() != 0) l.add(t);
+        }
         return l;
     }
 

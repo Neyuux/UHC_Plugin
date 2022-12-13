@@ -32,7 +32,7 @@ public class UHCTeam {
     private Team team;
     private final TeamPrefix prefix;
     private final List<PlayerUHC> players;
-    private final Set<PlayerUHC> alivePlayers;
+    private final List<PlayerUHC> alivePlayers;
     private final Set<PlayerUHC> deathPlayers;
     private final UHC main;
     public final int id;
@@ -40,7 +40,7 @@ public class UHCTeam {
         this.main = main;
         this.prefix = prefix;
         this.players = new ArrayList<>();
-        this.alivePlayers = new HashSet<>();
+        this.alivePlayers = new ArrayList<>();
         this.deathPlayers = new HashSet<>();
         this.id = main.getUHCTeamManager().getTeams().size() + 1;
 
@@ -95,7 +95,7 @@ public class UHCTeam {
             sendMessage(UHC.getPrefix() + player.getDisplayName() + prefix.color.getColor() + " a rejoint votre équipe !");
         }
         players.add(playerUHC);
-        if (playerUHC.isAlive()) alivePlayers.add(playerUHC);
+        if (playerUHC.isAlive() || !main.isState(Gstate.PLAYING)) alivePlayers.add(playerUHC);
         playerUHC.setTeam(this);
 
         player.setDisplayName(prefix.toString() + player.getName());
@@ -110,6 +110,7 @@ public class UHCTeam {
 
     public void reconnect(Player player) {
         alivePlayers.add(main.getPlayerUHC(player));
+
         player.setDisplayName(prefix.toString() + player.getName());
         player.setPlayerListName(player.getDisplayName());
         if (!team.hasEntry(player.getName()))
@@ -325,16 +326,11 @@ public class UHCTeam {
         return players;
     }
 
-    public Set<PlayerUHC> getAlivePlayers() {
+    public List<PlayerUHC> getAlivePlayers() {
         return alivePlayers;
     }
 
     public Set<PlayerUHC> getDeathPlayers() {
         return deathPlayers;
     }
-
-    public ArrayList<PlayerUHC> getListAlivePlayers(){
-        return new ArrayList<>(alivePlayers);
-    }
-
 }
