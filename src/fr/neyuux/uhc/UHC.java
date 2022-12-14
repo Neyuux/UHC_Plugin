@@ -198,7 +198,7 @@ public class UHC extends JavaPlugin {
 			ss.setLine(2, "ßeßl…quipe ße: " +(getPlayerUHC(player).getTeam() != null ? getPlayerUHC(player).getTeam().getTeam().getDisplayName() : "ßcAucune"));
 		}
 		ss.setLine(3, "ß4");
-		ss.setLine(4, "ß6ßlJoueurs ß6: ßf" + Bukkit.getServer().getOnlinePlayers().size() + "ß6/ße" + GameConfig.ConfigurableParams.SLOTS.getValue());
+		ss.setLine(4, "ß6ßlJoueurs ß6: ßf" + this.players.size() + "ß6/ße" + GameConfig.ConfigurableParams.SLOTS.getValue());
 		ss.setLine(5, "ß8------------");
 		ss.setLine(6, "ß5ßoMap by ßcßlßoNeyuux_");
 		this.boards.put(getPlayerUHC(player), ss);

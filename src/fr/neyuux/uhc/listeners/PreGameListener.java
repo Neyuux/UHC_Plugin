@@ -74,7 +74,7 @@ public class PreGameListener implements Listener {
         if (onlines >= (maxonlines / 1.3)) quitmessage = "§c" + onlines;
         if (onlines >= maxonlines) quitmessage = "§4" + onlines;
         ev.setQuitMessage("§8[§c§l-§r§8] §e§o" + player.getName() + " §8(" + quitmessage + "§8/§c§l" + maxonlines + "§8)");
-        main.players.forEach(pu -> main.boards.get(pu).setLine(4, "§6§lSlots §6: §f" + Bukkit.getServer().getOnlinePlayers().size() + "§6/§e" + GameConfig.ConfigurableParams.SLOTS.getValue()));
+        main.players.forEach(pu -> main.boards.get(pu).setLine(4, "§6§lSlots §6: §f" + main.players.size() + "§6/§e" + maxonlines));
     }
 
     @EventHandler
@@ -113,7 +113,7 @@ public class PreGameListener implements Listener {
         if (onlines >= (maxonlines / 1.3)) joinmessage = "§c" + onlines;
         if (onlines >= maxonlines) joinmessage = "§4" + onlines;
         ev.setJoinMessage("§8[§a§l+§r§8] §e§o" + player.getName() + " §8(" + joinmessage + "§8/§c§l" + maxonlines + "§8)");
-        main.players.forEach(pu -> main.boards.get(pu).setLine(4, "§6§lSlots §6: §f" + Bukkit.getServer().getOnlinePlayers().size() + "§6/§e" + GameConfig.ConfigurableParams.SLOTS.getValue()));
+        main.players.forEach(pu -> main.boards.get(pu).setLine(4, "§6§lSlots §6: §f" + main.players.size() + "§6/§e" + maxonlines));
     }
 
 
@@ -147,6 +147,7 @@ public class PreGameListener implements Listener {
 
                 player.sendMessage(UHC.getPrefix() + "§6Vous avez établi votre mode de jeu en spectateur.");
                 player.sendMessage(UHC.getPrefix() + "§7Pour revenir au mode non-spectateur, utilisez la commande §6§l/uhc spec off§7.");
+                main.players.forEach(pu -> main.boards.get(pu).setLine(4, "§6§lSlots §6: §f" + main.players.size() + "§6/§e" + GameConfig.ConfigurableParams.SLOTS.getValue()));
             }
     }
 
