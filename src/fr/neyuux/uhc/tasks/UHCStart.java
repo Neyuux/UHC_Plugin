@@ -206,6 +206,8 @@ public class UHCStart extends BukkitRunnable {
             VarsLoot.getBlocksLoots().put(Material.LEAVES_2, new Loot(0, Lists.newArrayList(
                     new LootItem(new ItemStack(Material.APPLE, 1), (double)GameConfig.ConfigurableParams.APPLE.getValue(), new Interval<>(1, 1)))));
             /* FIN DROPS POMMES*/
+            //STONE
+            VarsLoot.getBlocksLoots().put(Material.STONE, new Loot(0, Lists.newArrayList(new LootItem(new ItemStack(Material.COBBLESTONE, 1), 100.0, new Interval<>(1, 1)))));
             /* DROPS FLINT */
             double flint = (double)GameConfig.ConfigurableParams.FLINT.getValue();
             VarsLoot.getBlocksLoots().put(Material.GRAVEL, new Loot(0, Lists.newArrayList(

@@ -116,7 +116,7 @@ public class PlayerListener implements Listener {
         if (main.isState(Gstate.PLAYING)) main.setGameScoreboard(player);
         else if (main.isState(Gstate.FINISHED)) main.setKillsScoreboard(player);
         UHC.setPlayerTabList(player, UHC.getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
-        if (playerUHC.getTeam() != null)
+        if (playerUHC.getTeam() != null && playerUHC.isAlive())
             playerUHC.getTeam().reconnect(player);
         if (playerUHC.isSpec()) player.setDisplayName("§8[§7Spectateur§8] §7" + player.getName() + "§r");
         player.setPlayerListName(player.getDisplayName());

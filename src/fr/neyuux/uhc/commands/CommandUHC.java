@@ -123,9 +123,9 @@ public class CommandUHC implements CommandExecutor {
                         } else player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'exécuter cette commande.");
                         break;
                     case "classementores":
-                        if (!playerUHC.isAlive()) {
+                        if (!playerUHC.isAlive() || main.isState(Gstate.FINISHED)) {
                             if (main.getGameConfig().hosts.contains(player.getUniqueId())) {
-                                if (main.isState(Gstate.PLAYING)) {
+                                if (main.isState(Gstate.PLAYING) || main.isState(Gstate.FINISHED)) {
                                     Inventory inv = Bukkit.createInventory(null, UHC.adaptInvSizeForInt(main.getAlivePlayers().size(), 0), "§6Classement des minerais");
                                     for (PlayerUHC pu : main.getAlivePlayers())
                                         if (pu.isAlive()) {
@@ -695,7 +695,7 @@ public class CommandUHC implements CommandExecutor {
                         break;
                     case "taupelist":
                         if (!Scenarios.MOLES.isActivated() || !main.isState(Gstate.PLAYING)) return true;
-                        if (playerUHC.isSpec() && playerUHC.isHost()) {
+                        if ((playerUHC.isSpec() || main.isState(Gstate.FINISHED)) && playerUHC.isHost()) {
                             Bukkit.broadcastMessage(UHC.getPrefix() + "§eListe des taupes de la partie :");
                             Bukkit.broadcastMessage("§7------------------------------");
                             Bukkit.broadcastMessage("");
@@ -727,7 +727,7 @@ public class CommandUHC implements CommandExecutor {
                         break;
                     case "aablist":
                         if (!Scenarios.ASSAULT_AND_BATTERY.isActivated() || !main.isState(Gstate.PLAYING)) return true;
-                        if (playerUHC.isSpec() && playerUHC.isHost()) {
+                        if ((playerUHC.isSpec() || main.isState(Gstate.FINISHED)) && playerUHC.isHost()) {
                             Bukkit.broadcastMessage(UHC.getPrefix() + "§eListe des Assault et des Battery de la partie :");
                             Bukkit.broadcastMessage("§7------------------------------");
                             Bukkit.broadcastMessage("");
