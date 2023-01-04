@@ -47,10 +47,6 @@ public class GameConfig implements Listener {
     public GameConfig(UHC main, UHC.Modes mode) {
         this.main = main;
         this.mode = mode;
-        if (!UHCWorld.isCreated()) {
-            main.world.create();
-            Bukkit.broadcastMessage(UHC.getPrefix() + "§2Monde §a\"" + main.world.getSeed() + "\"§2 créé.");
-        }
         if (mode.equals(UHC.Modes.LG)) {
             SCOREBOARD_LIFE.setValue(false);
             DAY_CYCLE.setValue(true);
@@ -1350,6 +1346,7 @@ public class GameConfig implements Listener {
         FLINT_AND_STEEL$NOT_OVERWORLD("§7Briquets §4hors Overworld", ParamParts.WORLDRULES, Material.NETHER_BRICK_STAIRS, false),
         BED$NOT_OVERWORLD("§cLits §4hors Overworld", ParamParts.WORLDRULES, Material.BED, false),
         QUARTZ_XP_NERF("§aNerf de l'XP du Quartz", ParamParts.WORLDRULES, Material.QUARTZ_ORE, false),
+        CORRECT_SPAWNS("§2Corriger les spawns", ParamParts.WORLDRULES, Material.DIAMOND_PICKAXE, false, "§7Augmente l'apparition de canne à sucre, de diamant etc..."),
 
         APPLE("§cPommes", ParamParts.DROPS, Material.APPLE, 2.0, 100.0, 0.1, new double[]{0.1, 0.5, 1.0}),
         FLINT("§8Silex", ParamParts.DROPS, Material.FLINT, 20.0, 100.0, 1.0, new double[]{0.5, 1, 5, 15}),

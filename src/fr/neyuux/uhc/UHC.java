@@ -21,6 +21,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.PluginManager;
@@ -488,7 +489,6 @@ public class UHC extends JavaPlugin {
 		HandlerList.unregisterAll(this.config);
 		this.getServer().resetRecipes();
 		this.config = new GameConfig(this, this.mode);
-		this.world.changePVP(false);
 		this.getServer().getPluginManager().registerEvents(this.config, this);
 		UHCWorld.setAchievements(false);
 		for (Player p : Bukkit.getOnlinePlayers())
@@ -500,7 +500,7 @@ public class UHC extends JavaPlugin {
 
 			for (Player p2 : Bukkit.getOnlinePlayers())
 				p.showPlayer(p2);
-			p.teleport(world.getPlatformLoc());
+			p.teleport(new Location(Bukkit.getWorld("Core"), -6.5, 48.2, -5.5));
 			fr.neyuux.uhc.InventoryManager.clearInventory(p);
 			p.getInventory().clear();
 			p.updateInventory();
@@ -531,6 +531,7 @@ public class UHC extends JavaPlugin {
 				Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Joueur").addEntry(p.getName());
 			}
 		}
+		this.world.delete();
 		updatesGrades();
 	}
 
@@ -684,7 +685,6 @@ public class UHC extends JavaPlugin {
 		Method getHandle = player.getClass().getMethod("getHandle");
 		return getHandle.invoke(player);
 	}
-
 
 
 	public enum Modes {

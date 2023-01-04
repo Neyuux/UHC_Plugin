@@ -770,6 +770,27 @@ public class CommandUHC implements CommandExecutor {
                             player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'utiliser cette commande.");
                             UHC.playNegativeSound(player);
                         }
+                    break;
+                    case "genworld":
+                    case "generateworld":
+                    case "worldgen":
+                        if (playerUHC.isHost()) {
+                            if (main.isState(Gstate.WAITING)) {
+                                Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §2a commencé à générer un monde.");
+                                main.world.create();
+                                main.world.changePVP(false);
+                                Bukkit.getOnlinePlayers().forEach(player1 -> player1.teleport(main.world.getPlatformLoc()));
+                                Bukkit.broadcastMessage(UHC.getPrefix() + "§2Monde §a\"" + main.world.getSeed() + "\"§2 créé.");
+                            }
+                        }
+
+                    break;
+                    case "crafts":
+                    case "customcrafts":
+                    case "craft":
+                    case "customcraft":
+
+                    break;
                     default:
                         player.sendMessage(UHC.getPrefix() + helpmessage);
                         break;

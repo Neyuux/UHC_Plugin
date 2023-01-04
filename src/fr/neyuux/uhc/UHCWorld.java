@@ -12,6 +12,7 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.generator.BlockPopulator;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,6 +31,7 @@ public class UHCWorld {
     private static boolean loaded = false;
     private static YamlConfiguration yconfig;
     private static final List<Location> spawns = new ArrayList<>();
+    public static final List<Chunk> CORRECTED_CHUNKS = new ArrayList<>();
 
     public static String MAIN_WORLD = "Core";
 
@@ -112,7 +114,7 @@ public class UHCWorld {
                 if (x == 25 || x == -25 || z == 25 || z == -25)
                     w.getBlockAt(x, 132, z).setType(Material.BARRIER);
             }
-        if (!MAIN_WORLD.equals("Core")) this.loadChunks();
+        if (!MAIN_WORLD.equals("Core")) loadLocationChunks(new Location(world, 0, 70, 0), true, false);
     }
 
     public Location getPlatformLoc() {
@@ -158,7 +160,7 @@ public class UHCWorld {
                 System.out.println("Free (%): " + (memCheck.freeMemory() / memCheck.maxMemory()));
                 System.gc();
                 try {
-                    Thread.sleep(30000L);
+                   Thread.sleep(30000L);
                 } catch (Exception ignored) {}
                 memCheck = Runtime.getRuntime();
             }
@@ -177,17 +179,17 @@ public class UHCWorld {
             df.setMaximumFractionDigits(1);
             double d = 0;
             for (Location l : spawns) {
-                loadLocationChunks(l, true);
+                loadLocationChunks(l, true, false);
                 d++;
                 Bukkit.broadcastMessage(UHC.getPrefix() + "§2Chargement du monde : §a§l" + df.format(d / (main.getAlivePlayers().size() + 1) * 100) + "%§2.");
             }
         }
-        loadLocationChunks(new Location(world, 0, 70, 0), true);
+        loadLocationChunks(new Location(world, 0, 70, 0), true, true);
         Bukkit.broadcastMessage(UHC.getPrefix() + "§2Chargement du monde : §a§l100%§2.");
         loaded = true;
     }
 
-    private static List<Chunk> loadLocationChunks(Location loc, Boolean load) {
+    private static List<Chunk> loadLocationChunks(Location loc, Boolean load, boolean correctSpawns) {
         List<Chunk> chunks = new ArrayList<>();
 
         int cx = loc.getBlockX() - 50;
@@ -199,6 +201,7 @@ public class UHCWorld {
                 Location l = new Location(loc.getWorld(), cx, 0, cz);
                 if (load && !l.getChunk().isLoaded())
                     l.getWorld().loadChunk(l.getChunk().getX(), l.getChunk().getZ(), true);
+                if (correctSpawns) correctSpawns(l.getChunk());
                 chunks.add(l.getChunk());
                 System.out.println("Chargement reussi");
                 DecimalFormat f = new DecimalFormat();
@@ -210,6 +213,92 @@ public class UHCWorld {
         }
 
         return chunks;
+    }
+    
+    public static void correctSpawns(Chunk... chunks) {
+        if (!(boolean)GameConfig.ConfigurableParams.CORRECT_SPAWNS.getValue())
+            return;
+
+        Random random = new Random();
+
+        for (Chunk chunk : chunks) {
+            Block b = chunk.getBlock(0, 0, 0);
+            if (b.getX() + b.getZ() > (double)GameConfig.ConfigurableParams.BORDERSIZE.getValue() || b.getX() + b.getZ() < -(double)GameConfig.ConfigurableParams.BORDERSIZE.getValue())
+                continue;
+
+            int canechecks = 5;
+            int diamondcheck = random.nextInt(3);
+            Bukkit.broadcastMessage(chunk + "");
+
+            for (int i = 0; i < canechecks; i++) {
+                int negative = (random.nextBoolean() ? -1 : 1);
+                int blockx = random.nextInt(16) * negative;
+                int blockz = random.nextInt(16) * negative;
+                Block block = chunk.getBlock(blockx, world.getHighestBlockYAt(blockx, blockz), blockz);
+                Material type = block.getType();
+                int bx = block.getX();
+                int by = block.getY();
+                int bz = block.getZ();
+
+                for (Block nearbyBlock : getAllSidesBlocks(block)) {
+                    if (nearbyBlock.getType().equals(Material.WATER) || nearbyBlock.getType().equals(Material.STATIONARY_WATER)) {
+                        if (type.equals(Material.GRASS) || type.equals(Material.SAND) || type.equals(Material.DIRT))
+                            for (int y = by + 1; y < random.nextInt(5) + 2 + by; y++) {
+                                chunk.getBlock(bx, y, bz).setType(Material.SUGAR_CANE_BLOCK, false);
+                            }
+                    }
+                }
+
+            }
+
+            if (diamondcheck == 0)
+                spawnOre(Material.DIAMOND_ORE, random, chunk, 14);
+
+            spawnOre(Material.GOLD_ORE, random, chunk, 28);
+
+            if (!CORRECTED_CHUNKS.contains(chunk)) CORRECTED_CHUNKS.add(chunk);
+        }
+        
+    }
+
+    private static List<Block> getAllSidesBlocks(Block block) {
+        BlockFace[] faces = new BlockFace[] {BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH};
+        List<Block> list = new ArrayList<>();
+        for (BlockFace face : faces)
+            list.add(block.getRelative(face));
+        return list;
+    }
+
+    private static void getNearbyOre(Block block, Material ore) {
+        for (BlockFace blockFace : BlockFace.values())
+            if (!block.getRelative(blockFace).getType().equals(ore)) {
+                Block block2 = block.getRelative(blockFace);
+
+                if (!block2.getType().equals(ore) && !block2.getType().equals(Material.AIR)) {
+                    block2.setType(ore, false);
+
+                    return;
+                }
+                break;
+            }
+    }
+
+    private static void spawnOre(Material ore, Random random, Chunk chunk, int basey) {
+        int negative = (random.nextBoolean() ? -1 : 1);
+        int x = random.nextInt(16) * negative;
+        int y = random.nextInt(basey) + 2;
+        int z = random.nextInt(16) * negative;
+        Block block = chunk.getBlock(x, y, z);
+        int size = random.nextInt(9) + 1;
+
+
+        while (size != 0) {
+            if (!block.getType().equals(Material.BEDROCK)) {
+                getNearbyOre(block, ore);
+            }
+
+            size--;
+        }
     }
 
     public static boolean isFarEnough(ArrayList<Location> list, Location loc, Integer player, Integer center, Integer border) {
@@ -253,7 +342,7 @@ public class UHCWorld {
         while (tp == null || !isFarEnough(new ArrayList<>(spawns), tp, main.getAlivePlayers().size(), border/10/2, border/10))
             tp = getRandomLocation(world, (int)Math.round((double) GameConfig.ConfigurableParams.BORDERSIZE.getValue()) / 2, 50);
 
-        WorldListener.keepChunk.addAll(loadLocationChunks(tp, false));
+        WorldListener.keepChunk.addAll(loadLocationChunks(tp, false, false));
         spawns.add(tp);
     }
 
@@ -281,7 +370,7 @@ public class UHCWorld {
         final PropertyManager manager = minecraftServer.getPropertyManager();
         manager.properties.setProperty("announce-player-achievements", value.toString().toLowerCase());
         try {
-            final String baseDir = Paths.get("").toAbsolutePath().toString() + File.separator;
+            final String baseDir = Paths.get("").toAbsolutePath() + File.separator;
             final File f = new File(baseDir + "server.properties");
             final OutputStream out = new FileOutputStream(f);
             manager.properties.store(out, "EditedByUHC");
