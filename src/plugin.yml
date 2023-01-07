@@ -9,16 +9,20 @@ commands:
     description: Commande Principale
   revive:
     description: Commande de Revive
-    permission: uhc.*
+    permission: uhc.host
+    permission-message: §e§lUHC §7>> §cVous devez être host pour utiliser cette commande.
   heal:
     description: Commande de Final Heal
-    permission: uhc.*
+    permission: uhc.host
+    permission-message: §e§lUHC §7>> §cVous devez être host pour utiliser cette commande.
   finish:
     description: Commande de finish de l'inv de depart
-    permission: uhc.*
+    permission: uhc.host
+    permission-message: §e§lUHC §7>> §cVous devez être host pour utiliser cette commande.
   enchant:
     description: Commande pour enchanter un item dans l'inv de depart
-    permission: uhc.*
+    permission: uhc.host
+    permission-message: §e§lUHC §7>> §cVous devez être host pour utiliser cette commande.
   scenario:
     description: Commande pour afficher les scenarios
     aliases: [scen, scenarios]
@@ -29,5 +33,5 @@ commands:
   #a:
    # description: oui
 permissions:
-   uhc.*:
-     description: Gives access to all UHC commands
+   uhc.host:
+     description: Donne accès aux commandes de host.

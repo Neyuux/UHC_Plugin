@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -55,7 +56,6 @@ public class UHC extends JavaPlugin {
 	public UHCWorld world = new UHCWorld(this);
 	private GameConfig config;
 	private static String prefix = Modes.UHC.getPrefix();
-	public final HashMap<String, PermissionAttachment> permissions = new HashMap<>();
 	private final List<OfflinePlayer> whitelist = new ArrayList<>();
 	public boolean hasWhitelist;
 	private static UHC instance;
@@ -136,6 +136,8 @@ public class UHC extends JavaPlugin {
 		getCommand("enchant").setExecutor(new CommandEnchant(this));
 		getCommand("scenario").setExecutor(new CommandScenario(this));
 		getCommand("helpop").setExecutor(new CommandHelpOp(this));
+
+		pm.addPermission(new Permission("uhc.hostF"));
 
 		reloadScoreboard();
 		rel();
@@ -425,6 +427,9 @@ public class UHC extends JavaPlugin {
 					player.setPlayerListName(player.getDisplayName());
 				}
 			}
+
+			this.getPlayerUHC(player).getAttachment().setPermission("uhc.host", true);
+
 			if (this.getGameConfig().deathInvModifier != null && this.getGameConfig().deathInvModifier.equals(player))
 				this.getGameConfig().deathInvModifier = null;
 			if (this.getGameConfig().starterModifier != null && this.getGameConfig().starterModifier.equals(player))
@@ -439,6 +444,9 @@ public class UHC extends JavaPlugin {
 					player.setPlayerListName(player.getDisplayName());
 				}
 			}
+
+			this.getPlayerUHC(player).getAttachment().setPermission("uhc.host", false);
+
 			if (this.isState(Gstate.WAITING) || this.isState(Gstate.STARTING)) player.getInventory().remove(Material.REDSTONE_COMPARATOR);
 			player.closeInventory();
 		}
