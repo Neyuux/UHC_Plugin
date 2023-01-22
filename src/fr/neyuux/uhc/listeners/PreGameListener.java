@@ -54,10 +54,7 @@ public class PreGameListener implements Listener {
         Player player = ev.getPlayer();
         PlayerUHC playerUHC = main.getPlayerUHC(player);
 
-        if (main.permissions.get(player.getName()) != null) {
-            player.removeAttachment(main.permissions.get(player.getName()));
-            main.permissions.remove(player.getName());
-        }
+        playerUHC.getAttachment().setPermission("uhc.host", false);
 
         if (main.isState(Gstate.PLAYING) || main.isState(Gstate.FINISHED)) return;
 

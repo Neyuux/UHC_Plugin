@@ -137,7 +137,7 @@ public class UHC extends JavaPlugin {
 		getCommand("scenario").setExecutor(new CommandScenario(this));
 		getCommand("helpop").setExecutor(new CommandHelpOp(this));
 
-		pm.addPermission(new Permission("uhc.hostF"));
+		pm.addPermission(new Permission("uhc.host"));
 
 		reloadScoreboard();
 		rel();
@@ -149,6 +149,7 @@ public class UHC extends JavaPlugin {
 	public void onDisable() {
 		System.out.println("UHC disabling");
 
+		this.getServer().getPluginManager().removePermission("uhc.host");
 		this.world.delete();
 
 		super.onDisable();
@@ -495,6 +496,7 @@ public class UHC extends JavaPlugin {
 		this.uhcTeamManager = new UHCTeamManager(this);
 		Scenario.removeEvents();
 		HandlerList.unregisterAll(this.config);
+		this.world.delete();
 		this.getServer().resetRecipes();
 		this.config = new GameConfig(this, this.mode);
 		this.getServer().getPluginManager().registerEvents(this.config, this);
@@ -508,7 +510,6 @@ public class UHC extends JavaPlugin {
 
 			for (Player p2 : Bukkit.getOnlinePlayers())
 				p.showPlayer(p2);
-			p.teleport(new Location(Bukkit.getWorld("Core"), -6.5, 48.2, -5.5));
 			fr.neyuux.uhc.InventoryManager.clearInventory(p);
 			p.getInventory().clear();
 			p.updateInventory();
@@ -539,7 +540,6 @@ public class UHC extends JavaPlugin {
 				Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Joueur").addEntry(p.getName());
 			}
 		}
-		this.world.delete();
 		updatesGrades();
 	}
 

@@ -58,6 +58,11 @@ public class GameConfig implements Listener {
         }
 
         main.players.forEach(playerUHC -> main.setLobbyScoreboard(playerUHC.getPlayer().getPlayer()));
+
+        main.world.create();
+        main.world.changePVP(false);
+        Bukkit.getOnlinePlayers().forEach(player1 -> player1.teleport(main.world.getPlatformLoc()));
+        Bukkit.broadcastMessage(UHC.getPrefix() + "§2Monde §a\"" + main.world.getSeed() + "\"§2 créé.");
     }
 
 

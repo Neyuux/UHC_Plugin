@@ -1,9 +1,9 @@
 package fr.neyuux.uhc.commands;
 
-import fr.neyuux.uhc.UHC;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.InventoryManager;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.GameConfig;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.listeners.FightListener;
@@ -23,14 +23,11 @@ import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import static org.bukkit.Material.GOLDEN_APPLE;
@@ -46,7 +43,9 @@ public class CommandUHC implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
         final String helpmessage = "§fAide pour la commande §e"+alias+"§f :§r\n§e/"+alias+" whitelist/wl §a<on/off/add/remove/list/clear>\n§e/"+alias+" classementores" +
                 "\n§e/"+alias+" rules\n§e/"+alias+" host §a<add/remove/list>\n§e/"+alias+" spec §a<on/off/list>\n§e/"+alias+ " team §a<list/info>\n§e/"+alias+" chat §a<on/off>"+
-                "\n§e/"+alias+" force §a<force>\n §e/"+alias+" inv";
+                "\n§e/"+alias+" force §a<force>"+
+                "\n§e/"+alias+" inv"+
+                "\n§e/"+alias+" genworld";
 
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -62,6 +61,8 @@ public class CommandUHC implements CommandExecutor {
                                     "§6/uhc aablist §cAffiche la liste des assaults and battery de la partie");
 
                             player.openInventory(main.getGameConfig().getGameConfigInv(player));
+
+                            Bukkit.broadcastMessage(player.getItemInHand().getType() + "");
                         }
                     break;
 
@@ -774,14 +775,11 @@ public class CommandUHC implements CommandExecutor {
                     case "genworld":
                     case "generateworld":
                     case "worldgen":
-                        if (playerUHC.isHost()) {
-                            if (main.isState(Gstate.WAITING)) {
-                                Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §2a commencé à générer un monde.");
-                                main.world.create();
-                                main.world.changePVP(false);
-                                Bukkit.getOnlinePlayers().forEach(player1 -> player1.teleport(main.world.getPlatformLoc()));
-                                Bukkit.broadcastMessage(UHC.getPrefix() + "§2Monde §a\"" + main.world.getSeed() + "\"§2 créé.");
-                            }
+                    case "pregen":
+                    case "pregenworld":
+                        if (sender.isOp()) {
+                            Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + sender.getName() + " §2a commencé la prégénération du monde !");
+                            main.world.generateChunks(World.Environment.NORMAL);
                         }
 
                     break;
