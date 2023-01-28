@@ -1353,8 +1353,8 @@ public class GameConfig implements Listener {
         QUARTZ_XP_NERF("§aNerf de l'XP du Quartz", ParamParts.WORLDRULES, Material.QUARTZ_ORE, false),
         CORRECT_SPAWNS("§2Corriger les spawns", ParamParts.WORLDRULES, Material.DIAMOND_PICKAXE, false, "§7Augmente l'apparition de canne à sucre, de diamant etc..."),
 
-        APPLE("§cPommes", ParamParts.DROPS, Material.APPLE, 2.0, 100.0, 0.1, new double[]{0.1, 0.5, 1.0}),
-        FLINT("§8Silex", ParamParts.DROPS, Material.FLINT, 20.0, 100.0, 1.0, new double[]{0.5, 1, 5, 15}),
+        APPLE("§cPommes", ParamParts.DROPS, Material.APPLE, 6.0, 100.0, 0.1, new double[]{0.1, 0.5, 1.0, 5.0}),
+        FLINT("§8Silex", ParamParts.DROPS, Material.FLINT, 30.0, 100.0, 1.0, new double[]{0.5, 1, 5, 15}),
         FEATHER("§fPlumes", ParamParts.DROPS, Material.FEATHER, 40.0, 100.0, 1.0, new double[]{0.5, 1, 5, 15}),
         LEATHER("§6Cuirs", ParamParts.DROPS, Material.LEATHER, 40.0, 100.0, 1.0, new double[]{0.5, 1, 5, 15}),
 

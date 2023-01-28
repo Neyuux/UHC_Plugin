@@ -222,7 +222,7 @@ public class UHCStart extends BukkitRunnable {
             VarsLoot.getBlocksLoots().put(Material.GOLD_ORE, new Loot(0, Lists.newArrayList(
                     new LootItem(new ItemStack(Material.GOLD_ORE, 1), 100.0, new Interval<>(1, 1)))));
             VarsLoot.getBlocksLoots().put(Material.COAL_ORE, new Loot(1, Lists.newArrayList(
-                    new LootItem(new ItemStack(Material.COAL, 1), 100.0, new Interval<>(1, 1)))));
+                    new LootItem(new ItemStack(Material.COAL, 1), 80.0, new Interval<>(1, 1)))));
             VarsLoot.getBlocksLoots().put(Material.LAPIS_ORE, new Loot(1, Lists.newArrayList(
                     new LootItem(new ItemStack(Material.INK_SACK, 1, (short) 4), 100.0, new Interval<>(4, 8)))));
             VarsLoot.getBlocksLoots().put(Material.REDSTONE_ORE, new Loot(1.5, Lists.newArrayList(
@@ -232,11 +232,11 @@ public class UHCStart extends BukkitRunnable {
             /*FIN MINERAIS*/
             /*ANIMAUX*/
             VarsLoot.getEntitiesLoots().put(EntityType.CHICKEN, new Loot(1, Lists.newArrayList(
-                    new LootItem(new ItemStack(Material.FEATHER, 1), 40+5*(double)GameConfig.ConfigurableParams.FEATHER.getValue(), new Interval<>(1, 3)),
+                    new LootItem(new ItemStack(Material.FEATHER, 1), (double)GameConfig.ConfigurableParams.FEATHER.getValue(), new Interval<>(1, 3)),
                     new LootItem(new ItemStack(Material.RAW_CHICKEN, 1), 100.0, new Interval<>(1, 1)))));
 
             VarsLoot.getEntitiesLoots().put(EntityType.COW, new Loot(1, Lists.newArrayList(
-                    new LootItem(new ItemStack(Material.LEATHER, 1), 40+5*(double)GameConfig.ConfigurableParams.LEATHER.getValue(), new Interval<>(1, 3)),
+                    new LootItem(new ItemStack(Material.LEATHER, 1), (double)GameConfig.ConfigurableParams.LEATHER.getValue(), new Interval<>(1, 2)),
                     new LootItem(new ItemStack(Material.RAW_BEEF, 1), 100.0, new Interval<>(1, 3)))));
             /*FIN ANIMAUX*/
 

@@ -1,6 +1,5 @@
 package fr.neyuux.uhc.util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -11,7 +10,7 @@ public class VeinGenerator extends CorrectChunkGenerator {
 
     public void generateInChunk(Chunk chunk) {
         this.generateForOre(chunk, Material.DIAMOND_ORE, 1, 9, 3, 15);
-        this.generateForOre(chunk, Material.GOLD_ORE, 1, 11, 3, 30);
+        this.generateForOre(chunk, Material.GOLD_ORE, 1, 10, 3, 30);
     }
 
     private void generateVein(Material material, Block startBlock, int nbrBlocks) {
@@ -63,11 +62,11 @@ public class VeinGenerator extends CorrectChunkGenerator {
             } else return 2;
 
         } else if (material.equals(Material.GOLD_ORE)) {
-            if (i < 25)
+            if (i < 29)
                 return 0;
-            else if (i < 56)
+            else if (i < 55)
                 return 1;
-            else if (i < 92)
+            else if (i < 95)
                 return 2;
             else
                 return 3;
