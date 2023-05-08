@@ -274,7 +274,7 @@ public class CommandUHC implements CommandExecutor {
                                     if (args.length > 2) {
                                         OfflinePlayer op = null;
                                         for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers())
-                                            if (offlinePlayer.getName().equals(args[2]))
+                                            if (offlinePlayer != null && offlinePlayer.getName().equals(args[2]))
                                                 op = offlinePlayer;
                                         if (op == null) {
                                             player.sendMessage(UHC.getPrefix() + "§cLe joueur §4\"§e" + args[2] + "§4\"§c n'existe pas.");

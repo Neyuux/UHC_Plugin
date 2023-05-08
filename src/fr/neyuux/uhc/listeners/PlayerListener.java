@@ -97,7 +97,6 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent ev) {
-        if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) return;
         Player player = ev.getPlayer();
         PlayerUHC pt = null;
         for (PlayerUHC pu : main.players) if (pu.getPlayer().getUniqueId().equals(player.getUniqueId())) pt = pu;
@@ -105,6 +104,8 @@ public class PlayerListener implements Listener {
         pt = main.getPlayerUHC(player);
         PlayerUHC playerUHC = pt;
         playerUHC.setPlayer(player);
+
+        if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) return;
 
         if (!main.getAlivePlayers().contains(playerUHC)) {
             main.spectators.add(player);

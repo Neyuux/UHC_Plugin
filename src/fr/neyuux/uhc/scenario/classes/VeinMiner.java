@@ -109,7 +109,7 @@ public class VeinMiner extends Scenario implements Listener {
 
                     ItemStack item = p.getItemInHand();
 
-                    if (item != null && item.getType() != Material.AIR && item.getType().getMaxDurability() > 0) {
+                    if (item != null && item.getType() != Material.AIR && item.getType().getMaxDurability() > 0 && item.hasItemMeta() && !item.getItemMeta().spigot().isUnbreakable()) {
                         if (item.getDurability() + 1 >= item.getType().getMaxDurability()) {
                             p.getInventory().removeItem(item);
                             p.updateInventory();

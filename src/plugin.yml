@@ -1,7 +1,7 @@
 main: fr.neyuux.uhc.UHC
 name: UHC
-version: '1.0.3'
-description: Coeur du plugin NeyGin permet de lier tous les jeux
+version: '1.0.4'
+description: Plugin UHC
 author: Neyuux_
 prefix: UHC
 softdepend:

@@ -134,7 +134,7 @@ public class GameConfig implements Listener {
                 main.changeMode(UHC.Modes.UHC);
                 Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §ea passé le mode de jeu sur " + ChatColor.translateAlternateColorCodes('&', UHC.Modes.UHC.getPrefix()));
             } else if (current.getType().equals(Material.MONSTER_EGG) && !mode.equals(UHC.Modes.LG)) {
-                //main.changeMode(UHC.Modes.LG);
+                main.changeMode(UHC.Modes.LG);
                 //Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §ea passé le mode de jeu sur " + ChatColor.translateAlternateColorCodes('&', UHC.Modes.LG.getPrefix()));
                 UHC.playNegativeSound(player);
                 player.sendMessage(UHC.getPrefix() + "§cCe mode n'est pas disponible !");
