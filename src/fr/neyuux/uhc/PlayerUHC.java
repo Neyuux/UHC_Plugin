@@ -9,6 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -32,23 +33,28 @@ public class PlayerUHC {
     private int monsters;
     public double maxHealth;
     public double health;
-    public float absorption;
     public int foodLevel;
     private boolean isAlive, isInvulnerable;
     private UHCTeam team;
     private final HashMap<Integer, ItemStack> lastArmor = new HashMap<>();
     private ItemStack[] lastInv = new ItemStack[]{};
     private Location lastLocation;
+    private final PermissionAttachment attachment;
 
     public PlayerUHC(Player player, UHC main) {
         this.player = player;
         this.main = main;
         this.kills = 0; this.diamonds = 0; this.golds = 0;
         this.irons = 0; this.monsters = 0; this.animals = 0;
-        this.maxHealth = 20.0; this.health = maxHealth; this.absorption = 0; this.foodLevel = 20;
+        this.maxHealth = 20.0; this.health = maxHealth; this.foodLevel = 20;
         this.isAlive = false; this.isInvulnerable = false;
+        this.attachment = player.addAttachment(UHC.getInstance());
     }
 
+
+    public float getAbsorption() {
+        return ((CraftPlayer) player).getHandle().getAbsorptionHearts();
+    }
 
     public OfflinePlayer getPlayer() {
         return player;
@@ -84,6 +90,10 @@ public class PlayerUHC {
 
     public boolean isInvulnerable() {
         return isInvulnerable;
+    }
+
+    public PermissionAttachment getAttachment() {
+        return attachment;
     }
 
     public boolean isHost() {

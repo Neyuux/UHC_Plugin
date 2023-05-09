@@ -6,6 +6,7 @@ import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
+import fr.neyuux.uhc.events.GameEndEvent;
 import fr.neyuux.uhc.events.PlayerEliminationEvent;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.scenario.classes.Anonymous;
@@ -96,7 +97,6 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent ev) {
-        if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) return;
         Player player = ev.getPlayer();
         PlayerUHC pt = null;
         for (PlayerUHC pu : main.players) if (pu.getPlayer().getUniqueId().equals(player.getUniqueId())) pt = pu;
@@ -104,6 +104,8 @@ public class PlayerListener implements Listener {
         pt = main.getPlayerUHC(player);
         PlayerUHC playerUHC = pt;
         playerUHC.setPlayer(player);
+
+        if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) return;
 
         if (!main.getAlivePlayers().contains(playerUHC)) {
             main.spectators.add(player);
@@ -115,7 +117,7 @@ public class PlayerListener implements Listener {
         if (main.isState(Gstate.PLAYING)) main.setGameScoreboard(player);
         else if (main.isState(Gstate.FINISHED)) main.setKillsScoreboard(player);
         UHC.setPlayerTabList(player, UHC.getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
-        if (playerUHC.getTeam() != null)
+        if (playerUHC.getTeam() != null && playerUHC.isAlive())
             playerUHC.getTeam().reconnect(player);
         if (playerUHC.isSpec()) player.setDisplayName("§8[§7Spectateur§8] §7" + player.getName() + "§r");
         player.setPlayerListName(player.getDisplayName());
@@ -201,20 +203,18 @@ public class PlayerListener implements Listener {
         }
 
         if(item.getType() == Material.GOLDEN_APPLE){
+            p.removePotionEffect(PotionEffectType.ABSORPTION);
+
             if(item.equals(UHC.getGoldenHead(item.getAmount()))) { // GOLDEN HEAD
                 p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, 1, true, true));
-                main.getPlayerUHC(p).absorption = 2.0f;
             }
 
-            double abso = (double)GameConfig.ConfigurableParams.ABSORPTION.getValue() * 2;
-            if(abso != 4.0) if (abso != 0) {
-                ((CraftPlayer) p).getHandle().setAbsorptionHearts((float) abso);
-                main.getPlayerUHC(p).absorption = (float) abso;
-            } else Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {
-                    p.removePotionEffect(PotionEffectType.ABSORPTION);
-                    main.getPlayerUHC(p).absorption = 0f;
-                    main.setHealth(p);
-                }, (long) 0.01);
+            if (!(boolean)GameConfig.ConfigurableParams.ABSORPTION.getValue()) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {
+                        p.removePotionEffect(PotionEffectType.ABSORPTION);
+                        main.setHealth(p);
+                    }, (long) 0.01);
+            }
             main.setHealth(p);
         }
     }
@@ -228,7 +228,7 @@ public class PlayerListener implements Listener {
             }
         } catch (Exception ignored){}
     }
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerHealth(EntityRegainHealthEvent e) {
         if (e.getEntityType().equals(EntityType.PLAYER) && main.isState(Gstate.PLAYING))
             main.getPlayerUHC((Player)e.getEntity()).health = ((Player) e.getEntity()).getHealth() + e.getAmount();

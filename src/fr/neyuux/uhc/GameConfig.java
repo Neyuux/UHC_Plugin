@@ -1,6 +1,5 @@
 package fr.neyuux.uhc;
 
-import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.scenario.classes.ArmorLimiter;
@@ -48,10 +47,6 @@ public class GameConfig implements Listener {
     public GameConfig(UHC main, UHC.Modes mode) {
         this.main = main;
         this.mode = mode;
-        if (!UHCWorld.isCreated()) {
-            main.world.create();
-            Bukkit.broadcastMessage(UHC.getPrefix() + "§2Monde §a\"" + main.world.getSeed() + "\"§2 créé.");
-        }
         if (mode.equals(UHC.Modes.LG)) {
             SCOREBOARD_LIFE.setValue(false);
             DAY_CYCLE.setValue(true);
@@ -63,6 +58,11 @@ public class GameConfig implements Listener {
         }
 
         main.players.forEach(playerUHC -> main.setLobbyScoreboard(playerUHC.getPlayer().getPlayer()));
+
+        main.world.create();
+        main.world.changePVP(false);
+        Bukkit.getOnlinePlayers().forEach(player1 -> player1.teleport(main.world.getPlatformLoc()));
+        Bukkit.broadcastMessage(UHC.getPrefix() + "§2Monde §a\"" + main.world.getSeed() + "\"§2 créé.");
     }
 
 
@@ -135,7 +135,9 @@ public class GameConfig implements Listener {
                 Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §ea passé le mode de jeu sur " + ChatColor.translateAlternateColorCodes('&', UHC.Modes.UHC.getPrefix()));
             } else if (current.getType().equals(Material.MONSTER_EGG) && !mode.equals(UHC.Modes.LG)) {
                 main.changeMode(UHC.Modes.LG);
-                Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §ea passé le mode de jeu sur " + ChatColor.translateAlternateColorCodes('&', UHC.Modes.LG.getPrefix()));
+                //Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + player.getName() + " §ea passé le mode de jeu sur " + ChatColor.translateAlternateColorCodes('&', UHC.Modes.LG.getPrefix()));
+                UHC.playNegativeSound(player);
+                player.sendMessage(UHC.getPrefix() + "§cCe mode n'est pas disponible !");
             }
 
             if (current.equals(getReturnArrow()))
@@ -809,7 +811,7 @@ public class GameConfig implements Listener {
     }
 
 
-    private Inventory getGameConfigInv(HumanEntity player) {
+    public Inventory getGameConfigInv(HumanEntity player) {
         Inventory inv = Bukkit.createInventory(null, 45, "§c§lConfiguration");
         List<String> ops = new ArrayList<>();
         setInvCoin(inv, (byte)14);
@@ -1084,7 +1086,7 @@ public class GameConfig implements Listener {
             it.setLore("§eJoueurs : ");
             for (int p = 0; p < getTeamTypeInt((String)TEAMTYPE.getValue()); p++)
                 if (t.getPlayers().size() - 1 >= p)
-                    it.addLore(t.getPrefix().color.getColor() + " - " + t.getListAlivePlayers().get(p).getPlayer().getPlayer().getPlayerListName());
+                    it.addLore(t.getPrefix().color.getColor() + " - " + t.getPlayers().get(p).getPlayer().getPlayer().getPlayerListName());
                 else it.addLore(t.getPrefix().color.getColor() + " - ");
             it.addLore("", "§b>>Cliquez pour mettre §f" + player.getName(), "§bdans cette équipe.");
             inv.setItem(i, it.toItemStack());
@@ -1325,7 +1327,7 @@ public class GameConfig implements Listener {
         COORDS_F3("§eF3 Coords", ParamParts.PLAYERRULES, Material.PAPER, true, "§7Activer les coordonnées F3"),
         ACHIEVEMENTS("§2Achievements", ParamParts.PLAYERRULES, Material.GOLD_NUGGET, true, "§7Annonce des succès dans le chat."),
         SPECTATORS("§7Specs", ParamParts.PLAYERRULES, Material.GLASS, true,  "§7Mode spectateur"),
-        ABSORPTION("§eAbsorption", ParamParts.PLAYERRULES, Material.GOLDEN_APPLE, 2.0, 1024.0, 00.0, new double[]{0.5, 1.0, 2.0, 4.0}),
+        ABSORPTION("§eAbsorption", ParamParts.PLAYERRULES, Material.GOLDEN_APPLE, true),
         SCOREBOARD_LIFE("§dVie dans le Tab", ParamParts.PLAYERRULES, Material.APPLE, true, "§7Pourcentage de vie dans le tab"),
 
         INVINCIBILITY("§eInvincibilité", ParamParts.PvP, Material.DIAMOND_CHESTPLATE, 30, Integer.MAX_VALUE, 1, new int[]{1, 10, 30}),
@@ -1349,9 +1351,10 @@ public class GameConfig implements Listener {
         FLINT_AND_STEEL$NOT_OVERWORLD("§7Briquets §4hors Overworld", ParamParts.WORLDRULES, Material.NETHER_BRICK_STAIRS, false),
         BED$NOT_OVERWORLD("§cLits §4hors Overworld", ParamParts.WORLDRULES, Material.BED, false),
         QUARTZ_XP_NERF("§aNerf de l'XP du Quartz", ParamParts.WORLDRULES, Material.QUARTZ_ORE, false),
+        CORRECT_SPAWNS("§2Corriger les spawns", ParamParts.WORLDRULES, Material.DIAMOND_PICKAXE, false, "§7Augmente l'apparition de canne à sucre, de diamant etc..."),
 
-        APPLE("§cPommes", ParamParts.DROPS, Material.APPLE, 2.0, 100.0, 0.1, new double[]{0.1, 0.5, 1.0}),
-        FLINT("§8Silex", ParamParts.DROPS, Material.FLINT, 20.0, 100.0, 1.0, new double[]{0.5, 1, 5, 15}),
+        APPLE("§cPommes", ParamParts.DROPS, Material.APPLE, 6.0, 100.0, 0.1, new double[]{0.1, 0.5, 1.0, 5.0}),
+        FLINT("§8Silex", ParamParts.DROPS, Material.FLINT, 30.0, 100.0, 1.0, new double[]{0.5, 1, 5, 15}),
         FEATHER("§fPlumes", ParamParts.DROPS, Material.FEATHER, 40.0, 100.0, 1.0, new double[]{0.5, 1, 5, 15}),
         LEATHER("§6Cuirs", ParamParts.DROPS, Material.LEATHER, 40.0, 100.0, 1.0, new double[]{0.5, 1, 5, 15}),
 
@@ -1479,8 +1482,7 @@ public class GameConfig implements Listener {
                 }
             } else if (value instanceof Boolean) return getStringBoolean(((boolean) value));
             if (this.getPart().equals(ParamParts.DROPS) || this.equals(STRENGTH_NERF)) return value.toString() + '%';
-            if (this.equals(ABSORPTION)) return value.toString() + " " + Symbols.HEARTH;
-            if (this.equals(BORDERSPEED)) return value.toString() + " blocs par seconde";
+            if (this.equals(BORDERSPEED)) return value.toString() + " blocs par secondes";
             return value.toString();
         }
 

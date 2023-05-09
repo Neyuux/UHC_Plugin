@@ -25,6 +25,10 @@ import java.util.Map;
 
 public class InventoryManager {
 
+    public InventoryManager() {
+        if (deathInventory.isEmpty()) deathInventory.add(new ItemStack(Material.GOLDEN_APPLE));
+    }
+
     public static ItemStack[] startInventory = new ItemStack[] {};
     private static final HashMap<Integer, ItemStack> startArmor = new HashMap<>();
     private static final List<ItemStack> deathInventory = new ArrayList<>();

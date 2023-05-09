@@ -1,9 +1,9 @@
 package fr.neyuux.uhc.listeners;
 
-import fr.neyuux.uhc.UHC;
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.InventoryManager;
 import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.GameConfig;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.GameEndEvent;
@@ -19,11 +19,13 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -42,7 +44,7 @@ public class FightListener implements Listener {
     }
 
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onDamage(EntityDamageEvent ev) {
         Entity e = ev.getEntity();
         double fdamage = ev.getFinalDamage();
@@ -54,69 +56,12 @@ public class FightListener implements Listener {
             if (playerUHC.isInvulnerable()) ev.setCancelled(true);
             if (ev.isCancelled()) return;
 
-            playerUHC.health = player.getHealth() + playerUHC.absorption - fdamage;
-            playerUHC.absorption = (float) (((CraftPlayer) player).getHandle().getAbsorptionHearts() - fdamage);
+            playerUHC.health = playerUHC.health + playerUHC.getAbsorption() - fdamage;
             if (playerUHC.health < 0) playerUHC.health = 0;
-            if (playerUHC.absorption < 0) playerUHC.absorption = 0;
 
             if (playerUHC.health <= 0.0) {
                 ev.setCancelled(true);
-                boolean el = true;
-                String deathmessage = player.getDisplayName() + "§c est Mort.";
-                switch (ev.getCause()) {
-                    case CONTACT:
-                        deathmessage = player.getDisplayName() + "§c s'est fait 1v1 par un Cactus.";
-                        break;
-                    case SUFFOCATION:
-                        deathmessage = player.getDisplayName() + "§cs'est fait BLOCKé hahaha";
-                        break;
-                    case FALL:
-                        deathmessage = player.getDisplayName() + "§c a chuté.";
-                        break;
-                    case FIRE:
-                        deathmessage = player.getDisplayName() + "§c s'est enflammé.";
-                        break;
-                    case FIRE_TICK:
-                        deathmessage = player.getDisplayName() + "§c est parti en fumée.";
-                        break;
-                    case LAVA:
-                        deathmessage = player.getDisplayName() + "§c s'est LAVÉ hahahaha";
-                        break;
-                    case DROWNING:
-                        deathmessage = player.getDisplayName() + "§c s'est suicidé... Enfin il est mort de noyade, qui meurt comme ça sérieux ?";
-                        break;
-                    case BLOCK_EXPLOSION:
-                        deathmessage = player.getDisplayName() + "§c s'est fait pété par un block.";
-                        break;
-                    case ENTITY_EXPLOSION:
-                        deathmessage = player.getDisplayName() + "§c a pété.";
-                        break;
-                    case VOID:
-                        deathmessage = player.getDisplayName() + "§c a tourné dans le vide.";
-                        break;
-                    case LIGHTNING:
-                        deathmessage = player.getDisplayName() + "§c est désormais ÉCLAIRÉ hahahahahahaha";
-                        break;
-                    case SUICIDE:
-                        deathmessage = player.getDisplayName() + "§c s'est fait /kill ez";
-                        break;
-                    case STARVATION:
-                        deathmessage = player.getDisplayName() + "§c est mort de faim. (Faites des dons)";
-                        break;
-                    case MAGIC:
-                        deathmessage = player.getDisplayName() + "§c est mort par des effets de substances liquides mystérieuses...";
-                        break;
-                    case WITHER:
-                        deathmessage = player.getDisplayName() + "§c est mort de l'effet du Wither.";
-                        break;
-                    case FALLING_BLOCK:
-                        deathmessage = player.getDisplayName() + "§c s'est fait tombé dessus (par un block ouais).";
-                        break;
-                    default:
-                        el = false;
-                        break;
-                }
-                if (el) eliminate(player, true, null, deathmessage);
+                this.death(player, ev.getCause());
             }
         }
     }
@@ -134,132 +79,21 @@ public class FightListener implements Listener {
                 Player dp = (Player)((Arrow)d).getShooter();
                 NumberFormat format = NumberFormat.getInstance();
                 format.setRoundingMode(RoundingMode.UP);
-                format.setMaximumFractionDigits(1);
+                format.setMaximumFractionDigits(2);
 
                 String formattedPlayerHealth;
                 if (Scenarios.TEAM_HEALTH.isActivated()) {
                     formattedPlayerHealth = format.format(playerUHC.getTeam().getHealth() - ev.getFinalDamage());
                     dp.sendMessage(UHC.getPrefix() + "§fL'équipe " + playerUHC.getTeam().getTeam().getDisplayName() + " §fpossède en tout §4§l" + formattedPlayerHealth + Symbols.HEARTH + "§f.");
                 } else {
-                    formattedPlayerHealth = format.format(playerUHC.health + playerUHC.absorption - ev.getFinalDamage());
-                    dp.sendMessage(UHC.getPrefix() + player.getDisplayName() + " §fpossède en actuellement §4§l" + formattedPlayerHealth + Symbols.HEARTH + "§f.");
+                    formattedPlayerHealth = format.format(playerUHC.health + playerUHC.getAbsorption());
+                    dp.sendMessage(UHC.getPrefix() + player.getDisplayName() + " §fpossède actuellement §4§l" + formattedPlayerHealth + Symbols.HEARTH + "§f.");
                 }
             }
 
             if (playerUHC.health <= 0.0) {
                 ev.setCancelled(true);
-                switch (d.getType()) {
-
-                    case ARROW:
-                        Arrow a = (Arrow)d;
-                        if (a.getShooter() instanceof Player) {
-                            Player killer = (Player) a.getShooter();
-                            eliminate(player, true, killer, player.getDisplayName() + "§c a été tué par la flèche de " + killer.getDisplayName() + "§c.");
-                        } else if (a.getShooter() instanceof Skeleton)
-                            eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un squelette.");
-                        else
-                            eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une flèche.");
-                        break;
-                    case FIREBALL:
-                    case SMALL_FIREBALL:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait explosé par une fireball.");
-                        break;
-                    case ENDER_PEARL:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une enderpearl.");
-                        break;
-                    case WITHER_SKULL:
-                    case WITHER:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Wither.");
-                        break;
-                    case PRIMED_TNT:
-                        TNTPrimed tnt = (TNTPrimed)d;
-                        if (tnt.getSource() != null && tnt.getSource().getType().equals(EntityType.PLAYER))
-                            eliminate(player, true, (Player)tnt.getSource(), player.getDisplayName() + "§c s'est fait explosé par " + ((Player)tnt.getSource()).getDisplayName() + "§c.");
-                        else eliminate(player, true, null, player.getDisplayName() + "§c s'est fait explosé par une TNT.");
-                        break;
-                    case FALLING_BLOCK:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un block (??).");
-                        break;
-                    case MINECART_TNT:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Minecart contenant des explosifs.");
-                        break;
-                    case CREEPER:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait explosé par un Creeper.");
-                        break;
-                    case SKELETON:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un squelette.");
-                        break;
-                    case SPIDER:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une araignée.");
-                        break;
-                    case GIANT:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Géant (??).");
-                        break;
-                    case ZOMBIE:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un zombie.");
-                        break;
-                    case SLIME:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une flèche.");
-                        break;
-                    case GHAST:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Ghast.");
-                        break;
-                    case PIG_ZOMBIE:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un cochon-zombie.");
-                        break;
-                    case ENDERMAN:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Enderman.");
-                        break;
-                    case CAVE_SPIDER:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une araignée des cavernes.");
-                        break;
-                    case SILVERFISH:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un poisson d'argent (Silverfish au fait).");
-                        break;
-                    case BLAZE:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Blaze.");
-                        break;
-                    case MAGMA_CUBE:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un cube de magma.");
-                        break;
-                    case ENDER_DRAGON:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par l'EnderDragon.");
-                        break;
-                    case WITCH:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une Witch.");
-                        break;
-                    case ENDERMITE:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une Endermite.");
-                        break;
-                    case GUARDIAN:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Guardian.");
-                        break;
-                    case WOLF:
-                        Wolf w = (Wolf)d;
-                        if (w.isTamed() && w.getOwner() instanceof Player) {
-                            eliminate(player, true, (Player)w.getOwner(), player.getDisplayName() + "§c s'est fait tué par "+w.getCustomName()+", le chien de "+((Player)w.getOwner()).getDisplayName()+"§c.");
-                        } else eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un chien.");
-                        break;
-                    case IRON_GOLEM:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un golem.");
-                        break;
-                    case RABBIT:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un lapin.");
-                        break;
-                    case ENDER_CRYSTAL:
-                        eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un crystal de l'end.");
-                        break;
-                    case SPLASH_POTION:
-                        ThrownPotion tp = (ThrownPotion)d;
-                        if (tp.getShooter() != null && tp.getShooter() instanceof Player)
-                            eliminate(player, true, (Player)tp.getShooter(), player.getDisplayName() + "§c a été tué par la potion de " + ((Player)tp.getShooter()).getDisplayName() + "§c.");
-                        else eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une potion.");
-                        break;
-                    case PLAYER:
-                        Player killer = (Player)d;
-                        eliminate(player, true, killer, player.getDisplayName() + "§c s'est fait tué par " + killer.getDisplayName() + "§c.");
-                        break;
-                }
+                this.deathByEntity(d, player);
             }
         }
     }
@@ -280,6 +114,19 @@ public class FightListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOW)
+    public void onDeath(PlayerDeathEvent ev) {
+        ev.setDeathMessage(null);
+        ev.setDroppedExp(0);
+        ev.setKeepInventory(true);
+        ev.setKeepLevel(true);
+
+        if (ev.getEntity().getKiller() == null)
+            this.death(ev.getEntity(), EntityDamageEvent.DamageCause.CUSTOM);
+        else
+            this.deathByEntity(ev.getEntity().getKiller(), ev.getEntity());
+    }
+
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onNerfStrength(EntityDamageByEntityEvent e) {
@@ -295,6 +142,177 @@ public class FightListener implements Listener {
         }
     }
 
+
+    private void deathByEntity(Entity damager, Player player) {
+
+        switch (damager.getType()) {
+
+            case ARROW:
+                Arrow a = (Arrow)damager;
+                if (a.getShooter() instanceof Player) {
+                    Player killer = (Player) a.getShooter();
+                    eliminate(player, true, killer, player.getDisplayName() + "§c a été tué par la flèche de " + killer.getDisplayName() + "§c.");
+                } else if (a.getShooter() instanceof Skeleton)
+                    eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un squelette.");
+                else
+                    eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une flèche.");
+                break;
+            case FIREBALL:
+            case SMALL_FIREBALL:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait explosé par une fireball.");
+                break;
+            case ENDER_PEARL:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une enderpearl.");
+                break;
+            case WITHER_SKULL:
+            case WITHER:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Wither.");
+                break;
+            case PRIMED_TNT:
+                TNTPrimed tnt = (TNTPrimed)damager;
+                if (tnt.getSource() != null && tnt.getSource().getType().equals(EntityType.PLAYER))
+                    eliminate(player, true, (Player)tnt.getSource(), player.getDisplayName() + "§c s'est fait explosé par " + ((Player)tnt.getSource()).getDisplayName() + "§c.");
+                else eliminate(player, true, null, player.getDisplayName() + "§c s'est fait explosé par une TNT.");
+                break;
+            case FALLING_BLOCK:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un block (??).");
+                break;
+            case MINECART_TNT:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Minecart contenant des explosifs.");
+                break;
+            case CREEPER:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait explosé par un Creeper.");
+                break;
+            case SKELETON:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un squelette.");
+                break;
+            case SPIDER:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une araignée.");
+                break;
+            case GIANT:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Géant (??).");
+                break;
+            case ZOMBIE:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un zombie.");
+                break;
+            case SLIME:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une flèche.");
+                break;
+            case GHAST:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Ghast.");
+                break;
+            case PIG_ZOMBIE:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un cochon-zombie.");
+                break;
+            case ENDERMAN:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Enderman.");
+                break;
+            case CAVE_SPIDER:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une araignée des cavernes.");
+                break;
+            case SILVERFISH:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un poisson d'argent (Silverfish au fait).");
+                break;
+            case BLAZE:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Blaze.");
+                break;
+            case MAGMA_CUBE:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un cube de magma.");
+                break;
+            case ENDER_DRAGON:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par l'EnderDragon.");
+                break;
+            case WITCH:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une Witch.");
+                break;
+            case ENDERMITE:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une Endermite.");
+                break;
+            case GUARDIAN:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Guardian.");
+                break;
+            case WOLF:
+                Wolf w = (Wolf)damager;
+                if (w.isTamed() && w.getOwner() instanceof Player) {
+                    eliminate(player, true, (Player)w.getOwner(), player.getDisplayName() + "§c s'est fait tué par "+w.getCustomName()+", le chien de "+((Player)w.getOwner()).getDisplayName()+"§c.");
+                } else eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un chien.");
+                break;
+            case IRON_GOLEM:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un golem.");
+                break;
+            case RABBIT:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un lapin.");
+                break;
+            case ENDER_CRYSTAL:
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un crystal de l'end.");
+                break;
+            case SPLASH_POTION:
+                ThrownPotion tp = (ThrownPotion)damager;
+                if (tp.getShooter() != null && tp.getShooter() instanceof Player)
+                    eliminate(player, true, (Player)tp.getShooter(), player.getDisplayName() + "§c a été tué par la potion de " + ((Player)tp.getShooter()).getDisplayName() + "§c.");
+                else eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une potion.");
+                break;
+            case PLAYER:
+                Player killer = (Player)damager;
+                eliminate(player, true, killer, player.getDisplayName() + "§c s'est fait tué par " + killer.getDisplayName() + "§c.");
+                break;
+        }
+    }
+
+    private void death(Player player, EntityDamageEvent.DamageCause cause) {
+        boolean el = true;
+        String deathmessage = player.getDisplayName() + "§c est Mort.";
+        switch (cause) {
+            case CONTACT:
+                deathmessage = player.getDisplayName() + "§c s'est fait 1v1 par un Cactus.";
+                break;
+            case SUFFOCATION:
+                deathmessage = player.getDisplayName() + "§c a suffoqué.";
+                break;
+            case FALL:
+                deathmessage = player.getDisplayName() + "§c a chuté.";
+                break;
+            case FIRE:
+                deathmessage = player.getDisplayName() + "§c s'est enflammé.";
+                break;
+            case FIRE_TICK:
+            case LAVA:
+                deathmessage = player.getDisplayName() + "§c est parti en fumée.";
+                break;
+            case DROWNING:
+                deathmessage = player.getDisplayName() + "§c s'est suicidé... Enfin il est mort de noyade, qui meurt comme ça sérieux ?";
+                break;
+            case BLOCK_EXPLOSION:
+            case ENTITY_EXPLOSION:
+                deathmessage = player.getDisplayName() + "§c a pété.";
+                break;
+            case VOID:
+                deathmessage = player.getDisplayName() + "§c a tourné dans le vide.";
+                break;
+            case LIGHTNING:
+                deathmessage = player.getDisplayName() + "§c s'est pris un éclair.";
+                break;
+            case SUICIDE:
+                deathmessage = player.getDisplayName() + "§c s'est fait /kill ez";
+                break;
+            case STARVATION:
+                deathmessage = player.getDisplayName() + "§c est mort de faim. (Faites des dons)";
+                break;
+            case MAGIC:
+                deathmessage = player.getDisplayName() + "§c est mort par magie.";
+                break;
+            case WITHER:
+                deathmessage = player.getDisplayName() + "§c est mort de l'effet du Wither.";
+                break;
+            case FALLING_BLOCK:
+                deathmessage = player.getDisplayName() + "§c s'est fait aplatir par un block.";
+                break;
+            default:
+                el = false;
+                break;
+        }
+        if (el) eliminate(player, true, null, deathmessage);
+    }
 
     public void eliminate(Player player, boolean saveStuff, Player killer, String deathMessage) {
         PlayerUHC up = main.getPlayerUHC(player);

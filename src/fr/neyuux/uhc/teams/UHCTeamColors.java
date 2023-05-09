@@ -20,8 +20,8 @@ public enum UHCTeamColors {
     DARK_GRAY("Dark Gray", "Gris Foncé", "§8", DyeColor.GRAY),
     WHITE("White", "Blanc", "§f", DyeColor.WHITE);
 
-    public static int used;
-    public static int taupeused;
+    public static int used = 0;
+    public static int taupeused = 0;
 
     UHCTeamColors(String name, String displayName, String color, DyeColor dc) {
         this.name = name;

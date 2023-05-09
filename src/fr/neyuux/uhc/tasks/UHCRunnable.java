@@ -3,18 +3,22 @@ package fr.neyuux.uhc.tasks;
 import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.GameConfig;
+import fr.neyuux.uhc.UHCWorld;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.scenario.classes.modes.Moles;
 import fr.neyuux.uhc.util.ScoreboardSign;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class UHCRunnable extends BukkitRunnable {
@@ -71,7 +75,7 @@ public class UHCRunnable extends BukkitRunnable {
                     }
                     if (!GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA")) {
                         for (PlayerUHC pu : main.getAlivePlayers())
-                            if (pu.getPlayer().isOnline() && pu.getTeam() != null && pu.getTeam().getAlivePlayers().size() != 1) {
+                            if (pu.getPlayer().isOnline() && pu.getTeam() != null && pu.getTeam().getAlivePlayers().size() > 1) {
                                 Location l = pu.getPlayer().getPlayer().getLocation();
                                 DecimalFormat df = new DecimalFormat();
                                 df.setMaximumFractionDigits(1);
@@ -87,15 +91,19 @@ public class UHCRunnable extends BukkitRunnable {
 
                                         String sdist = "§b";
                                         double d = l.distance(tu.getPlayer().getPlayer().getLocation());
-                                        if (d <= 180) sdist = "§c";
-                                        if (d <= 120) sdist = "§6";
-                                        if (d <= 70) sdist = "§e";
-                                        if (d <= 30) sdist = "§a";
+                                        if (d >= 30) sdist = "§a";
+                                        if (d >= 70) sdist = "§e";
+                                        if (d >= 120) sdist = "§6";
+                                        if (d >= 180) sdist = "§c";
                                         tm.append(shealth).append(tu.getPlayer().getName()).append(" ").append(sdist).append(pu.getDirectionArrow(new Location(tu.getPlayer().getPlayer().getWorld(), tu.getPlayer().getPlayer().getLocation().getX(), pu.getPlayer().getPlayer().getLocation().getY(), tu.getPlayer().getPlayer().getLocation().getZ()))).append("§7(").append(df.format(d)).append(" b) | ");
                                     }
-                                UHC.sendActionBar(pu.getPlayer().getPlayer(), tm.substring(0, tm.length() - 3));
+                                try {
+                                    UHC.sendActionBar(pu.getPlayer().getPlayer(), tm.substring(0, tm.length() - 3));
+                                } catch (StringIndexOutOfBoundsException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                    }
+                    } else cancel();
                 }
             }.runTaskTimer(main, 0 , 5);
         }

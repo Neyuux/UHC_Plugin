@@ -42,7 +42,8 @@ public class Switch extends Scenario implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
 
-        IGtimers[0] = firstSwitch - randomTimeLimit + new SecureRandom().nextInt(randomTimeLimit + 1);
+        getNewTimer();
+        this.getNewTimer();
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -58,7 +59,7 @@ public class Switch extends Scenario implements Listener {
                 else if (IGtimers[0] == 0) {
                     Bukkit.broadcastMessage(getPrefix() + "§eActivation du Scénario !");
                     switchTeams();
-                    IGtimers[0] = switchFrequency - randomTimeLimit + new SecureRandom().nextInt(randomTimeLimit + 1);
+                    Switch.this.getNewTimer();
                 }
                 if (!UHC.getInstance().isState(Gstate.PLAYING)) cancel();
             }
@@ -150,7 +151,7 @@ public class Switch extends Scenario implements Listener {
                 UHCTeam needLess = teamsNeedLess.get(random.nextInt(teamsNeedLess.size()));
                 UHCTeam needMore = teamsNeedMore.get(random.nextInt(teamsNeedMore.size()));
 
-                PlayerUHC playerUHC = needLess.getListAlivePlayers().get(random.nextInt(needLess.getAlivePlayers().size()));
+                PlayerUHC playerUHC = needLess.getAlivePlayers().get(random.nextInt(needLess.getAlivePlayers().size()));
 
                 needLess.leave(playerUHC);
                 needMore.add(playerUHC.getPlayer().getPlayer());
@@ -159,4 +160,17 @@ public class Switch extends Scenario implements Listener {
             } else break;
         }
     }
+
+
+    private void getNewTimer() {
+        IGtimers[0] = switchFrequency - randomTimeLimit + new SecureRandom().nextInt(randomTimeLimit + 1);
+        this.checkTimerLimit();
+    }
+
+    private void checkTimerLimit() {
+        if (IGtimers[0] < 5) {
+            this.getNewTimer();
+        }
+    }
+
 }

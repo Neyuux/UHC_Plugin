@@ -1,11 +1,13 @@
 package fr.neyuux.uhc;
 
 import fr.neyuux.uhc.listeners.WorldListener;
+import fr.neyuux.uhc.util.SugarCaneGenerator;
+import fr.neyuux.uhc.util.UHCChunkLoader;
+import fr.neyuux.uhc.util.VeinGenerator;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PropertyManager;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
@@ -19,10 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class UHCWorld {
 
@@ -30,6 +29,7 @@ public class UHCWorld {
     private static boolean loaded = false;
     private static YamlConfiguration yconfig;
     private static final List<Location> spawns = new ArrayList<>();
+    public static final List<Chunk> CORRECTED_CHUNKS = new ArrayList<>();
 
     public static String MAIN_WORLD = "Core";
 
@@ -112,64 +112,12 @@ public class UHCWorld {
                 if (x == 25 || x == -25 || z == 25 || z == -25)
                     w.getBlockAt(x, 132, z).setType(Material.BARRIER);
             }
-        if (!MAIN_WORLD.equals("Core")) this.loadChunks();
+        if (!MAIN_WORLD.equals("Core")) loadLocationChunks(new Location(world, 0, 70, 0), true, false);
     }
 
     public Location getPlatformLoc() {
         return new Location(Bukkit.getWorld(MAIN_WORLD), new Random().nextInt(50)-24, 131.5, new Random().nextInt(50)-24);
     }
-
-    /*public boolean isLoaded() {
-        return loaded;
-    }
-
-    public void preGenerateWorld() {
-        if (world == null) throw new NullPointerException("Aucun monde n est cree");
-        final ArrayList<Chunk> loaded = new ArrayList<>();
-        int radius = (int) Math.round((double)GameConfig.ConfigurableParams.BORDERSIZE.getValue());
-        String start = new Date().toString();
-
-        int maxX = 17 + radius;
-        int maxZ = 17 + radius;
-        int minX = 1 - radius;
-        int minZ = 1 - radius;
-        int fail = 0;
-        int total = 0;
-        for (int x = minX; x < maxX; x += 16) {
-            System.out.println("Generating Chunks for X: " + x + " Z: " + minZ + " to " + maxZ);
-            for (int z = minZ; z < maxZ; z += 16) {
-                if (!world.loadChunk(x, z, true))
-                    fail++;
-                total++;
-                loaded.add(world.getChunkAt(x, z));
-                DecimalFormat f = new DecimalFormat();
-                f.setMaximumFractionDigits(2);
-                Bukkit.broadcastMessage(main.getPrefix() + "§2Chargement du Monde à §a§l" + f.format((int) Math.round((double) GameConfig.ConfigurableParams.BORDERSIZE.getValue()) / 16 / total * 100) + "%§2.");
-                if (loaded.size() == 2000) {
-                    System.out.println("Unloading loaded chunks");
-                    for (Chunk load : loaded)
-                        load.unload();
-                    loaded.clear();
-                }
-            }
-            Runtime memCheck = Runtime.getRuntime();
-            while (memCheck.freeMemory() / memCheck.maxMemory() < 1) {
-                System.out.println("Free memory in heap below threshold, waiting 30 seconds");
-                System.out.println("Free (%): " + (memCheck.freeMemory() / memCheck.maxMemory()));
-                System.gc();
-                try {
-                    Thread.sleep(30000L);
-                } catch (Exception ignored) {}
-                memCheck = Runtime.getRuntime();
-            }
-        }
-        System.out.println("Execution Time:");
-        System.out.println("Start: " + start);
-        System.out.println("Finish: " + (new Date()).toString());
-        System.out.println("Failed Chunks: " + fail + ", Loaded: " + (total - fail) + " Chunks: " + total);
-        System.out.println("Finished");
-        UHCWorld.loaded = true;
-    }*/
 
     public void loadChunks() {
         if (loaded) {
@@ -177,17 +125,17 @@ public class UHCWorld {
             df.setMaximumFractionDigits(1);
             double d = 0;
             for (Location l : spawns) {
-                loadLocationChunks(l, true);
+                loadLocationChunks(l, true, false);
                 d++;
                 Bukkit.broadcastMessage(UHC.getPrefix() + "§2Chargement du monde : §a§l" + df.format(d / (main.getAlivePlayers().size() + 1) * 100) + "%§2.");
             }
         }
-        loadLocationChunks(new Location(world, 0, 70, 0), true);
+        loadLocationChunks(new Location(world, 0, 70, 0), true, true);
         Bukkit.broadcastMessage(UHC.getPrefix() + "§2Chargement du monde : §a§l100%§2.");
         loaded = true;
     }
 
-    private static List<Chunk> loadLocationChunks(Location loc, Boolean load) {
+    private static List<Chunk> loadLocationChunks(Location loc, Boolean load, boolean correctSpawns) {
         List<Chunk> chunks = new ArrayList<>();
 
         int cx = loc.getBlockX() - 50;
@@ -210,6 +158,39 @@ public class UHCWorld {
         }
 
         return chunks;
+    }
+
+    public void generateChunks(final World.Environment env) {
+        Double size = (Double) GameConfig.ConfigurableParams.BORDERSIZE.getValue();
+
+        if (env == World.Environment.NETHER)
+            size /= 2;
+
+        VeinGenerator veinGenerator = new VeinGenerator();
+        SugarCaneGenerator sugarCaneGenerator = new SugarCaneGenerator();
+        long time = System.currentTimeMillis();
+        UHCChunkLoader chunkLoaderThread = new UHCChunkLoader(world, size.intValue(), 250, 18) {
+            public void onDoneLoadingWorld() {
+                String finalTime = UHC.getTimer(Math.toIntExact((System.currentTimeMillis() - time) / 1000));
+
+                Bukkit.getLogger().info("UHC >> Environment " + env.toString() + " 100% loaded");
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§2Préchargement du monde terminé ! §o(Temps utilisé : " + finalTime + ")");
+                if (env.equals(World.Environment.NORMAL) && (boolean)GameConfig.ConfigurableParams.NETHER.getValue()) {
+                    UHCWorld.this.generateChunks(World.Environment.NETHER);
+                }
+            }
+
+            public void onDoneLoadingChunk(Chunk chunk) {
+                if ((boolean)GameConfig.ConfigurableParams.CORRECT_SPAWNS.getValue() && env.equals(World.Environment.NORMAL)) {
+                    veinGenerator.generateInChunk(chunk);
+                    sugarCaneGenerator.generateInChunk(chunk);
+                }
+            }
+        };
+
+        chunkLoaderThread.printSettings();
+
+        Bukkit.getScheduler().runTask(UHC.getInstance(), chunkLoaderThread);
     }
 
     public static boolean isFarEnough(ArrayList<Location> list, Location loc, Integer player, Integer center, Integer border) {
@@ -253,7 +234,7 @@ public class UHCWorld {
         while (tp == null || !isFarEnough(new ArrayList<>(spawns), tp, main.getAlivePlayers().size(), border/10/2, border/10))
             tp = getRandomLocation(world, (int)Math.round((double) GameConfig.ConfigurableParams.BORDERSIZE.getValue()) / 2, 50);
 
-        WorldListener.keepChunk.addAll(loadLocationChunks(tp, false));
+        WorldListener.keepChunk.addAll(loadLocationChunks(tp, false, false));
         spawns.add(tp);
     }
 
@@ -281,7 +262,7 @@ public class UHCWorld {
         final PropertyManager manager = minecraftServer.getPropertyManager();
         manager.properties.setProperty("announce-player-achievements", value.toString().toLowerCase());
         try {
-            final String baseDir = Paths.get("").toAbsolutePath().toString() + File.separator;
+            final String baseDir = Paths.get("").toAbsolutePath() + File.separator;
             final File f = new File(baseDir + "server.properties");
             final OutputStream out = new FileOutputStream(f);
             manager.properties.store(out, "EditedByUHC");
@@ -324,15 +305,5 @@ public class UHCWorld {
         stand.setSmall(false);
 
         return stand;
-    }
-
-    public static List<Block> getNearbyBlocks(Location location, int radius) {
-        List<Block> blocks = new ArrayList<>();
-        for(int x = location.getBlockX() - radius; x <= location.getBlockX() + radius; x++)
-            for (int y = location.getBlockY() - radius; y <= location.getBlockY() + radius; y++)
-                for (int z = location.getBlockZ() - radius; z <= location.getBlockZ() + radius; z++)
-                    blocks.add(location.getWorld().getBlockAt(x, y, z));
-         System.out.println(blocks.toString());
-        return blocks;
     }
 }

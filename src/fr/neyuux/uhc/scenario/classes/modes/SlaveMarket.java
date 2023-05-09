@@ -4,6 +4,7 @@ import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.InventoryManager;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.GameConfig;
+import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.PluginReloadEvent;
 import fr.neyuux.uhc.scenario.Scenario;
@@ -77,6 +78,10 @@ public class SlaveMarket extends Scenario implements Listener {
 
 
     public static void auction() {
+        UHC.getInstance().setState(Gstate.PLAYING);
+        Bukkit.broadcastMessage(UHC.getPrefix() + "§a§lDébut des enchères ! §aChaque joueur sera présenté et devra être acheté par l'un des owners de la partie à l'aide la commande §b§l/uhc bid <diamants> §a. L'owner qui met en jeu le plus de diamants récupérera le joueur dans son équipe. Tous les diamants restant à la fin des enchères sera rendu aux owners au début de la partie.");
+        Bukkit.broadcastMessage("");
+
         for (PlayerUHC playerUHC : UHC.getInstance().players) {
             if (UHC.getInstance().boards.containsKey(playerUHC)) {
                 UHC.getInstance().boards.get(playerUHC).destroy();
@@ -108,7 +113,7 @@ public class SlaveMarket extends Scenario implements Listener {
                     UHCTeam t;
                     if (bestBidder != null) t = bestBidder.getTeam();
                     else t = UHC.getInstance().getUHCTeamManager().getTeams().get(new Random().nextInt(UHC.getInstance().getUHCTeamManager().getTeams().size()));
-                    Player owner = t.getListAlivePlayers().get(0).getPlayer().getPlayer();
+                    Player owner = t.getPlayers().get(0).getPlayer().getPlayer();
                     t.add(player[0]);
                     owner.getInventory().getItem(owner.getInventory().first(Material.DIAMOND)).setAmount(owner.getInventory().getItem(owner.getInventory().first(Material.DIAMOND)).getAmount() - bid);
                     //tp player
@@ -119,7 +124,7 @@ public class SlaveMarket extends Scenario implements Listener {
                     fwm.addEffect(FireworkEffect.builder().withColor(t.getPrefix().color.getDyecolor().getColor()).with(FireworkEffect.Type.STAR).build());
                     fw.setFireworkMeta(fwm);
                     ((CraftFirework)fw).getHandle().expectedLifespan = 1;
-                    Bukkit.broadcastMessage(UHC.getPrefix() + Scenarios.SLAVE_MARKET.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + t.getListAlivePlayers().get(t.getListAlivePlayers().size() - 1).getPlayer().getPlayer().getDisplayName() + " §ea acheté §f" + player[0].getDisplayName() + " §epour §b§l" + bid + " §bdiamants !");
+                    Bukkit.broadcastMessage(UHC.getPrefix() + Scenarios.SLAVE_MARKET.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + t.getPlayers().get(t.getPlayers().size() - 1).getPlayer().getPlayer().getDisplayName() + " §ea acheté §f" + player[0].getDisplayName() + " §epour §b§l" + bid + " §bdiamants !");
                 }
                 for (PlayerUHC puhc : UHC.getInstance().players) {
                     int l = 0;
@@ -150,6 +155,7 @@ public class SlaveMarket extends Scenario implements Listener {
                     player[0].getInventory().clear();
                     for (Map.Entry<PlayerUHC, ScoreboardSign> en : UHC.getInstance().boards.entrySet())
                         en.getValue().setLine(14, "§f" + player[0].getName() + " §eest mis aux enchères !");
+                    Bukkit.broadcastMessage("§f" + player[0].getName() +" §aest mis aux enchères !");
                     timers[0] = 55;
                 }
                 if (bestBidder != null) UHC.sendInfiniteActionBarForAllPlayers(bestBidder.getTeam().getPrefix().color.getColor() + "§l" + bestBidder.getPlayer().getName() + " §7- §b" + bid + " diamants");

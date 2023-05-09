@@ -11,9 +11,11 @@ import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -36,6 +38,8 @@ public class SkyHigh extends Scenario implements Listener {
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
+
+        UHC.getInstance().getAlivePlayers().forEach(playerUHC -> playerUHC.getPlayer().getPlayer().getInventory().addItem(new ItemStack(Material.DIRT, 2)));
 
         IGtimers[0] = SkyHigh.timer;
         new BukkitRunnable() {
@@ -97,5 +101,10 @@ public class SkyHigh extends Scenario implements Listener {
             if (killer.getPlayer().isOnline())
                 ev.setStuffLocation(killer.getPlayer().getPlayer().getLocation());
             else ev.setStuffLocation(killer.getLastLocation());
+    }
+
+    @EventHandler
+    public void onPlaceDirt(BlockPlaceEvent ev) {
+        if (ev.getBlock().getType().equals(Material.DIRT)) ev.getItemInHand().setAmount(2);
     }
 }

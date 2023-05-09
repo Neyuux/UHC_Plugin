@@ -1,11 +1,7 @@
 package fr.neyuux.uhc.tasks;
 
 import com.google.common.collect.Lists;
-import fr.neyuux.uhc.UHC;
-import fr.neyuux.uhc.InventoryManager;
-import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.UHCWorld;
-import fr.neyuux.uhc.GameConfig;
+import fr.neyuux.uhc.*;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.GameStartEvent;
@@ -27,7 +23,8 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ConcurrentModificationException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UHCStart extends BukkitRunnable {
 
@@ -107,8 +104,10 @@ public class UHCStart extends BukkitRunnable {
             for (PlayerUHC p : main.players)
                 if (!p.isSpec())
                     p.setAlive(true);
+
             if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString().startsWith("Random"))
                 main.getUHCTeamManager().randomTeams();
+
             UHCTeamManager.baseplayers = main.getAlivePlayers();
             for (PlayerUHC playerUHC : main.getAlivePlayers()) {
                 if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) != 1 && playerUHC.getTeam() == null) {
@@ -118,11 +117,12 @@ public class UHCStart extends BukkitRunnable {
                 }
                 InventoryManager.clearInventory(playerUHC.getPlayer().getPlayer());
             }
-            try {
-                for (UHCTeam t : main.getUHCTeamManager().getTeams())
-                    if (t.getPlayers().size() == 0) main.getUHCTeamManager().removeTeam(t);
-                    else System.out.println(t.getTeam().getDisplayName() + " / " + t.getPlayers());
-            } catch (ConcurrentModificationException ignored) {}
+
+            List<UHCTeam> toDelete = new ArrayList<>();
+            for (UHCTeam t : main.getUHCTeamManager().getTeams())
+                if (t.getPlayers().size() == 0) toDelete.add(t);
+                else System.out.println(t.getTeam().getDisplayName() + " / " + t.getPlayers());
+            toDelete.forEach(uhcTeam -> main.getUHCTeamManager().removeTeam(uhcTeam));
             UHCTeamManager.baseteams = main.getUHCTeamManager().getTeams().size();
 
             InventoryManager.clearAllPlayersEffects();
@@ -141,8 +141,10 @@ public class UHCStart extends BukkitRunnable {
                 health.setDisplaySlot(DisplaySlot.PLAYER_LIST);
                 healthBelow.setDisplaySlot(DisplaySlot.BELOW_NAME);
             } else {
-                health.unregister();
-                healthBelow.unregister();
+                if (health != null && healthBelow != null) {
+                    health.unregister();
+                    healthBelow.unregister();
+                }
             }
             Bukkit.broadcastMessage(UHC.getPrefix() + "§2Lancement de la Pré-Génération du monde...");
             for (PlayerUHC p : main.getAlivePlayers()) {
@@ -204,6 +206,8 @@ public class UHCStart extends BukkitRunnable {
             VarsLoot.getBlocksLoots().put(Material.LEAVES_2, new Loot(0, Lists.newArrayList(
                     new LootItem(new ItemStack(Material.APPLE, 1), (double)GameConfig.ConfigurableParams.APPLE.getValue(), new Interval<>(1, 1)))));
             /* FIN DROPS POMMES*/
+            //STONE
+            VarsLoot.getBlocksLoots().put(Material.STONE, new Loot(0, Lists.newArrayList(new LootItem(new ItemStack(Material.COBBLESTONE, 1), 100.0, new Interval<>(1, 1)))));
             /* DROPS FLINT */
             double flint = (double)GameConfig.ConfigurableParams.FLINT.getValue();
             VarsLoot.getBlocksLoots().put(Material.GRAVEL, new Loot(0, Lists.newArrayList(
@@ -218,7 +222,7 @@ public class UHCStart extends BukkitRunnable {
             VarsLoot.getBlocksLoots().put(Material.GOLD_ORE, new Loot(0, Lists.newArrayList(
                     new LootItem(new ItemStack(Material.GOLD_ORE, 1), 100.0, new Interval<>(1, 1)))));
             VarsLoot.getBlocksLoots().put(Material.COAL_ORE, new Loot(1, Lists.newArrayList(
-                    new LootItem(new ItemStack(Material.COAL, 1), 100.0, new Interval<>(1, 1)))));
+                    new LootItem(new ItemStack(Material.COAL, 1), 80.0, new Interval<>(1, 1)))));
             VarsLoot.getBlocksLoots().put(Material.LAPIS_ORE, new Loot(1, Lists.newArrayList(
                     new LootItem(new ItemStack(Material.INK_SACK, 1, (short) 4), 100.0, new Interval<>(4, 8)))));
             VarsLoot.getBlocksLoots().put(Material.REDSTONE_ORE, new Loot(1.5, Lists.newArrayList(
@@ -228,11 +232,11 @@ public class UHCStart extends BukkitRunnable {
             /*FIN MINERAIS*/
             /*ANIMAUX*/
             VarsLoot.getEntitiesLoots().put(EntityType.CHICKEN, new Loot(1, Lists.newArrayList(
-                    new LootItem(new ItemStack(Material.FEATHER, 1), 40+5*(double)GameConfig.ConfigurableParams.FEATHER.getValue(), new Interval<>(1, 3)),
+                    new LootItem(new ItemStack(Material.FEATHER, 1), (double)GameConfig.ConfigurableParams.FEATHER.getValue(), new Interval<>(1, 3)),
                     new LootItem(new ItemStack(Material.RAW_CHICKEN, 1), 100.0, new Interval<>(1, 1)))));
 
             VarsLoot.getEntitiesLoots().put(EntityType.COW, new Loot(1, Lists.newArrayList(
-                    new LootItem(new ItemStack(Material.LEATHER, 1), 40+5*(double)GameConfig.ConfigurableParams.LEATHER.getValue(), new Interval<>(1, 3)),
+                    new LootItem(new ItemStack(Material.LEATHER, 1), (double)GameConfig.ConfigurableParams.LEATHER.getValue(), new Interval<>(1, 2)),
                     new LootItem(new ItemStack(Material.RAW_BEEF, 1), 100.0, new Interval<>(1, 3)))));
             /*FIN ANIMAUX*/
 
@@ -255,7 +259,8 @@ public class UHCStart extends BukkitRunnable {
                 p.getPlayer().getPlayer().teleport(main.world.getSpawns().remove(0));
                 for (Player pl : Bukkit.getOnlinePlayers())
                     pl.playSound(pl.getLocation(), Sound.CHICKEN_EGG_POP, 7f ,2f);
-                Bukkit.broadcastMessage(UHC.getPrefix() + p.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
+                if (!Scenarios.ANONYMOUS.isActivated())
+                    Bukkit.broadcastMessage(UHC.getPrefix() + p.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
                 p.setLastLocation(p.getPlayer().getPlayer().getLocation().add(0, -38, 0));
             }
             else {
@@ -269,7 +274,8 @@ public class UHCStart extends BukkitRunnable {
                         playerUHC.getPlayer().getPlayer().setPlayerListName(playerUHC.getPlayer().getPlayer().getDisplayName());
                         for (Player pl : Bukkit.getOnlinePlayers())
                             pl.playSound(pl.getLocation(), Sound.CHICKEN_EGG_POP, 7f ,2f);
-                        Bukkit.broadcastMessage(UHC.getPrefix() + playerUHC.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
+                        if (!Scenarios.ANONYMOUS.isActivated())
+                            Bukkit.broadcastMessage(UHC.getPrefix() + playerUHC.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
                         playerUHC.setLastLocation(playerUHC.getPlayer().getPlayer().getLocation().add(0, -39, 0));
                     }
                     t.getTeam().setAllowFriendlyFire((boolean)GameConfig.ConfigurableParams.FRIENDLY_FIRE.getValue());

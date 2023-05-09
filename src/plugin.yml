@@ -1,32 +1,40 @@
-name: UHC
-version: Beta2.0.1b
-author: Neyuux_
 main: fr.neyuux.uhc.UHC
-softdepend: [NeyGin_Core]
+name: UHC
+version: '1.0.4'
+description: Plugin UHC
+author: Neyuux_
+prefix: UHC
+softdepend:
+  - NeyGin_Core
+loadbefore:
+  - NeyGin_Core
 commands:
   uhc:
     description: Commande Principale
   revive:
     description: Commande de Revive
-    permission: uhc.*
+    permission: uhc.host
+    permission-message: UHC >> Vous devez etre host pour utiliser cette commande.
   heal:
     description: Commande de Final Heal
-    permission: uhc.*
+    permission: uhc.host
+    permission-message: UHC >> Vous devez etre host pour utiliser cette commande.
   finish:
     description: Commande de finish de l'inv de depart
-    permission: uhc.*
+    permission: uhc.host
+    permission-message: UHC >> Vous devez etre host pour utiliser cette commande.
   enchant:
     description: Commande pour enchanter un item dans l'inv de depart
-    permission: uhc.*
+    permission: uhc.host
+    permission-message: UHC >> Vous devez etre host pour utiliser cette commande.
   scenario:
     description: Commande pour afficher les scenarios
     aliases: [scen, scenarios]
   helpop:
-      description: Commande de question
-      aliases:
-        - question
-  #a:
-   # description: oui
+    description: Commande de question
+    aliases:
+      - question
 permissions:
-   uhc.*:
-     description: Gives access to all UHC commands
+  uhc.host:
+    description: Donne acces aux commandes de host
+    default: op

@@ -21,7 +21,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -54,7 +56,6 @@ public class UHC extends JavaPlugin {
 	public UHCWorld world = new UHCWorld(this);
 	private GameConfig config;
 	private static String prefix = Modes.UHC.getPrefix();
-	public final HashMap<String, PermissionAttachment> permissions = new HashMap<>();
 	private final List<OfflinePlayer> whitelist = new ArrayList<>();
 	public boolean hasWhitelist;
 	private static UHC instance;
@@ -105,8 +106,17 @@ public class UHC extends JavaPlugin {
 			if (System.getProperty("RELOAD").equals("TRUE"))
 				return;
 
+
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvents(new PreGameListener(this), this);
+		pm.registerEvents(new WorldListener(this), this);
+		pm.registerEvents(new PlayerListener(this), this);
+		pm.registerEvents(new FightListener(this), this);
+		pm.registerEvents(new ArmorListener(Collections.emptyList()), this);
+
 		instance = this;
 		this.config = new GameConfig(this, Modes.UHC);
+		pm.registerEvents(this.config, this);
 		System.out.println("UHC enabling");
 
 		File file = new File(getDataFolder(), "config.yml");
@@ -126,13 +136,8 @@ public class UHC extends JavaPlugin {
 		getCommand("enchant").setExecutor(new CommandEnchant(this));
 		getCommand("scenario").setExecutor(new CommandScenario(this));
 		getCommand("helpop").setExecutor(new CommandHelpOp(this));
-		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(new PreGameListener(this), this);
-		pm.registerEvents(new WorldListener(this), this);
-		pm.registerEvents(new PlayerListener(this), this);
-		pm.registerEvents(new FightListener(this), this);
-		pm.registerEvents(new ArmorListener(Collections.emptyList()), this);
-		pm.registerEvents(this.config, this);
+
+		pm.addPermission(new Permission("uhc.host"));
 
 		reloadScoreboard();
 		rel();
@@ -144,6 +149,7 @@ public class UHC extends JavaPlugin {
 	public void onDisable() {
 		System.out.println("UHC disabling");
 
+		this.getServer().getPluginManager().removePermission("uhc.host");
 		this.world.delete();
 
 		super.onDisable();
@@ -196,7 +202,7 @@ public class UHC extends JavaPlugin {
 			ss.setLine(2, "ßeßl…quipe ße: " +(getPlayerUHC(player).getTeam() != null ? getPlayerUHC(player).getTeam().getTeam().getDisplayName() : "ßcAucune"));
 		}
 		ss.setLine(3, "ß4");
-		ss.setLine(4, "ß6ßlJoueurs ß6: ßf" + Bukkit.getServer().getOnlinePlayers().size() + "ß6/ße" + GameConfig.ConfigurableParams.SLOTS.getValue());
+		ss.setLine(4, "ß6ßlJoueurs ß6: ßf" + this.players.size() + "ß6/ße" + GameConfig.ConfigurableParams.SLOTS.getValue());
 		ss.setLine(5, "ß8------------");
 		ss.setLine(6, "ß5ßoMap by ßcßlßoNeyuux_");
 		this.boards.put(getPlayerUHC(player), ss);
@@ -221,13 +227,13 @@ public class UHC extends JavaPlugin {
 			ss.setLine(7, "ß6ßlPvP ß6: ßcßl" + getTimer((int)GameConfig.ConfigurableParams.PVP.getValue()));
 			ss.setLine(8, "ß6ßlBordure ß6: ß3ßl" + getTimer((int)GameConfig.ConfigurableParams.BORDER_TIMER.getValue()));
 			ss.setLine(9, "ß8");
-			ss.setLine(10, "ßbßlTaille de la bordure ßb: " + Symbols.PLUS_MINUS + "ß3" + "bordr" + "ßb/ß3" + "bordr");
-			ss.setLine(11, "ß9ßlCentre : ß6" + "centerdist" + " blocks " + "Arrowto00");
+			ss.setLine(10, "ßbßlTaille de la bordure ßb: " + Symbols.PLUS_MINUS + "ß3" + "x" + "ßb/ß3" + "x");
+			ss.setLine(11, "ß9ßlCentre : ß6" + "x" + " blocks " + " ");
 			ss.setLine(12, "ß8------------");
 			ss.setLine(13, "ß5ßoMap by ßcßlßoNeyuux_");
 		} else if (this.mode.equals(Modes.LG)) {
 			ss.setLine(1, "ß0");
-			ss.setLine(2, "ß9ßlRÙle ß9: " + "roledisplayname");
+			ss.setLine(2, "ß9ßlRÙle ß9: " + "ßcAucun");
 			ss.setLine(3, "ß7ßlJoueurs ß7: ßf" + getAlivePlayers().size());
 			ss.setLine(4, "ßcßlKills ßc: ßl" + playerUHC.getKills());
 			ss.setLine(5, "ß5");
@@ -237,7 +243,7 @@ public class UHC extends JavaPlugin {
 			ss.setLine(9, "ß6ßlPvP ß6:ßcßl " + getTimer((int) GameConfig.ConfigurableParams.PVP.getValue()));
 			ss.setLine(10, "ß6ßlBordure ß6:ß3ßl " + getTimer((int) GameConfig.ConfigurableParams.BORDER_TIMER.getValue()));
 			ss.setLine(11, "ß5");
-			ss.setLine(12, "ßbßlTaille de la bordure ßb: " + Symbols.PLUS_MINUS + "ß3" + "bordr" + "ßb/ß3" + "bordr");
+			ss.setLine(12, "ßbßlTaille de la bordure ßb: " + Symbols.PLUS_MINUS + "ß3" + "x" + "ßb/ß3" + "x");
 			ss.setLine(13, "ß8------------");
 			ss.setLine(14, "ß5ßoMap by ßcßlßoNeyuux_");
 		}
@@ -422,6 +428,9 @@ public class UHC extends JavaPlugin {
 					player.setPlayerListName(player.getDisplayName());
 				}
 			}
+
+			this.getPlayerUHC(player).getAttachment().setPermission("uhc.host", true);
+
 			if (this.getGameConfig().deathInvModifier != null && this.getGameConfig().deathInvModifier.equals(player))
 				this.getGameConfig().deathInvModifier = null;
 			if (this.getGameConfig().starterModifier != null && this.getGameConfig().starterModifier.equals(player))
@@ -436,6 +445,9 @@ public class UHC extends JavaPlugin {
 					player.setPlayerListName(player.getDisplayName());
 				}
 			}
+
+			this.getPlayerUHC(player).getAttachment().setPermission("uhc.host", false);
+
 			if (this.isState(Gstate.WAITING) || this.isState(Gstate.STARTING)) player.getInventory().remove(Material.REDSTONE_COMPARATOR);
 			player.closeInventory();
 		}
@@ -484,9 +496,9 @@ public class UHC extends JavaPlugin {
 		this.uhcTeamManager = new UHCTeamManager(this);
 		Scenario.removeEvents();
 		HandlerList.unregisterAll(this.config);
+		this.world.delete();
 		this.getServer().resetRecipes();
 		this.config = new GameConfig(this, this.mode);
-		this.world.changePVP(false);
 		this.getServer().getPluginManager().registerEvents(this.config, this);
 		UHCWorld.setAchievements(false);
 		for (Player p : Bukkit.getOnlinePlayers())
@@ -498,7 +510,6 @@ public class UHC extends JavaPlugin {
 
 			for (Player p2 : Bukkit.getOnlinePlayers())
 				p.showPlayer(p2);
-			p.teleport(world.getPlatformLoc());
 			fr.neyuux.uhc.InventoryManager.clearInventory(p);
 			p.getInventory().clear();
 			p.updateInventory();
@@ -682,7 +693,6 @@ public class UHC extends JavaPlugin {
 		Method getHandle = player.getClass().getMethod("getHandle");
 		return getHandle.invoke(player);
 	}
-
 
 
 	public enum Modes {

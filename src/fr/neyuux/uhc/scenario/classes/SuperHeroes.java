@@ -31,7 +31,7 @@ public class SuperHeroes extends Scenario implements Listener {
         super(Scenarios.SUPER_HEROES, new ItemStack(Material.NETHER_STAR));
     }
 
-    public static boolean hasResistance = true, hasStrength = true, hasSpeed = true, hasJumpBoost = true, hasDoubleHealth = true, hasInvisibility;
+    public static boolean hasResistance = false, hasStrength = true, hasSpeed = true, hasJumpBoost = true, hasDoubleHealth = true, hasInvisibility = false;
     public static HashMap<PlayerUHC, PotionEffectType> powers = new HashMap<>();
     private static final HashMap<PlayerUHC, PotionEffectType> needPower = new HashMap<>();
 
@@ -45,6 +45,8 @@ public class SuperHeroes extends Scenario implements Listener {
     public void execute() {
         Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
+        powers.clear();
+        needPower.clear();
 
         new BukkitRunnable() {
             @Override
@@ -98,12 +100,8 @@ public class SuperHeroes extends Scenario implements Listener {
         if (ev.getEntityType().equals(EntityType.PLAYER)) {
             PlayerUHC pu = UHC.getInstance().getPlayerUHC((Player)ev.getEntity());
             if (pu.isAlive() && powers.containsKey(pu) && powers.get(pu).equals(PotionEffectType.DAMAGE_RESISTANCE)) {
-                Bukkit.broadcastMessage(ev.getFinalDamage() + "");
-                Bukkit.broadcastMessage("Réz : " + ev.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE));
-                //NERF  : 40% >> 30%
-                ev.setDamage(EntityDamageEvent.DamageModifier.RESISTANCE, -(ev.getDamage() - (ev.getDamage() * 0.7)));
-                Bukkit.broadcastMessage("§d" + ev.getFinalDamage() + "");
-                Bukkit.broadcastMessage("§dRéz : " + ev.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE));
+                ev.setDamage(EntityDamageEvent.DamageModifier.RESISTANCE, -(ev.getDamage() * 0.3));
+
             }
         }
     }
@@ -137,6 +135,7 @@ public class SuperHeroes extends Scenario implements Listener {
                 p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 0, true, true));
                 p.sendMessage(getPrefix() + "§eVous obtenez le pouvoir §b§lRapidité 2§e!");
             } else if (power.equals(PotionEffectType.HEALTH_BOOST)) {
+                pu.maxHealth *= 2;
                 p.setMaxHealth(p.getMaxHealth() * 2);
                 p.setHealth(p.getMaxHealth());
                 p.sendMessage(getPrefix() + "§eVous obtenez le pouvoir §c§lDouble Vie §e!");

@@ -54,10 +54,7 @@ public class PreGameListener implements Listener {
         Player player = ev.getPlayer();
         PlayerUHC playerUHC = main.getPlayerUHC(player);
 
-        if (main.permissions.get(player.getName()) != null) {
-            player.removeAttachment(main.permissions.get(player.getName()));
-            main.permissions.remove(player.getName());
-        }
+        playerUHC.getAttachment().setPermission("uhc.host", false);
 
         if (main.isState(Gstate.PLAYING) || main.isState(Gstate.FINISHED)) return;
 
@@ -74,7 +71,7 @@ public class PreGameListener implements Listener {
         if (onlines >= (maxonlines / 1.3)) quitmessage = "§c" + onlines;
         if (onlines >= maxonlines) quitmessage = "§4" + onlines;
         ev.setQuitMessage("§8[§c§l-§r§8] §e§o" + player.getName() + " §8(" + quitmessage + "§8/§c§l" + maxonlines + "§8)");
-        main.players.forEach(pu -> main.boards.get(pu).setLine(4, "§6§lSlots §6: §f" + Bukkit.getServer().getOnlinePlayers().size() + "§6/§e" + GameConfig.ConfigurableParams.SLOTS.getValue()));
+        main.players.forEach(pu -> main.boards.get(pu).setLine(4, "§6§lSlots §6: §f" + main.players.size() + "§6/§e" + maxonlines));
     }
 
     @EventHandler
@@ -113,7 +110,7 @@ public class PreGameListener implements Listener {
         if (onlines >= (maxonlines / 1.3)) joinmessage = "§c" + onlines;
         if (onlines >= maxonlines) joinmessage = "§4" + onlines;
         ev.setJoinMessage("§8[§a§l+§r§8] §e§o" + player.getName() + " §8(" + joinmessage + "§8/§c§l" + maxonlines + "§8)");
-        main.players.forEach(pu -> main.boards.get(pu).setLine(4, "§6§lSlots §6: §f" + Bukkit.getServer().getOnlinePlayers().size() + "§6/§e" + GameConfig.ConfigurableParams.SLOTS.getValue()));
+        main.players.forEach(pu -> main.boards.get(pu).setLine(4, "§6§lSlots §6: §f" + main.players.size() + "§6/§e" + maxonlines));
     }
 
 
@@ -139,6 +136,7 @@ public class PreGameListener implements Listener {
         if (action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK) || action.equals(Action.PHYSICAL))
             if (current.equals(UHC.getSpecTear())) {
                 main.spectators.add(player);
+                main.players.remove(main.getPlayerUHC(player));
                 player.setGameMode(GameMode.SPECTATOR);
                 player.setDisplayName("§8[§7Spectateur§8] §7" + player.getName());
                 player.setPlayerListName(player.getDisplayName());
@@ -146,6 +144,7 @@ public class PreGameListener implements Listener {
 
                 player.sendMessage(UHC.getPrefix() + "§6Vous avez établi votre mode de jeu en spectateur.");
                 player.sendMessage(UHC.getPrefix() + "§7Pour revenir au mode non-spectateur, utilisez la commande §6§l/uhc spec off§7.");
+                main.players.forEach(pu -> main.boards.get(pu).setLine(4, "§6§lSlots §6: §f" + main.players.size() + "§6/§e" + GameConfig.ConfigurableParams.SLOTS.getValue()));
             }
     }
 
@@ -383,7 +382,7 @@ public class PreGameListener implements Listener {
             it.setLore("§eJoueurs : ");
             for (int p = 0; p < GameConfig.getTeamTypeInt((String)TEAMTYPE.getValue()); p++)
                 if (t.getPlayers().size() - 1 >= p)
-                    it.addLore(t.getPrefix().color.getColor() + " - " + t.getListAlivePlayers().get(p).getPlayer().getPlayer().getPlayerListName());
+                    it.addLore(t.getPrefix().color.getColor() + " - " + t.getPlayers().get(p).getPlayer().getPlayer().getPlayerListName());
                 else it.addLore(t.getPrefix().color.getColor() + " - ");
             it.addLore("", "§b>>Cliquez rejoindre cette équipe.");
             inv.setItem(i, it.toItemStack());

@@ -55,7 +55,7 @@ public class OreLimiter extends Scenario implements Listener {
                 b.getWorld().dropItem(b.getLocation().add(0.5, 0.5, 0.5), new ItemStack(Material.GOLD_INGOT, o));
                 ExperienceOrb orb = b.getWorld().spawn(b.getLocation().add(0.5, 0.5, 0.5), ExperienceOrb.class);
                 orb.setExperience(e.getExpToDrop());
-                player.sendMessage(getPrefix() + "§bVous avez dépassé la limite de dimants. Vous avez reçu §6" + o + " d'or§b à place.");
+                player.sendMessage(getPrefix() + "§bVous avez dépassé la limite de diamants. Vous avez reçu §6" + o + " d'or§b à place.");
             } else if (up.getDiamonds() == diamonds)
                 player.sendMessage(getPrefix() + "§bLa limite de diamants a été atteinte. Désormais lorsque vous minerez du diamant, vous receverez 1 ou 2 ors.");
         if (b.getType().equals(Material.GOLD_ORE))
