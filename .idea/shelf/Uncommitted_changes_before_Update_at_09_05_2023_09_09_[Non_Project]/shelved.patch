@@ -1,0 +1,233 @@
+Index: .idea/artifacts/UHC_jar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><component name=\"ArtifactManager\">\r\n  <artifact name=\"UHC:jar\">\r\n    <output-path>$PROJECT_DIR$/classes/artifacts/UHC_jar</output-path>\r\n    <root id=\"root\">\r\n      <element id=\"archive\" name=\"UHC.jar\">\r\n        <element id=\"module-output\" name=\"UHC\" />\r\n      </element>\r\n    </root>\r\n  </artifact>\r\n</component>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/artifacts/UHC_jar.xml b/.idea/artifacts/UHC_jar.xml
+--- a/.idea/artifacts/UHC_jar.xml	(revision 10f7427f663abb8596bc166fe6d0ca3192c53353)
++++ b/.idea/artifacts/UHC_jar.xml	(date 1633004812202)
+@@ -1,6 +1,6 @@
+ <component name="ArtifactManager">
+   <artifact name="UHC:jar">
+-    <output-path>$PROJECT_DIR$/classes/artifacts/UHC_jar</output-path>
++    <output-path>$USER_HOME$/Documents/Programmation privée/Java/Minecraft/output plugins</output-path>
+     <root id="root">
+       <element id="archive" name="UHC.jar">
+         <element id="module-output" name="UHC" />
+Index: .idea/runConfigurations.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/runConfigurations.xml b/.idea/runConfigurations.xml
+new file mode 100644
+--- /dev/null	(date 1631885804079)
++++ b/.idea/runConfigurations.xml	(date 1631885804079)
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="RunConfigurationProducerService">
++    <option name="ignoredProducers">
++      <set>
++        <option value="com.android.tools.idea.compose.preview.runconfiguration.ComposePreviewRunConfigurationProducer" />
++      </set>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/libraries/spigot_1_8_8.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/libraries/spigot_1_8_8.xml b/.idea/libraries/spigot_1_8_8.xml
+new file mode 100644
+--- /dev/null	(date 1632137190187)
++++ b/.idea/libraries/spigot_1_8_8.xml	(date 1632137190187)
+@@ -0,0 +1,11 @@
++<component name="libraryTable">
++  <library name="spigot-1.8.8">
++    <CLASSES>
++      <root url="jar://$USER_HOME$/Documents/Programmation privée/Java/Minecraft/spigot-1.8.8.jar!/" />
++    </CLASSES>
++    <JAVADOC />
++    <SOURCES>
++      <root url="jar://$USER_HOME$/Documents/Programmation privée/Java/Minecraft/spigot-1.8.8.jar!/" />
++    </SOURCES>
++  </library>
++</component>
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"BranchesTreeState\">\r\n    <expand>\r\n      <path>\r\n        <item name=\"ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n        <item name=\"LOCAL_ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n      </path>\r\n      <path>\r\n        <item name=\"ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n        <item name=\"REMOTE_ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n      </path>\r\n      <path>\r\n        <item name=\"ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n        <item name=\"REMOTE_ROOT\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n        <item name=\"GROUP_NODE:origin\" type=\"e8cecc67:BranchNodeDescriptor\" />\r\n      </path>\r\n    </expand>\r\n    <select />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"7ce5b067-029d-4d78-abc3-13e99d4ca6f1\" name=\"Default Changelist\" comment=\"\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/fr/neyuux/uhc/UHC.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/fr/neyuux/uhc/UHC.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"1hCBeE4yYxOxS3Z0Ge9KQjhUWYk\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">\r\n    <property name=\"RunOnceActivity.OpenProjectViewOnStart\" value=\"true\" />\r\n    <property name=\"SHARE_PROJECT_CONFIGURATION_FILES\" value=\"true\" />\r\n    <property name=\"last_opened_file_path\" value=\"$PROJECT_DIR$\" />\r\n    <property name=\"project.structure.last.edited\" value=\"Modules\" />\r\n    <property name=\"project.structure.proportion\" value=\"0.0\" />\r\n    <property name=\"project.structure.side.proportion\" value=\"0.2\" />\r\n    <property name=\"settings.editor.selected.configurable\" value=\"0d570cb2-96df-43cc-80da-7f777e6d0afe\" />\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"7ce5b067-029d-4d78-abc3-13e99d4ca6f1\" name=\"Default Changelist\" comment=\"\" />\r\n      <created>1599505289816</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1599505289816</updated>\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n    <option name=\"oldMeFiltersMigrated\" value=\"true\" />\r\n  </component>\r\n  <component name=\"WindowStateProjectService\">\r\n    <state x=\"710\" y=\"444\" key=\"#com.intellij.ide.util.TreeClassChooserDialog\" timestamp=\"1621522323095\">\r\n      <screen x=\"0\" y=\"0\" width=\"1920\" height=\"1080\" />\r\n    </state>\r\n    <state x=\"710\" y=\"444\" key=\"#com.intellij.ide.util.TreeClassChooserDialog/0.0.1920.1080@0.0.1920.1080\" timestamp=\"1621522323095\" />\r\n    <state x=\"460\" y=\"228\" key=\"SettingsEditor\" timestamp=\"1621522829193\">\r\n      <screen x=\"0\" y=\"0\" width=\"1920\" height=\"1080\" />\r\n    </state>\r\n    <state x=\"460\" y=\"228\" key=\"SettingsEditor/0.0.1920.1080@0.0.1920.1080\" timestamp=\"1621522829193\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 10f7427f663abb8596bc166fe6d0ca3192c53353)
++++ b/.idea/workspace.xml	(date 1633074886418)
+@@ -1,5 +1,10 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="ArtifactsWorkspaceSettings">
++    <artifacts-to-build>
++      <artifact name="UHC:jar" />
++    </artifacts-to-build>
++  </component>
+   <component name="BranchesTreeState">
+     <expand>
+       <path>
+@@ -19,17 +24,48 @@
+     <select />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="7ce5b067-029d-4d78-abc3-13e99d4ca6f1" name="Default Changelist" comment="">
++    <list default="true" id="7ce5b067-029d-4d78-abc3-13e99d4ca6f1" name="Default Changelist" comment="few fix">
++      <change afterPath="$PROJECT_DIR$/.idea/libraries/spigot_1_8_8.xml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/artifacts/UHC_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/UHC_jar.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/UHC.iml" beforeDir="false" afterPath="$PROJECT_DIR$/UHC.iml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/GameConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/GameConfig.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/commands/CommandUHC.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/commands/CommandUHC.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/listeners/PreGameListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/listeners/PreGameListener.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/scenario/classes/modes/AssaultAndBattery.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/scenario/classes/modes/AssaultAndBattery.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/scenario/classes/modes/SlaveMarket$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/scenario/classes/modes/SlaveMarket$1.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/scenario/classes/modes/Switch$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/scenario/classes/modes/Switch$1.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/scenario/classes/modes/Switch.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/scenario/classes/modes/Switch.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/bin/fr/neyuux/uhc/teams/UHCTeam.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/fr/neyuux/uhc/teams/UHCTeam.class" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/UHC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/UHC.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/UHCWorld.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/UHCWorld.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/commands/CommandRevive.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/commands/CommandRevive.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/modes/AssaultAndBattery.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/scenario/classes/modes/AssaultAndBattery.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/fr/neyuux/uhc/util/PlayerSkin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fr/neyuux/uhc/util/PlayerSkin.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+     <option name="LAST_RESOLUTION" value="IGNORE" />
++  </component>
++  <component name="FileTemplateManagerImpl">
++    <option name="RECENT_TEMPLATES">
++      <list>
++        <option value="Class" />
++      </list>
++    </option>
+   </component>
+   <component name="Git.Settings">
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
++  </component>
++  <component name="GitSEFilterConfiguration">
++    <file-type-list>
++      <filtered-out-file-type name="LOCAL_BRANCH" />
++      <filtered-out-file-type name="REMOTE_BRANCH" />
++      <filtered-out-file-type name="TAG" />
++      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
++    </file-type-list>
+   </component>
+   <component name="ProjectId" id="1hCBeE4yYxOxS3Z0Ge9KQjhUWYk" />
+   <component name="ProjectViewState">
+@@ -38,10 +74,12 @@
+   </component>
+   <component name="PropertiesComponent">
+     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
++    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+-    <property name="project.structure.last.edited" value="Modules" />
+-    <property name="project.structure.proportion" value="0.0" />
++    <property name="jdk.selected.JAVA_MODULE" value="1.8" />
++    <property name="last_opened_file_path" value="$USER_HOME$/Documents/Programmation privée/Java/Minecraft/output plugins" />
++    <property name="project.structure.last.edited" value="Artifacts" />
++    <property name="project.structure.proportion" value="0.15" />
+     <property name="project.structure.side.proportion" value="0.2" />
+     <property name="settings.editor.selected.configurable" value="0d570cb2-96df-43cc-80da-7f777e6d0afe" />
+   </component>
+@@ -54,6 +92,28 @@
+       <option name="presentableId" value="Default" />
+       <updated>1599505289816</updated>
+     </task>
++    <task id="LOCAL-00001" summary="switch cours d'anglais">
++      <created>1632139598456</created>
++      <option name="number" value="00001" />
++      <option name="presentableId" value="LOCAL-00001" />
++      <option name="project" value="LOCAL" />
++      <updated>1632139598456</updated>
++    </task>
++    <task id="LOCAL-00002" summary="teamBalancing Switch">
++      <created>1632491285823</created>
++      <option name="number" value="00002" />
++      <option name="presentableId" value="LOCAL-00002" />
++      <option name="project" value="LOCAL" />
++      <updated>1632491285823</updated>
++    </task>
++    <task id="LOCAL-00003" summary="few fix">
++      <created>1633006277012</created>
++      <option name="number" value="00003" />
++      <option name="presentableId" value="LOCAL-00003" />
++      <option name="project" value="LOCAL" />
++      <updated>1633006277012</updated>
++    </task>
++    <option name="localTasksCounter" value="4" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
+@@ -68,14 +128,10 @@
+     </option>
+     <option name="oldMeFiltersMigrated" value="true" />
+   </component>
+-  <component name="WindowStateProjectService">
+-    <state x="710" y="444" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1621522323095">
+-      <screen x="0" y="0" width="1920" height="1080" />
+-    </state>
+-    <state x="710" y="444" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1621522323095" />
+-    <state x="460" y="228" key="SettingsEditor" timestamp="1621522829193">
+-      <screen x="0" y="0" width="1920" height="1080" />
+-    </state>
+-    <state x="460" y="228" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1621522829193" />
++  <component name="VcsManagerConfiguration">
++    <MESSAGE value="switch cours d'anglais" />
++    <MESSAGE value="teamBalancing Switch" />
++    <MESSAGE value="few fix" />
++    <option name="LAST_COMMIT_MESSAGE" value="few fix" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: UHC.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<module type=\"JAVA_MODULE\" version=\"4\">\r\n  <component name=\"EclipseModuleManager\">\r\n    <libelement value=\"jar://$MODULE_DIR$/../../Serv/spigot.jar!/\" />\r\n    <src_description expected_position=\"1\">\r\n      <src_folder value=\"file://$MODULE_DIR$/src\" expected_position=\"1\" />\r\n    </src_description>\r\n  </component>\r\n  <component name=\"NewModuleRootManager\" LANGUAGE_LEVEL=\"JDK_1_8\">\r\n    <output url=\"file://$MODULE_DIR$/bin\" />\r\n    <exclude-output />\r\n    <content url=\"file://$MODULE_DIR$\">\r\n      <sourceFolder url=\"file://$MODULE_DIR$/src\" isTestSource=\"false\" />\r\n    </content>\r\n    <orderEntry type=\"jdk\" jdkName=\"1.8\" jdkType=\"JavaSDK\" />\r\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\r\n    <orderEntry type=\"module-library\">\r\n      <library name=\"spigot.jar\">\r\n        <CLASSES>\r\n          <root url=\"jar://$MODULE_DIR$/../../Serv/spigot.jar!/\" />\r\n        </CLASSES>\r\n        <JAVADOC />\r\n        <SOURCES />\r\n      </library>\r\n    </orderEntry>\r\n    <orderEntry type=\"module\" module-name=\"UHC\" />\r\n  </component>\r\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/UHC.iml b/UHC.iml
+--- a/UHC.iml	(revision 10f7427f663abb8596bc166fe6d0ca3192c53353)
++++ b/UHC.iml	(date 1632224998811)
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <module type="JAVA_MODULE" version="4">
+   <component name="EclipseModuleManager">
+-    <libelement value="jar://$MODULE_DIR$/../../Serv/spigot.jar!/" />
++    <libelement value="jar://$USER_HOME$/Serv/spigot.jar!/" />
+     <src_description expected_position="1">
+       <src_folder value="file://$MODULE_DIR$/src" expected_position="1" />
+     </src_description>
+@@ -17,12 +17,13 @@
+     <orderEntry type="module-library">
+       <library name="spigot.jar">
+         <CLASSES>
+-          <root url="jar://$MODULE_DIR$/../../Serv/spigot.jar!/" />
++          <root url="jar://$USER_HOME$/Serv/spigot.jar!/" />
+         </CLASSES>
+         <JAVADOC />
+         <SOURCES />
+       </library>
+     </orderEntry>
+     <orderEntry type="module" module-name="UHC" />
++    <orderEntry type="library" name="spigot-1.8.8" level="project" />
+   </component>
+ </module>
+\ No newline at end of file
