@@ -178,6 +178,7 @@ public class PlayerUHC {
     public void heal() {
         health = maxHealth;
         foodLevel = 20;
+
         if (getPlayer().isOnline()) {
             getPlayer().getPlayer().setHealth(health);
             getPlayer().getPlayer().setFoodLevel(foodLevel);
