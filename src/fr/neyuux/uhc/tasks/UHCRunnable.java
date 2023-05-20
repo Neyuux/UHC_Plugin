@@ -1,24 +1,20 @@
 package fr.neyuux.uhc.tasks;
 
-import fr.neyuux.uhc.UHC;
-import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.GameConfig;
-import fr.neyuux.uhc.UHCWorld;
+import fr.neyuux.uhc.PlayerUHC;
+import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.scenario.classes.modes.Moles;
 import fr.neyuux.uhc.util.ScoreboardSign;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class UHCRunnable extends BukkitRunnable {
@@ -209,7 +205,7 @@ public class UHCRunnable extends BukkitRunnable {
                 else
                     en.getValue().removeLine(8);
 
-                en.getValue().setLine(10, "§b§lTaille de la bordure §b: " + Symbols.PLUS_MINUS + "§3" +  df.format(Bukkit.getWorld(main.world.getSeed() + "").getWorldBorder().getSize() / 2.0));
+                en.getValue().setLine(10, "§b§lTaille de la bordure §b: " + Symbols.PLUS_MINUS + "§3" +  Math.round(Bukkit.getWorld(main.world.getSeed() + "").getWorldBorder().getSize() / 2.0f));
 
             } else if (main.mode.equals(UHC.Modes.LG)) {
                 en.getValue().setLine(8, "§6§lTimer §6: §e§l" + UHC.getTimer(timer));
@@ -223,7 +219,7 @@ public class UHCRunnable extends BukkitRunnable {
                     en.getValue().setLine(10, "§6§lBordure §6: §3§l" + UHC.getTimer(borderTimer));
                 else
                     en.getValue().removeLine(10);
-                en.getValue().setLine(12, "§b§lTaille de la bordure §b: " + Symbols.PLUS_MINUS + "§3" + df.format(Bukkit.getWorld(main.world.getSeed() + "").getWorldBorder().getSize() / 2.0));
+                en.getValue().setLine(12, "§b§lTaille de la bordure §b: " + Symbols.PLUS_MINUS + "§3" + Math.round(Bukkit.getWorld(main.world.getSeed() + "").getWorldBorder().getSize() / 2.0f));
             }
         }
     }

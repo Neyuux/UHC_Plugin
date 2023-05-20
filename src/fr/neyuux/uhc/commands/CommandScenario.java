@@ -15,12 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 
 public class CommandScenario implements CommandExecutor {
 
-    private final UHC main;
-
-    public CommandScenario(UHC UHC) {
-        this.main = UHC;
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
 

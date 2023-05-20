@@ -43,7 +43,6 @@ public class FightListener implements Listener {
         this.main = main;
     }
 
-
     @EventHandler(priority = EventPriority.NORMAL)
     public void onDamage(EntityDamageEvent ev) {
         Entity e = ev.getEntity();

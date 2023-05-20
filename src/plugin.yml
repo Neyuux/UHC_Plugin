@@ -1,6 +1,6 @@
 main: fr.neyuux.uhc.UHC
 name: UHC
-version: '1.0.4'
+version: '1.0.5'
 description: Plugin UHC
 author: Neyuux_
 prefix: UHC

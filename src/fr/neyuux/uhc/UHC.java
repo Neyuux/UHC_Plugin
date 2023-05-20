@@ -21,10 +21,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -115,8 +113,6 @@ public class UHC extends JavaPlugin {
 		pm.registerEvents(new ArmorListener(Collections.emptyList()), this);
 
 		instance = this;
-		this.config = new GameConfig(this, Modes.UHC);
-		pm.registerEvents(this.config, this);
 		System.out.println("UHC enabling");
 
 		File file = new File(getDataFolder(), "config.yml");
@@ -134,13 +130,15 @@ public class UHC extends JavaPlugin {
 		getCommand("heal").setExecutor(new CommandHeal(this));
 		getCommand("finish").setExecutor(new CommandFinish(this));
 		getCommand("enchant").setExecutor(new CommandEnchant(this));
-		getCommand("scenario").setExecutor(new CommandScenario(this));
+		getCommand("scenario").setExecutor(new CommandScenario());
 		getCommand("helpop").setExecutor(new CommandHelpOp(this));
 
 		pm.addPermission(new Permission("uhc.host"));
 
 		reloadScoreboard();
 		rel();
+
+		pm.registerEvents(this.config, this);
 
 		super.onEnable();
 	}
