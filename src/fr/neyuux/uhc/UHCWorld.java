@@ -43,7 +43,7 @@ public class UHCWorld {
 
 
     public UHCWorld create() {
-        Long seed = (long)0;
+        Long seed = 0L;
         if (main.mode.equals(UHC.Modes.UHC))
             seed = yconfig.getLongList("uhc_maps").get(new Random().nextInt(yconfig.getLongList("uhc_maps").size()));
         else if (main.mode.equals(UHC.Modes.LG))

@@ -13,6 +13,7 @@ import fr.neyuux.uhc.teams.UHCTeam;
 import fr.neyuux.uhc.teams.UHCTeamManager;
 import fr.neyuux.uhc.util.ItemsStack;
 import fr.neyuux.uhc.util.ScoreboardSign;
+import fr.neyuux.uhc.util.nms.NMSPatcher;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
@@ -78,6 +79,7 @@ public class UHC extends JavaPlugin {
 	public void changeMode(Modes mode) {
 		this.mode = mode;
 		prefix = mode.getPrefix();
+
 		this.world.delete();
 		rel();
 	}
@@ -104,6 +106,14 @@ public class UHC extends JavaPlugin {
 			if (System.getProperty("RELOAD").equals("TRUE"))
 				return;
 
+		NMSPatcher patcher = new NMSPatcher();
+
+		try {
+			patcher.patchBiomes();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Bukkit.broadcastMessage("§4[§cErreur§4]§c Impossible de patch les biomes.");
+		}
 
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new PreGameListener(this), this);
