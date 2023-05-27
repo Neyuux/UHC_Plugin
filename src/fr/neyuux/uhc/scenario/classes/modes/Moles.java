@@ -79,58 +79,72 @@ public class Moles extends Scenario implements Listener {
             @Override
             public void run() {
                 if (!hasChoosedMoles) {
-                    if (IGtimers[0] == 900)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 15 minutes !");
-                    else if (IGtimers[0] == 600)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 10 minutes !");
-                    else if (IGtimers[0] == 300)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 5 minutes !");
-                    else if (IGtimers[0] == 60)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 1 minute !");
-                    else if (IGtimers[0] == 30)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 30 secondes !");
-                    else if (IGtimers[0] == 10)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 10 secondes !");
-                    else if (IGtimers[0] > 1 && IGtimers[0] < 5)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans " + IGtimers[0] + " secondes !");
-                    else if (IGtimers[0] == 1)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 1 seconde !");
-                    IGtimers[0]--;
-                    if (IGtimers[0] == -1) {
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes...");
-                        giveMoles();
+                    switch (IGtimers[0]) {
+                        case 900:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 15 minutes !");
+                            break;
+                        case 600:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 10 minutes !");
+                            break;
+                        case 300:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 5 minutes !");
+                            break;
+                        case 60:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 1 minute !");
+                            break;
+                        case 30:
+                        case 10:
+                        case 4:
+                        case 3:
+                        case 2:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans " + IGtimers[0] + " secondes !");
+                            break;
+                        case 1:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes dans 1 seconde !");
+                            break;
+                        case 0:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des taupes...");
+                            giveMoles();
 
-                        IGtimers[0] = Moles.timer;
-                        hasChoosedMoles = true;
+                            IGtimers[0] = Moles.timer;
+                            hasChoosedMoles = true;
+                            break;
                     }
                 }
                 
                 
                 if (hasChoosedMoles && !hasChoosedSuperMoles && superMoles) {
-                    if (IGtimers[1] == 900)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 15 minutes !");
-                    else if (IGtimers[1] == 600)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 10 minutes !");
-                    else if (IGtimers[1] == 300)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 5 minutes !");
-                    else if (IGtimers[1] == 60)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 1 minute !");
-                    else if (IGtimers[1] == 30)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 30 secondes !");
-                    else if (IGtimers[1] == 10)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 10 secondes !");
-                    else if (IGtimers[1] > 1 && IGtimers[1] < 5)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans " + IGtimers[1] + " secondes !");
-                    else if (IGtimers[1] == 1)
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 1 seconde !");
-                    IGtimers[1]--;
-                    if (IGtimers[1] == -1) {
-                        Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e...");
-                        giveSuperMoles();
+                    switch (IGtimers[0]) {
+                        case 900:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 15 minutes !");
+                            break;
+                        case 600:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 10 minutes !");
+                            break;
+                        case 300:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 5 minutes !");
+                            break;
+                        case 60:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 1 minute !");
+                            break;
+                        case 30:
+                        case 10:
+                        case 4:
+                        case 3:
+                        case 2:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans " + IGtimers[1] + " secondes !");
+                            break;
+                        case 1:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 1 seconde !");
+                            break;
+                        case 0:
+                            Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e...");
+                            giveSuperMoles();
 
-                        IGtimers[1] = (int) (Moles.timer * 1.5);
-                        hasChoosedSuperMoles = true;
-                        cancel();
+                            IGtimers[1] = (int) (Moles.timer * 1.5);
+                            hasChoosedSuperMoles = true;
+                            cancel();
+                            break;
                     }
                 } else if (!superMoles && hasChoosedMoles) cancel();
                 
@@ -335,11 +349,29 @@ public class Moles extends Scenario implements Listener {
 
     public enum Kits {
 
-        AERIEN("§fAerien", ENDER_PEARL, Arrays.asList(new ItemStack(ENDER_PEARL, 16), new ItemsStack(ENCHANTED_BOOK).toItemStackWithEnchant(new AbstractMap.SimpleEntry<>(Enchantment.PROTECTION_FALL, 4)), new ItemStack(FEATHER, 8))),
-        ALCHIMISTE("§eAlchimiste", BREWING_STAND_ITEM, Arrays.asList(getPotion(PotionEffectType.HARM, 1, 0, true, true, PotionType.INSTANT_DAMAGE), getPotion(PotionEffectType.POISON, 33, 0, true, true, PotionType.POISON), getPotion(PotionEffectType.WEAKNESS, 60, 0, true, true, PotionType.WEAKNESS), getPotion(PotionEffectType.SLOW, 60, 0, true, true, PotionType.SLOWNESS))),
-        MINEUR("§7Mineur", DIAMOND_PICKAXE, Arrays.asList(new ItemsStack(DIAMOND_PICKAXE).toItemStackWithEnchant(new AbstractMap.SimpleEntry<>(Enchantment.DIG_SPEED, 3)), new ItemStack(EXP_BOTTLE, 8))),
-        PYROMANE("§6Pyromane", BLAZE_POWDER, Arrays.asList(new ItemsStack(FLINT_AND_STEEL).toItemStack(), new ItemsStack(LAVA_BUCKET).toItemStack(), new ItemsStack(ENCHANTED_BOOK).toItemStackWithEnchant(new AbstractMap.SimpleEntry<>(Enchantment.ARROW_FIRE, 1), new AbstractMap.SimpleEntry<>(Enchantment.FIRE_ASPECT, 1)))),
-        SUPPORT("§dSupport", GOLDEN_APPLE, Arrays.asList(getPotion(PotionEffectType.HEAL, 1, 0, true, true, PotionType.INSTANT_HEAL), getPotion(PotionEffectType.INCREASE_DAMAGE, 30, 0, true, false, PotionType.STRENGTH), getPotion(PotionEffectType.REGENERATION, 33, 0, true, true, PotionType.REGEN), getPotion(PotionEffectType.SPEED, 45, 0, true, true, PotionType.SPEED)));
+        AERIEN("§fAerien", ENDER_PEARL, Arrays.asList(
+                new ItemStack(ENDER_PEARL, 16),
+                new ItemsStack(ENCHANTED_BOOK).toItemStackWithEnchant(new AbstractMap.SimpleEntry<>(Enchantment.PROTECTION_FALL, 4)),
+                new ItemStack(FEATHER, 8))),
+        ALCHIMISTE("§eAlchimiste", BREWING_STAND_ITEM, Arrays.asList(
+                getPotion(PotionEffectType.HARM, 1, 0, true, true, PotionType.INSTANT_DAMAGE),
+                getPotion(PotionEffectType.POISON, 33, 0, true, true, PotionType.POISON),
+                getPotion(PotionEffectType.WEAKNESS, 60, 0, true, true, PotionType.WEAKNESS),
+                getPotion(PotionEffectType.SLOW, 60, 0, true, true, PotionType.SLOWNESS))),
+        MINEUR("§7Mineur", DIAMOND_PICKAXE, Arrays.asList(
+                new ItemsStack(DIAMOND_PICKAXE).toItemStackWithEnchant(new AbstractMap.SimpleEntry<>(Enchantment.DIG_SPEED, 3)),
+                new ItemStack(EXP_BOTTLE, 8))),
+        PYROMANE("§6Pyromane", BLAZE_POWDER, Arrays.asList(
+                new ItemsStack(FLINT_AND_STEEL).toItemStack(),
+                new ItemsStack(LAVA_BUCKET).toItemStack(),
+                new ItemsStack(ENCHANTED_BOOK).toItemStackWithEnchant(
+                        new AbstractMap.SimpleEntry<>(Enchantment.ARROW_FIRE, 1),
+                        new AbstractMap.SimpleEntry<>(Enchantment.FIRE_ASPECT, 1)))),
+        SUPPORT("§dSupport", GOLDEN_APPLE, Arrays.asList(
+                getPotion(PotionEffectType.HEAL, 1, 0, true, true, PotionType.INSTANT_HEAL),
+                getPotion(PotionEffectType.INCREASE_DAMAGE, 30, 0, true, false, PotionType.STRENGTH),
+                getPotion(PotionEffectType.REGENERATION, 33, 0, true, true, PotionType.REGEN),
+                getPotion(PotionEffectType.SPEED, 45, 0, true, true, PotionType.SPEED)));
 
 
         Kits(String name, Material material, List<ItemStack> kit) {
