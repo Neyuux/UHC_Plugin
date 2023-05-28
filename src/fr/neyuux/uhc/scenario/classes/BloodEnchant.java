@@ -39,7 +39,7 @@ public class BloodEnchant extends Scenario implements Listener {
 
     @EventHandler
     public void onEnchant(EnchantItemEvent ev) {
-        PlayerUHC pu = UHC.getInstance().getPlayerUHC(ev.getEnchanter());
+        PlayerUHC pu = UHC.getInstance().getPlayerUHC(ev.getEnchanter().getUniqueId());
         if (pu.isAlive()) {
             ev.getEnchanter().damage(0);
             if (ev.getEnchanter().getHealth() > damage * 2.0) ev.getEnchanter().setHealth(ev.getEnchanter().getHealth() - damage * 2.0);

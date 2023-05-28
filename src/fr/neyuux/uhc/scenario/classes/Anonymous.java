@@ -83,7 +83,7 @@ public class Anonymous extends Scenario implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
-        if(!main.getPlayerUHC(p).isSpec()) changeNameAndSkin(p, "§kAnonymous" + used + "§r", usedName);
+        if(!main.getPlayerUHC(p.getUniqueId()).isSpec()) changeNameAndSkin(p, "§kAnonymous" + used + "§r", usedName);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -120,15 +120,15 @@ public class Anonymous extends Scenario implements Listener {
 
 
     public static void changeNameAndSkin(Player p, String customName, String skinName) {
-        realName.put(main.getPlayerUHC(p), p.getName());
+        realName.put(main.getPlayerUHC(p.getUniqueId()), p.getName());
 
         UHCTeam t = null;
-        if (main.getPlayerUHC(p).getTeam() != null) {
-            t = main.getPlayerUHC(p).getTeam();
-            main.getPlayerUHC(p).getTeam().leave(main.getPlayerUHC(p));
+        if (main.getPlayerUHC(p.getUniqueId()).getTeam() != null) {
+            t = main.getPlayerUHC(p.getUniqueId()).getTeam();
+            main.getPlayerUHC(p.getUniqueId()).getTeam().leave(main.getPlayerUHC(p.getUniqueId()));
 
         } else {
-            if (main.getPlayerUHC(p).isHost())
+            if (main.getPlayerUHC(p.getUniqueId()).isHost())
                 Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Host").removeEntry(p.getName());
         }
 
@@ -150,7 +150,7 @@ public class Anonymous extends Scenario implements Listener {
                 pl.hidePlayer(p);
                 pl.showPlayer(p);
             }
-            main.getPlayerUHC(p).setPlayer(p);
+            main.getPlayerUHC(p.getUniqueId()).setPlayer(p);
             if (t != null) t.add(p);
             reloadSkinForSelf(p);
         } catch (Exception e) {

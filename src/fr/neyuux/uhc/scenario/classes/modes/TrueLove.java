@@ -84,7 +84,7 @@ public class TrueLove extends Scenario implements Listener {
                     if (!lovers.contains(playerUHC) && playerUHC.getPlayer().isOnline()) {
                         for (Entity ent : playerUHC.getPlayer().getPlayer().getNearbyEntities(40, 40, 40))
                             if (ent.getType().equals(EntityType.PLAYER)) {
-                                PlayerUHC euhc = UHC.getInstance().getPlayerUHC((Player)ent);
+                                PlayerUHC euhc = UHC.getInstance().getPlayerUHC(ent.getUniqueId());
                                 if (euhc.isAlive() && !euhc.isSpec() && !lovers.contains(euhc)) {
                                     if (playerUHC.getTeam() != null && euhc.getTeam() != null && playerUHC.getTeam().hasPlayer(euhc)) continue;
                                     love(playerUHC, euhc);
@@ -114,7 +114,7 @@ public class TrueLove extends Scenario implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent ev) {
         Player player = ev.getPlayer();
-        PlayerUHC playerUHC = UHC.getInstance().getPlayerUHC(player);
+        PlayerUHC playerUHC = UHC.getInstance().getPlayerUHC(player.getUniqueId());
 
         if (playerUHC.isAlive() && !playerUHC.isSpec() && waitList.containsKey(playerUHC)) {
             waitList.get(playerUHC).add(player);

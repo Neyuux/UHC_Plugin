@@ -49,7 +49,7 @@ public class Paranoia extends Scenario implements Listener {
         Player p = ev.getPlayer();
         Location l = p.getLocation();
         Block b = ev.getBlock();
-        if (!ev.isCancelled() && UHC.getInstance().getPlayerUHC(p).isAlive()) {
+        if (!ev.isCancelled() && UHC.getInstance().getPlayerUHC(p.getUniqueId()).isAlive()) {
             if (hasMineDiamond && b.getType().equals(Material.DIAMOND_ORE))
                 Bukkit.broadcastMessage(getPrefix() + p.getDisplayName() + " §ba miné du diamant en : §b§lX§b:§3 " + l.getBlockX() + " §b; §lY§b:§3 " + l.getBlockY() + " §b; §lZ§b:§3 " + l.getBlockZ() + " §b; §lMonde§b:§3 " + l.getWorld().getEnvironment().name());
             if (hasMineGold && b.getType().equals(Material.GOLD_ORE))
@@ -63,7 +63,7 @@ public class Paranoia extends Scenario implements Listener {
             Player p = (Player)ev.getWhoClicked();
             Location l = p.getLocation();
             Material m = ev.getCurrentItem().getType();
-            if (!ev.isCancelled() && UHC.getInstance().getPlayerUHC(p).isAlive()) {
+            if (!ev.isCancelled() && UHC.getInstance().getPlayerUHC(p.getUniqueId()).isAlive()) {
                 if (hasCraftEnchant && m.equals(Material.ENCHANTMENT_TABLE))
                     Bukkit.broadcastMessage(getPrefix() + p.getDisplayName() + " §da craft une table d'enchantement en : §d§lX§d:§5 " + l.getBlockX() + " §d; §lY§d:§5 " + l.getBlockY() + " §d; §lZ§d:§5 " + l.getBlockZ() + " §d; §lMonde§d:§5 " + l.getWorld().getEnvironment().name());
                 if (hasCraftAnvil && m.equals(Material.ANVIL))
@@ -86,7 +86,7 @@ public class Paranoia extends Scenario implements Listener {
     public void onParanoPortalTravel(PlayerPortalEvent ev) {
         Player p = ev.getPlayer();
         Location l = ev.getFrom();
-        if (!ev.isCancelled() && hasPortalTravel && UHC.getInstance().getPlayerUHC(p).isAlive())
+        if (!ev.isCancelled() && hasPortalTravel && UHC.getInstance().getPlayerUHC(p.getUniqueId()).isAlive())
             Bukkit.broadcastMessage(getPrefix() + p.getDisplayName() + " §aa traversé un portail en : §a§lX§a:§2 " + l.getBlockX() + " §a; §lY§a:§2 " + l.getBlockY() + " §a; §lZ§a:§2 " + l.getBlockZ() + " §a; §lMonde§a:§2 " + l.getWorld().getEnvironment().name());
     }
     
@@ -95,7 +95,7 @@ public class Paranoia extends Scenario implements Listener {
         Player p = ev.getPlayer();
         Location l = p.getLocation();
         ItemStack it = ev.getItem();
-        if (!ev.isCancelled() && UHC.getInstance().getPlayerUHC(p).isAlive()) {
+        if (!ev.isCancelled() && UHC.getInstance().getPlayerUHC(p.getUniqueId()).isAlive()) {
             if (hasUseGoldenApple && it.getType().equals(Material.GOLDEN_APPLE) && !it.getItemMeta().hasLore())
                 Bukkit.broadcastMessage(getPrefix() + p.getDisplayName() + " §ea mangé une pomme en or en : §e§lX§e:§6 " + l.getBlockX() + " §e; §lY§e:§6 " + l.getBlockY() + " §e; §lZ§e:§6 " + l.getBlockZ() + " §e; §lMonde§e:§6 " + l.getWorld().getEnvironment().name());
             if (hasUseGoldenHead && it.getType().equals(Material.GOLDEN_APPLE) && it.getItemMeta().hasLore())

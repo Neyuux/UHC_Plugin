@@ -90,7 +90,7 @@ public class SuperHeroes extends Scenario implements Listener {
     @EventHandler
     public void onJBFallDamage(EntityDamageEvent ev) {
         if (ev.getEntityType().equals(EntityType.PLAYER) && ev.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
-            PlayerUHC pu = UHC.getInstance().getPlayerUHC((Player)ev.getEntity());
+            PlayerUHC pu = UHC.getInstance().getPlayerUHC(ev.getEntity().getUniqueId());
             if (pu.isAlive() && powers.containsKey(pu) && powers.get(pu).equals(PotionEffectType.JUMP)) ev.setCancelled(true);
         }
     }
@@ -98,7 +98,7 @@ public class SuperHeroes extends Scenario implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void nerfRez(EntityDamageEvent ev) {
         if (ev.getEntityType().equals(EntityType.PLAYER)) {
-            PlayerUHC pu = UHC.getInstance().getPlayerUHC((Player)ev.getEntity());
+            PlayerUHC pu = UHC.getInstance().getPlayerUHC(ev.getEntity().getUniqueId());
             if (pu.isAlive() && powers.containsKey(pu) && powers.get(pu).equals(PotionEffectType.DAMAGE_RESISTANCE)) {
                 ev.setDamage(EntityDamageEvent.DamageModifier.RESISTANCE, -(ev.getDamage() * 0.3));
 
@@ -108,8 +108,10 @@ public class SuperHeroes extends Scenario implements Listener {
 
     @EventHandler
     public void onJoinNeedPower(PlayerJoinEvent ev) {
-        if (needPower.containsKey(UHC.getInstance().getPlayerUHC(ev.getPlayer()))) {
-            addPower(UHC.getInstance().getPlayerUHC(ev.getPlayer()), needPower.get(UHC.getInstance().getPlayerUHC(ev.getPlayer())));
+        PlayerUHC playerUHC = UHC.getInstance().getPlayerUHC(ev.getPlayer().getUniqueId());
+
+        if (needPower.containsKey(playerUHC)) {
+            addPower(playerUHC, needPower.get(playerUHC));
         }
     }
 

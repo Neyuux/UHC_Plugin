@@ -34,7 +34,8 @@ public class Switch extends Scenario implements Listener {
 
     @Override
     protected void activate() {
-
+        if (GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA"))
+            UHC.sendHostMessage(UHC.getPrefix() + "§cVeuillez ajouter des équipes pour que le plugin " + scenario.getDisplayName() + " §cpuisse fonctionner.");
     }
 
     @Override
@@ -42,7 +43,6 @@ public class Switch extends Scenario implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, UHC.getInstance());
         Scenario.handlers.add(this);
 
-        getNewTimer();
         this.getNewTimer();
         new BukkitRunnable() {
             @Override
@@ -163,7 +163,7 @@ public class Switch extends Scenario implements Listener {
 
 
     private void getNewTimer() {
-        IGtimers[0] = switchFrequency - randomTimeLimit + new SecureRandom().nextInt(randomTimeLimit + 1);
+        IGtimers[0] = (firstSwitch != 0 ? firstSwitch : switchFrequency) - randomTimeLimit + new SecureRandom().nextInt(randomTimeLimit + 1);
         this.checkTimerLimit();
     }
 

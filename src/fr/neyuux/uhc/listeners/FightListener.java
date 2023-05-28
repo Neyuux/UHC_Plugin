@@ -50,7 +50,7 @@ public class FightListener implements Listener {
 
         if (e.getType().equals(EntityType.PLAYER) && main.isState(Gstate.PLAYING)) {
             Player player = (Player)e;
-            PlayerUHC playerUHC = main.getPlayerUHC(player);
+            PlayerUHC playerUHC = main.getPlayerUHC(player.getUniqueId());
 
             if (playerUHC.isInvulnerable()) ev.setCancelled(true);
             if (ev.isCancelled()) return;
@@ -72,7 +72,7 @@ public class FightListener implements Listener {
 
         if (e.getType().equals(EntityType.PLAYER) && main.isState(Gstate.PLAYING)) {
             Player player = (Player) e;
-            PlayerUHC playerUHC = main.getPlayerUHC(player);
+            PlayerUHC playerUHC = main.getPlayerUHC(player.getUniqueId());
 
             if (d.getType().equals(EntityType.ARROW) && ((Arrow)d).getShooter() instanceof Player){
                 Player dp = (Player)((Arrow)d).getShooter();
@@ -108,7 +108,7 @@ public class FightListener implements Listener {
             main.spectators.add(player);
             player.setDisplayName("§8[§7Spectateur§8] §7" + player.getName());
             player.setPlayerListName(player.getDisplayName());
-            main.getPlayerUHC(player).heal();
+            main.getPlayerUHC(player.getUniqueId()).heal();
             player.sendMessage(UHC.getPrefix() + "§6Votre mode de jeu à été établi en spectateur.");
         }
     }
@@ -314,7 +314,7 @@ public class FightListener implements Listener {
     }
 
     public void eliminate(Player player, boolean saveStuff, Player killer, String deathMessage) {
-        PlayerUHC up = main.getPlayerUHC(player);
+        PlayerUHC up = main.getPlayerUHC(player.getUniqueId());
         up.setAlive(false);
 
         if(saveStuff) {
@@ -350,7 +350,7 @@ public class FightListener implements Listener {
         }
 
         PlayerEliminationEvent ev;
-        if (killer != null) ev = new PlayerEliminationEvent(up, main.getPlayerUHC(killer), up.getLastLocation(), deathMessage);
+        if (killer != null) ev = new PlayerEliminationEvent(up, main.getPlayerUHC(killer.getUniqueId()), up.getLastLocation(), deathMessage);
         else ev = new PlayerEliminationEvent(up, null, up.getLastLocation(), deathMessage);
         Bukkit.getPluginManager().callEvent(ev);
 
@@ -373,7 +373,7 @@ public class FightListener implements Listener {
         }
 
         if (killer != null){
-            PlayerUHC killerUHC = main.getPlayerUHC(killer);
+            PlayerUHC killerUHC = main.getPlayerUHC(killer.getUniqueId());
             killerUHC.addKill();
             if (killerUHC.getTeam() != null)
                 for (PlayerUHC pu : killerUHC.getTeam().getAlivePlayers())

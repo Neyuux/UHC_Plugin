@@ -60,7 +60,7 @@ public class WorldListener implements Listener {
         if(b.getType() == Material.QUARTZ_ORE && (boolean)GameConfig.ConfigurableParams.QUARTZ_XP_NERF.getValue())
             e.setExpToDrop(e.getExpToDrop() / 2);
 
-        PlayerUHC up = main.getPlayerUHC(player);
+        PlayerUHC up = main.getPlayerUHC(player.getUniqueId());
         if (b.getType() == Material.DIAMOND_ORE) up.addDiamonds(1);
         else if (b.getType() == Material.GOLD_ORE) up.addGolds(1);
         else if (b.getType() == Material.IRON_ORE) up.addIrons(1);
@@ -103,7 +103,7 @@ public class WorldListener implements Listener {
         if(entity.getKiller().getType() != EntityType.PLAYER) return;
 
         Player killer = e.getEntity().getKiller();
-        PlayerUHC up = main.getPlayerUHC(killer);
+        PlayerUHC up = main.getPlayerUHC(killer.getUniqueId());
 
         if(type == EntityType.CHICKEN || type == EntityType.COW || type == EntityType.HORSE || type == EntityType.SHEEP || type == EntityType.RABBIT
                 || type == EntityType.MUSHROOM_COW || type == EntityType.PIG || type == EntityType.WOLF || type == EntityType.OCELOT || type == EntityType.SQUID)

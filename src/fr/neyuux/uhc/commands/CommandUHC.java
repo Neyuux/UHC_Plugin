@@ -49,7 +49,7 @@ public class CommandUHC implements CommandExecutor {
 
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            PlayerUHC playerUHC = main.getPlayerUHC(player);
+            PlayerUHC playerUHC = main.getPlayerUHC(player.getUniqueId());
             if (args.length > 0) {
 
                 switch (args[0].toLowerCase()) {
@@ -261,7 +261,7 @@ public class CommandUHC implements CommandExecutor {
                                     if (args.length > 2) {
                                         Player p = Bukkit.getPlayer(args[2]);
                                         if (p != null) {
-                                            if (!main.getPlayerUHC(p).isHost()) {
+                                            if (!main.getPlayerUHC(p.getUniqueId()).isHost()) {
                                                 main.setPlayerHost(p, true);
                                                 Bukkit.broadcastMessage(UHC.getPrefix() + "§a§l" + p.getName() + " §6a été promu §lHost §6de la partie !");
                                             } else player.sendMessage(UHC.getPrefix() + "§cCe joueur est déjà §6§lHost §cde la partie !");

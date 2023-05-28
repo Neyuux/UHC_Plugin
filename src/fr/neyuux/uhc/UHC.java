@@ -21,7 +21,6 @@ import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.PluginManager;
@@ -164,9 +163,9 @@ public class UHC extends JavaPlugin {
 	}
 
 
-	public PlayerUHC getPlayerUHC(OfflinePlayer player) {
+	public PlayerUHC getPlayerUHC(UUID uuid) {
 		for (PlayerUHC pu : this.players)
-			if (pu.getPlayer().getUniqueId().equals(player.getUniqueId()))
+			if (pu.getPlayer().getUniqueId().equals(uuid))
 				return pu;
 
 		return null;
@@ -201,25 +200,25 @@ public class UHC extends JavaPlugin {
 	}
 
 	public void setLobbyScoreboard(Player player) {
-		if (this.boards.containsKey(getPlayerUHC(player))) this.boards.get(getPlayerUHC(player)).destroy();
+		if (this.boards.containsKey(getPlayerUHC(player.getUniqueId()))) this.boards.get(getPlayerUHC(player.getUniqueId())).destroy();
 		ScoreboardSign ss = new ScoreboardSign(player, getPrefixWithoutArrow());
 		ss.create();
 		ss.setLine(0, player.getDisplayName());
 		if (this.mode.equals(Modes.UHC)) {
 			ss.setLine(1, "ß0");
-			ss.setLine(2, "ßeßl…quipe ße: " +(getPlayerUHC(player).getTeam() != null ? getPlayerUHC(player).getTeam().getTeam().getDisplayName() : "ßcAucune"));
+			ss.setLine(2, "ßeßl…quipe ße: " +(getPlayerUHC(player.getUniqueId()).getTeam() != null ? getPlayerUHC(player.getUniqueId()).getTeam().getTeam().getDisplayName() : "ßcAucune"));
 		}
 		ss.setLine(3, "ß4");
 		ss.setLine(4, "ß6ßlJoueurs ß6: ßf" + this.players.size() + "ß6/ße" + GameConfig.ConfigurableParams.SLOTS.getValue());
 		ss.setLine(5, "ß8------------");
 		ss.setLine(6, "ß5ßoMap by ßcßlßoNeyuux_");
-		this.boards.put(getPlayerUHC(player), ss);
+		this.boards.put(getPlayerUHC(player.getUniqueId()), ss);
 	}
 
 	public void setGameScoreboard(Player player) {
-		if (this.boards.containsKey(getPlayerUHC(player))) this.boards.get(getPlayerUHC(player)).destroy();
+		if (this.boards.containsKey(getPlayerUHC(player.getUniqueId()))) this.boards.get(getPlayerUHC(player.getUniqueId())).destroy();
 		ScoreboardSign ss = new ScoreboardSign(player, getPrefixWithoutArrow());
-		PlayerUHC playerUHC = getPlayerUHC(player);
+		PlayerUHC playerUHC = getPlayerUHC(player.getUniqueId());
 		ss.create();
 		ss.setLine(0, player.getDisplayName());
 		if (this.mode.equals(Modes.UHC)) {
@@ -259,7 +258,7 @@ public class UHC extends JavaPlugin {
 	}
 
 	public void setKillsScoreboard(Player player) {
-		if (this.boards.containsKey(getPlayerUHC(player))) this.boards.get(getPlayerUHC(player)).destroy();
+		if (this.boards.containsKey(getPlayerUHC(player.getUniqueId()))) this.boards.get(getPlayerUHC(player.getUniqueId())).destroy();
 		ScoreboardSign scoreboard = new ScoreboardSign(player, "ß4ßlKills");
 		scoreboard.create();
 		int limit = 0;
@@ -284,7 +283,7 @@ public class UHC extends JavaPlugin {
 			}
 			limit++;
 		}
-		this.boards.put(getPlayerUHC(player), scoreboard);
+		this.boards.put(getPlayerUHC(player.getUniqueId()), scoreboard);
 	}
 
 	public static int adaptInvSizeForInt(int toAdapt, int marge) {
@@ -414,8 +413,8 @@ public class UHC extends JavaPlugin {
 	public void setHealth(Player player) {
 		if(!(boolean)GameConfig.ConfigurableParams.SCOREBOARD_LIFE.getValue()) return;
 
-		if(Scenarios.TEAM_HEALTH.isActivated() && getPlayerUHC(player).getTeam() != null) {
-			UHCTeam team = getPlayerUHC(player).getTeam();
+		if(Scenarios.TEAM_HEALTH.isActivated() && getPlayerUHC(player.getUniqueId()).getTeam() != null) {
+			UHCTeam team = getPlayerUHC(player.getUniqueId()).getTeam();
 
 			for(PlayerUHC pu : team.getAlivePlayers()) {
 				Bukkit.getScoreboardManager().getMainScoreboard().getObjective("health").getScore(pu.getPlayer().getName()).setScore((int)team.getHealth());
@@ -429,7 +428,7 @@ public class UHC extends JavaPlugin {
 		if (isHost) {
 			if (!this.whitelist.contains(player)) this.whitelist.add(player);
 			if (!this.config.hosts.contains(player.getUniqueId())) this.config.hosts.add(player.getUniqueId());
-			if (!this.getPlayerUHC(player).isSpec()) {
+			if (!this.getPlayerUHC(player.getUniqueId()).isSpec()) {
 				if (scoreboard.getTeam("Joueur").hasEntry(player.getName())) {
 					scoreboard.getTeam("Host").addEntry(player.getName());
 					player.setDisplayName(scoreboard.getEntryTeam(player.getName()).getPrefix() + player.getName());
@@ -437,7 +436,7 @@ public class UHC extends JavaPlugin {
 				}
 			}
 
-			this.getPlayerUHC(player).getAttachment().setPermission("uhc.host", true);
+			this.getPlayerUHC(player.getUniqueId()).getAttachment().setPermission("uhc.host", true);
 
 			if (this.getGameConfig().deathInvModifier != null && this.getGameConfig().deathInvModifier.equals(player))
 				this.getGameConfig().deathInvModifier = null;
@@ -446,7 +445,7 @@ public class UHC extends JavaPlugin {
 			if (this.isState(Gstate.WAITING) || this.isState(Gstate.STARTING))fr.neyuux.uhc.InventoryManager.giveWaitInventory(player);
 		} else {
 			this.config.hosts.remove(player.getUniqueId());
-			if (!this.getPlayerUHC(player).isSpec()) {
+			if (!this.getPlayerUHC(player.getUniqueId()).isSpec()) {
 				if (scoreboard.getTeam("Host").hasEntry(player.getName())) {
 					scoreboard.getTeam("Joueur").addEntry(player.getName());
 					player.setDisplayName(scoreboard.getTeam("Joueur").getPrefix() + player.getName() + "ßr");
@@ -454,7 +453,7 @@ public class UHC extends JavaPlugin {
 				}
 			}
 
-			this.getPlayerUHC(player).getAttachment().setPermission("uhc.host", false);
+			this.getPlayerUHC(player.getUniqueId()).getAttachment().setPermission("uhc.host", false);
 
 			if (this.isState(Gstate.WAITING) || this.isState(Gstate.STARTING)) player.getInventory().remove(Material.REDSTONE_COMPARATOR);
 			player.closeInventory();
@@ -503,11 +502,11 @@ public class UHC extends JavaPlugin {
 		this.InventoryManager = new InventoryManager();
 		this.uhcTeamManager = new UHCTeamManager(this);
 		Scenario.removeEvents();
-		HandlerList.unregisterAll(this.config);
+		//HandlerList.unregisterAll(this.config);
 		this.world.delete();
 		this.getServer().resetRecipes();
 		this.config = new GameConfig(this, this.mode);
-		this.getServer().getPluginManager().registerEvents(this.config, this);
+		//this.getServer().getPluginManager().registerEvents(this.config, this);
 		UHCWorld.setAchievements(false);
 		for (Player p : Bukkit.getOnlinePlayers())
 			if (p.hasPermission("uhc.*"))
@@ -667,7 +666,7 @@ public class UHC extends JavaPlugin {
 	}
 
 	public static void sendInfiniteActionBarForAllPlayers(String message) {
-		for (Player p : Bukkit.getOnlinePlayers()) sendInfiniteActionBar(instance.getPlayerUHC(p), message);
+		for (Player p : Bukkit.getOnlinePlayers()) sendInfiniteActionBar(instance.getPlayerUHC(p.getUniqueId()), message);
 	}
 
 	public static void stopInfiniteActionBar(PlayerUHC pu) {

@@ -81,7 +81,7 @@ public class AssaultAndBattery extends Scenario implements Listener {
     public void onDamageByEntity(EntityDamageByEntityEvent ev) {
         if (ev.getDamager().getType().equals(EntityType.PLAYER) && ev.getEntityType().equals(EntityType.PLAYER)) {
             Player d = (Player)ev.getDamager();
-            PlayerUHC du = UHC.getInstance().getPlayerUHC(d);
+            PlayerUHC du = UHC.getInstance().getPlayerUHC(d.getUniqueId());
             if (batteries.contains(du) && !assaults.contains(du)) {
                 ev.setCancelled(true);
                 UHC.sendActionBar(d, getPrefix() + "§cVous ne pouvez pas frapper au corps-à-corps !");
@@ -98,7 +98,7 @@ public class AssaultAndBattery extends Scenario implements Listener {
             }
         } else if (ev.getDamager() instanceof Projectile && ((Projectile)ev.getDamager()).getShooter() instanceof Player && ev.getEntityType().equals(EntityType.PLAYER)) {
             Player d = (Player)((Projectile)ev.getDamager()).getShooter();
-            PlayerUHC du = UHC.getInstance().getPlayerUHC(d);
+            PlayerUHC du = UHC.getInstance().getPlayerUHC(d.getUniqueId());
             if (assaults.contains(du) && !batteries.contains(du)) {
                 ev.setCancelled(true);
                 UHC.sendActionBar(d, getPrefix() + "§cVous ne pouvez pas utiliser de projectiles !");

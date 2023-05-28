@@ -97,7 +97,7 @@ public class VeinMiner extends Scenario implements Listener {
                     e.setCancelled(true);
                     check.remove(b);
 
-                    PlayerUHC up = UHC.getInstance().getPlayerUHC(p);
+                    PlayerUHC up = UHC.getInstance().getPlayerUHC(p.getUniqueId());
 
                     if(b.getType() == Material.DIAMOND_ORE) up.addDiamonds(1);
                     else if(b.getType() == Material.GOLD_ORE) up.addGolds(1);
@@ -149,7 +149,7 @@ public class VeinMiner extends Scenario implements Listener {
         HashMap<Material, Loot> loots = VarsLoot.getBlocksLoots();
         boolean ol = true;
         if (Scenarios.ORE_LIMITER.isActivated()) {
-            PlayerUHC pu = UHC.getInstance().getPlayerUHC(event.getPlayer());
+            PlayerUHC pu = UHC.getInstance().getPlayerUHC(event.getPlayer().getUniqueId());
             if (mat.equals(Material.GOLD_ORE) && pu.getGolds() >= OreLimiter.golds) ol = false;
             if (mat.equals(Material.DIAMOND_ORE) && pu.getDiamonds() >= OreLimiter.diamonds) ol = false;
             if (mat.equals(Material.IRON_ORE) && pu.getIrons() >= OreLimiter.irons) ol = false;

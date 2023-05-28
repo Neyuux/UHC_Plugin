@@ -702,7 +702,7 @@ public class GameConfig implements Listener {
         else if (inv.getName().startsWith("§5Modif ")) {
             ev.setCancelled(true);
             Player p = Bukkit.getPlayer(((SkullMeta)inv.getItem(4).getItemMeta()).getOwner());
-            PlayerUHC puhc = main.getPlayerUHC(p);
+            PlayerUHC puhc = main.getPlayerUHC(p.getUniqueId());
 
             if (current.getType().equals(Material.BANNER)) {
                 if (getTeamTypeInt((String)TEAMTYPE.getValue()) <= 1) {
@@ -759,7 +759,7 @@ public class GameConfig implements Listener {
         else if (inv.getName().startsWith("§e§lTeam ")) {
             ev.setCancelled(true);
             Player p = Bukkit.getPlayer(((SkullMeta)inv.getItem(4).getItemMeta()).getOwner());
-            PlayerUHC puhc = main.getPlayerUHC(p);
+            PlayerUHC puhc = main.getPlayerUHC(p.getUniqueId());
             String sp = inv.getName();
             while (!sp.startsWith("["))
                 sp = sp.substring(1);
@@ -1042,7 +1042,7 @@ public class GameConfig implements Listener {
 
     private Inventory getPlayerInv(Player player, ItemStack current) {
         Inventory inv = Bukkit.createInventory(null, 54, "§5Modif §b" + player.getName());
-        PlayerUHC playerUHC = main.getPlayerUHC(player);
+        PlayerUHC playerUHC = main.getPlayerUHC(player.getUniqueId());
         setInvCoin(inv, (short)10);
         setReturnArrow(inv);
         inv.setItem(4, current);

@@ -52,7 +52,7 @@ public class Kings extends Scenario implements Listener {
                             players.add(p);
                     }
                     Player king = players.get(random.nextInt(players.size()));
-                    PlayerUHC ku = UHC.getInstance().getPlayerUHC(king);
+                    PlayerUHC ku = UHC.getInstance().getPlayerUHC(king.getUniqueId());
                     king.setDisplayName(team.getPrefix().toString() + "§l" + king.getName());
                     king.setPlayerListName(king.getDisplayName());
                     king.sendMessage(getPrefix() + "§6Vous avez été désigné comme Roi de l'équipe " + team.getTeam().getDisplayName() + " §6. Vous obtenez donc les effets : force, rapidité, résistance, résistance au feu, hâte et double vie. Si vous mourrez, le reste de votre équipe aura un effet de poison puissant pendant quelques secondes.");
@@ -81,8 +81,8 @@ public class Kings extends Scenario implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent ev) {
-        if (kings.contains(UHC.getInstance().getPlayerUHC(ev.getPlayer()))) {
-            ev.getPlayer().setDisplayName(UHC.getInstance().getPlayerUHC(ev.getPlayer()).getTeam().getPrefix().toString() + "§l" + ev.getPlayer().getName());
+        if (kings.contains(UHC.getInstance().getPlayerUHC(ev.getPlayer().getUniqueId()))) {
+            ev.getPlayer().setDisplayName(UHC.getInstance().getPlayerUHC(ev.getPlayer().getUniqueId()).getTeam().getPrefix().toString() + "§l" + ev.getPlayer().getName());
             ev.getPlayer().setPlayerListName(ev.getPlayer().getDisplayName());
         }
     }

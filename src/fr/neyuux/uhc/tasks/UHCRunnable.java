@@ -104,34 +104,6 @@ public class UHCRunnable extends BukkitRunnable {
             }.runTaskTimer(main, 0 , 5);
         }
 
-        if (pvpTimer == 900) Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §615 minutes§c.");
-        else if (pvpTimer == 600) {
-            Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §610 minutes§c.");
-            for (Player p : Bukkit.getOnlinePlayers())
-                p.playSound(p.getLocation(), Sound.WOOD_CLICK, 5, 0.5f);
-        } else if (pvpTimer == 300) Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §65 minutes§c.");
-        else if (pvpTimer == 180) Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §63 minutes§c.");
-        else if (pvpTimer == 120) Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §62 minutes§c.");
-        else if (pvpTimer == 60) {
-            Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §61 minute§c.");
-            for (Player p : Bukkit.getOnlinePlayers())
-                p.playSound(p.getLocation(), Sound.WOOD_CLICK, 5, 0.5f);
-        } else if (pvpTimer == 30) Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §630 secondes§c.");
-        else if (pvpTimer > 1 && pvpTimer <= 10) {
-            Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §6"+pvpTimer+" secondes§c.");
-            for (Player p : Bukkit.getOnlinePlayers())
-                p.playSound(p.getLocation(), Sound.WOOD_CLICK, 5, 0.5f);
-        } else if (pvpTimer == 1) {
-            Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §61 seconde§c.");
-            for (Player p : Bukkit.getOnlinePlayers())
-                p.playSound(p.getLocation(), Sound.WOOD_CLICK, 5, 0.5f);
-        } else if (pvpTimer == 0) {
-            Bukkit.broadcastMessage(UHC.getPrefix() + "§c§lPvP activé !");
-            main.world.changePVP(true);
-            for (Player p : Bukkit.getOnlinePlayers())
-                p.playSound(p.getLocation(), Sound.ENDERDRAGON_GROWL, 5, 0.5f);
-        }
-
         switch (pvpTimer) {
             case 900:
                 Bukkit.broadcastMessage(UHC.getPrefix() + "§cActivation du §lPvP§c dans §615 minutes§c.");

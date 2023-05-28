@@ -81,7 +81,7 @@ public class UHCTeam {
     }
 
     public void add(Player player) {
-        PlayerUHC playerUHC = main.getPlayerUHC(player);
+        PlayerUHC playerUHC = main.getPlayerUHC(player.getUniqueId());
         
         if (((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To") && players.size() >= GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) && !prefix.isTaupePrefix() && !(main.isState(Gstate.PLAYING) && (Scenarios.SWITCH.isActivated() || Scenarios.TRUE_LOVE.isActivated()))) {
             player.sendMessage(UHC.getPrefix() + "§cL'équipe " + team.getDisplayName() + " §cest pleine !");
@@ -109,13 +109,13 @@ public class UHCTeam {
     }
 
     public void reconnect(Player player) {
-        alivePlayers.add(main.getPlayerUHC(player));
+        alivePlayers.add(main.getPlayerUHC(player.getUniqueId()));
 
         player.setDisplayName(prefix.toString() + player.getName());
         player.setPlayerListName(player.getDisplayName());
         if (!team.hasEntry(player.getName()))
             team.addEntry(player.getName());
-        main.getPlayerUHC(player).setTeam(this);
+        main.getPlayerUHC(player.getUniqueId()).setTeam(this);
     }
 
     public void leave(PlayerUHC pu) {
@@ -159,8 +159,8 @@ public class UHCTeam {
             else
                 Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Joueur").addEntry(player.getName());
 
-            players.remove(main.getPlayerUHC(player));
-            alivePlayers.remove(main.getPlayerUHC(player));
+            players.remove(main.getPlayerUHC(player.getUniqueId()));
+            alivePlayers.remove(main.getPlayerUHC(player.getUniqueId()));
         }
         pu.setTeam(null);
 

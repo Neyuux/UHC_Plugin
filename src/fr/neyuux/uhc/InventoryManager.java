@@ -92,8 +92,8 @@ public class InventoryManager {
             clearInventory(player);
             player.getInventory().setItem(1, UHC.getSpecTear());
             if (((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To"))
-                give(player, 4, GameConfig.getChooseTeamBanner(UHC.getInstance().getPlayerUHC(player)));
-            if (UHC.getInstance().getPlayerUHC(player).isHost())
+                give(player, 4, GameConfig.getChooseTeamBanner(UHC.getInstance().getPlayerUHC(player.getUniqueId())));
+            if (UHC.getInstance().getPlayerUHC(player.getUniqueId()).isHost())
                 player.getInventory().setItem(6, new ItemsStack(Material.REDSTONE_COMPARATOR, "§c§lConfiguration de la partie", "§7Permet de configurer la partie", "§b>>Clique droit").toItemStack());
         }
     }

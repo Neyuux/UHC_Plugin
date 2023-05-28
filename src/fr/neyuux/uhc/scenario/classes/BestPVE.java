@@ -73,8 +73,8 @@ public class BestPVE extends Scenario implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamage(EntityDamageEvent ev) {
         Entity e = ev.getEntity();
-        if (ev.getEntityType().equals(EntityType.PLAYER) && bestpve.contains(UHC.getInstance().getPlayerUHC((Player)e)) && !ev.isCancelled()) {
-            PlayerUHC pu = UHC.getInstance().getPlayerUHC((Player)e);
+        if (ev.getEntityType().equals(EntityType.PLAYER) && bestpve.contains(UHC.getInstance().getPlayerUHC(e.getUniqueId())) && !ev.isCancelled()) {
+            PlayerUHC pu = UHC.getInstance().getPlayerUHC(e.getUniqueId());
             bestpve.remove(pu);
             Bukkit.broadcastMessage(getPrefix() + pu.getPlayer().getPlayer().getDisplayName() + " §7a pris un dégât et est donc supprimé de la liste BestPvE !");
         }

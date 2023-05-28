@@ -52,7 +52,7 @@ public class TeamHealth extends Scenario implements Listener {
     public void onHealth(EntityRegainHealthEvent ev) {
         if (ev.getEntityType().equals(EntityType.PLAYER)) {
             Player player = (Player)ev.getEntity();
-            PlayerUHC playerUHC = UHC.getInstance().getPlayerUHC(player);
+            PlayerUHC playerUHC = UHC.getInstance().getPlayerUHC(player.getUniqueId());
             if (playerUHC.isAlive() && playerUHC.getTeam() != null)
                 updateHealth(playerUHC.getTeam(), ev.getAmount());
         }
@@ -62,7 +62,7 @@ public class TeamHealth extends Scenario implements Listener {
     public void onDamage(EntityDamageEvent ev) {
         if (ev.getEntityType().equals(EntityType.PLAYER)) {
             Player player = (Player)ev.getEntity();
-            PlayerUHC playerUHC = UHC.getInstance().getPlayerUHC(player);
+            PlayerUHC playerUHC = UHC.getInstance().getPlayerUHC(player.getUniqueId());
             if (playerUHC.isAlive() && playerUHC.getTeam() != null)
                 updateHealth(playerUHC.getTeam(), -ev.getFinalDamage());
         }

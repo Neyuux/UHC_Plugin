@@ -52,7 +52,7 @@ public class PreGameListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent ev) {
         Player player = ev.getPlayer();
-        PlayerUHC playerUHC = main.getPlayerUHC(player);
+        PlayerUHC playerUHC = main.getPlayerUHC(player.getUniqueId());
 
         playerUHC.getAttachment().setPermission("uhc.host", false);
 
@@ -81,7 +81,7 @@ public class PreGameListener implements Listener {
         PlayerUHC pt = null;
         for (PlayerUHC pu : main.players) if (pu.getPlayer().getUniqueId().equals(player.getUniqueId())) pt = pu;
         if (pt == null) main.players.add(new PlayerUHC(player, main));
-        pt = main.getPlayerUHC(player);
+        pt = main.getPlayerUHC(player.getUniqueId());
         PlayerUHC playerUHC = pt;
         playerUHC.setPlayer(player);
 
@@ -121,7 +121,7 @@ public class PreGameListener implements Listener {
 
         if (current == null) return;
 
-        if (current.getType().equals(Material.BANNER) && current.hasItemMeta() && current.getItemMeta().hasDisplayName() && current.getItemMeta().getDisplayName().equals(GameConfig.getChooseTeamBanner(main.getPlayerUHC(player)).getItemMeta().getDisplayName()))
+        if (current.getType().equals(Material.BANNER) && current.hasItemMeta() && current.getItemMeta().hasDisplayName() && current.getItemMeta().getDisplayName().equals(GameConfig.getChooseTeamBanner(main.getPlayerUHC(player.getUniqueId())).getItemMeta().getDisplayName()))
             player.openInventory(getChangeTeamInv(1));
     }
 
@@ -136,7 +136,6 @@ public class PreGameListener implements Listener {
         if (action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK) || action.equals(Action.PHYSICAL))
             if (current.equals(UHC.getSpecTear())) {
                 main.spectators.add(player);
-                main.players.remove(main.getPlayerUHC(player));
                 player.setGameMode(GameMode.SPECTATOR);
                 player.setDisplayName("§8[§7Spectateur§8] §7" + player.getName());
                 player.setPlayerListName(player.getDisplayName());
@@ -151,7 +150,7 @@ public class PreGameListener implements Listener {
     @EventHandler
     public void onChangeTeamInv(InventoryClickEvent ev) {
         Player player = (Player)ev.getWhoClicked();
-        PlayerUHC playerUHC = main.getPlayerUHC(player);
+        PlayerUHC playerUHC = main.getPlayerUHC(player.getUniqueId());
         ItemStack current = ev.getCurrentItem();
         Inventory inv = ev.getInventory();
 
@@ -301,7 +300,7 @@ public class PreGameListener implements Listener {
                                     InventoryManager.give(p, 4, new ItemStack(Material.DIAMOND, SlaveMarket.diamonds));
                                     p.getInventory().remove(Material.REDSTONE_COMPARATOR);
                                     p.getInventory().remove(Material.GHAST_TEAR);
-                                    if (!main.getPlayerUHC(p).isHost()) p.setDisplayName(p.getDisplayName().substring(0, 2) + "§l" + p.getDisplayName().substring(2));
+                                    if (!main.getPlayerUHC(p.getUniqueId()).isHost()) p.setDisplayName(p.getDisplayName().substring(0, 2) + "§l" + p.getDisplayName().substring(2));
                                     else p.setDisplayName(p.getDisplayName().substring(0, TeamPrefix.getHostPrefix().length() + 2) + "§l" + p.getDisplayName().substring(TeamPrefix.getHostPrefix().length() + 2));
                                     p.setPlayerListName(p.getDisplayName());
 
@@ -342,7 +341,7 @@ public class PreGameListener implements Listener {
             ev.setCancelled(true);
             if (current.getType().equals(Material.SKULL_ITEM)) {
                 Player p = Bukkit.getPlayer(((SkullMeta)current.getItemMeta()).getOwner());
-                PlayerUHC puhc = UHC.getInstance().getPlayerUHC(p);
+                PlayerUHC puhc = UHC.getInstance().getPlayerUHC(p.getUniqueId());
                 p.sendMessage(UHC.getPrefix() + "§aVous avez été accepté comme acheteur.");
                 UHC.playPositiveSound(p);
                 SlaveMarket.candidsInv.remove(current);

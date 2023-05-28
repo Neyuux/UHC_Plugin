@@ -45,7 +45,7 @@ public class OreLimiter extends Scenario implements Listener {
     @EventHandler
     public void onMineOre(BlockBreakEvent e) {
         Player player = e.getPlayer();
-        PlayerUHC up = UHC.getInstance().getPlayerUHC(player);
+        PlayerUHC up = UHC.getInstance().getPlayerUHC(player.getUniqueId());
         Block b = e.getBlock();
         if (b.getType() == Material.DIAMOND_ORE)
             if (up.getDiamonds() > diamonds) {

@@ -55,7 +55,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent ev) {
         Player player = ev.getPlayer();
-        PlayerUHC playerUHC = main.getPlayerUHC(player);
+        PlayerUHC playerUHC = main.getPlayerUHC(player.getUniqueId());
 
         if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING)) return;
 
@@ -101,7 +101,7 @@ public class PlayerListener implements Listener {
         PlayerUHC pt = null;
         for (PlayerUHC pu : main.players) if (pu.getPlayer().getUniqueId().equals(player.getUniqueId())) pt = pu;
         if (pt == null) main.players.add(new PlayerUHC(player, main));
-        pt = main.getPlayerUHC(player);
+        pt = main.getPlayerUHC(player.getUniqueId());
         PlayerUHC playerUHC = pt;
         playerUHC.setPlayer(player);
 
@@ -177,7 +177,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onInteractEntity(PlayerInteractEntityEvent ev) {
         Player player = ev.getPlayer();
-        PlayerUHC playerUHC = main.getPlayerUHC(player);
+        PlayerUHC playerUHC = main.getPlayerUHC(player.getUniqueId());
         Entity e = ev.getRightClicked();
 
         if (e.getType().equals(EntityType.HORSE) && !(boolean)GameConfig.ConfigurableParams.HORSE.getValue()) {
@@ -186,7 +186,7 @@ public class PlayerListener implements Listener {
             UHC.playNegativeSound(player);
         }
         else if (e.getType().equals(EntityType.PLAYER) && playerUHC.isSpec())
-            player.openInventory(main.getPlayerUHC((Player) e).getSpecInfosInventory(Collections.emptyList()));
+            player.openInventory(main.getPlayerUHC(e.getUniqueId()).getSpecInfosInventory(Collections.emptyList()));
     }
 
     @EventHandler
@@ -222,8 +222,8 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerFood(FoodLevelChangeEvent e) {
         try {
-            if (e.getEntity().getGameMode().equals(GameMode.SURVIVAL) && main.isState(Gstate.PLAYING) && main.getPlayerUHC((Player) e.getEntity()).isAlive()) {
-                PlayerUHC pu = main.getPlayerUHC((Player) e.getEntity());
+            PlayerUHC pu = main.getPlayerUHC(e.getEntity().getUniqueId());
+            if (e.getEntity().getGameMode().equals(GameMode.SURVIVAL) && main.isState(Gstate.PLAYING) && pu.isAlive()) {
                 pu.foodLevel = e.getFoodLevel();
             }
         } catch (Exception ignored){}
@@ -231,7 +231,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerHealth(EntityRegainHealthEvent e) {
         if (e.getEntityType().equals(EntityType.PLAYER) && main.isState(Gstate.PLAYING))
-            main.getPlayerUHC((Player)e.getEntity()).health = ((Player) e.getEntity()).getHealth() + e.getAmount();
+            main.getPlayerUHC(e.getEntity().getUniqueId()).health = ((Player) e.getEntity()).getHealth() + e.getAmount();
     }
 
     @EventHandler
@@ -247,7 +247,7 @@ public class PlayerListener implements Listener {
         Player p = e.getPlayer();
         ItemStack item = e.getItem();
         if(item == null) return;
-        boolean nerf = e.getAction() == Action.RIGHT_CLICK_BLOCK && ((item.getType() == Material.LAVA_BUCKET && main.getPlayerUHC(p).havePlayerAround(10)) ||
+        boolean nerf = e.getAction() == Action.RIGHT_CLICK_BLOCK && ((item.getType() == Material.LAVA_BUCKET && main.getPlayerUHC(p.getUniqueId()).havePlayerAround(10)) ||
                 (item.getType() == Material.FLINT_AND_STEEL && e.getClickedBlock().getType() != Material.OBSIDIAN));
 
         if(nerf && UHCRunnable.pvpTimer != -1 && !(boolean)GameConfig.ConfigurableParams.I_PVP.getValue()) {
@@ -342,7 +342,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent ev) {
         Player player = ev.getPlayer();
-        PlayerUHC playerUHC = main.getPlayerUHC(player);
+        PlayerUHC playerUHC = main.getPlayerUHC(player.getUniqueId());
         String msg = ev.getMessage();
         String format = null;
 
@@ -396,7 +396,7 @@ public class PlayerListener implements Listener {
         playings.clear();
         for (PlayerUHC pu : main.players) if (pu.isAlive()) playings.add(pu);
 
-        if (main.isState(Gstate.PLAYING) && !(boolean)GameConfig.ConfigurableParams.SPECTATORS.getValue() && !playings.contains(main.getPlayerUHC(p))) {
+        if (main.isState(Gstate.PLAYING) && !(boolean)GameConfig.ConfigurableParams.SPECTATORS.getValue() && !playings.contains(main.getPlayerUHC(p.getUniqueId()))) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             e.setKickMessage(UHC.getPrefixWithoutArrow() + "\n" + " §cLes spectateurs ne sont pas autorisés !");
             return;

@@ -38,7 +38,7 @@ public class BloodDiamond extends Scenario implements Listener {
 
     @EventHandler
     public void onMineDiamond(BlockBreakEvent ev) {
-        PlayerUHC pu = UHC.getInstance().getPlayerUHC(ev.getPlayer());
+        PlayerUHC pu = UHC.getInstance().getPlayerUHC(ev.getPlayer().getUniqueId());
         if (ev.getBlock().getType().equals(Material.DIAMOND_ORE) && pu.isAlive()) {
             ev.getPlayer().damage(0);
             if (ev.getPlayer().getHealth() > damage * 2.0) ev.getPlayer().setHealth(ev.getPlayer().getHealth() - damage * 2.0);

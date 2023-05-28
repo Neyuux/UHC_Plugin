@@ -48,8 +48,8 @@ public class BowSwap extends Scenario implements Listener {
         if (ev.getDamager().getType().equals(EntityType.ARROW) && ((Arrow)ev.getDamager()).getShooter() instanceof Player && ev.getEntityType().equals(EntityType.PLAYER)) {
             Player p1 = (Player) ev.getEntity();
             Player p2 = (Player) ((Arrow)ev.getDamager()).getShooter();
-            PlayerUHC pu1 = UHC.getInstance().getPlayerUHC(p1);
-            PlayerUHC pu2 = UHC.getInstance().getPlayerUHC(p2);
+            PlayerUHC pu1 = UHC.getInstance().getPlayerUHC(p1.getUniqueId());
+            PlayerUHC pu2 = UHC.getInstance().getPlayerUHC(p2.getUniqueId());
             int r = new Random().nextInt(100) + 1;
             if (pu1.isAlive() && pu2.isAlive() && r <= percentage) {
                 System.out.println(UHCRunnable.timer + " bow swap");

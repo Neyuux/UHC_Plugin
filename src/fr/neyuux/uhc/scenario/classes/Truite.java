@@ -67,7 +67,7 @@ public class Truite extends Scenario implements Listener {
         if (ev.getItem() == null) return;
         if (ev.getItem().hasItemMeta() && ev.getItem().getItemMeta().hasDisplayName() && ev.getItem().getItemMeta().getDisplayName().equals("§b§lTruite enchantée")) {
             Player p = ev.getPlayer();
-            PlayerUHC pu = UHC.getInstance().getPlayerUHC(p);
+            PlayerUHC pu = UHC.getInstance().getPlayerUHC(p.getUniqueId());
             if (effects.containsKey(pu)) {
                 if (effects.get(pu).equals(PotionEffectType.HARM)) p.setMaxHealth(p.getMaxHealth() + 10);
                 if (p.hasPotionEffect(effects.get(pu)))

@@ -31,12 +31,12 @@ public class CommandRevive implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
-        if (sender instanceof ConsoleCommandSender || (sender instanceof Player && main.getPlayerUHC((Player)sender).isHost())) {
+        if (sender instanceof ConsoleCommandSender || (sender instanceof Player && main.getPlayerUHC(((Player) sender).getUniqueId()).isHost())) {
             if (main.isState(Gstate.PLAYING))
                 if (args.length > 0) {
                     if (Bukkit.getPlayer(args[0]) != null) {
                         Player player = Bukkit.getPlayer(args[0]);
-                        PlayerUHC playerUHC = main.getPlayerUHC(player);
+                        PlayerUHC playerUHC = main.getPlayerUHC(player.getUniqueId());
                         if (!playerUHC.isAlive() && playerUHC.isSpec()) {
                             PlayerReviveEvent ev = new PlayerReviveEvent(playerUHC);
                             Bukkit.getPluginManager().callEvent(ev);
