@@ -44,23 +44,33 @@ public class UHCStart extends BukkitRunnable {
         }
 
         InventoryManager.setAllPlayersLevels(timer, (float)timer / 10);
-        for(Player pls : Bukkit.getOnlinePlayers()) {
-            if (timer == 10) sendStartTimerTitle(pls);
-            else if (timer <= 5 && timer != 0)
-                sendStartTimerTitle(pls);
-            if (timer==10)
-                pls.playSound(pls.getLocation(), Sound.SUCCESSFUL_HIT, 8, 1);
-            else if (timer==5)
-                pls.playSound(pls.getLocation(), Sound.SUCCESSFUL_HIT, 8, 1.1f);
-            else if (timer==4)
-                pls.playSound(pls.getLocation(), Sound.SUCCESSFUL_HIT, 8, 1.2f);
-            else if (timer==3)
-                pls.playSound(pls.getLocation(), Sound.SUCCESSFUL_HIT, 8, 1.5f);
-            else if (timer==2)
-                pls.playSound(pls.getLocation(), Sound.SUCCESSFUL_HIT, 8, 1.7f);
-            else if (timer==1)
-                pls.playSound(pls.getLocation(), Sound.SUCCESSFUL_HIT, 8, 2);
-        }
+        for(Player pls : Bukkit.getOnlinePlayers())
+            switch (timer) {
+                case 10:
+                    sendStartTimerTitle(pls);
+                    pls.playSound(pls.getLocation(), Sound.SUCCESSFUL_HIT, 8, 1);
+                    break;
+                case 5:
+                    sendStartTimerTitle(pls);
+                    pls.playSound(pls.getLocation(), Sound.SUCCESSFUL_HIT, 8, 1.1f);
+                    break;
+                case 4:
+                    sendStartTimerTitle(pls);
+                    pls.playSound(pls.getLocation(), Sound.SUCCESSFUL_HIT, 8, 1.2f);
+                    break;
+                case 3:
+                    sendStartTimerTitle(pls);
+                    pls.playSound(pls.getLocation(), Sound.SUCCESSFUL_HIT, 8, 1.5f);
+                    break;
+                case 2:
+                    sendStartTimerTitle(pls);
+                    pls.playSound(pls.getLocation(), Sound.SUCCESSFUL_HIT, 8, 1.7f);
+                    break;
+                case 1:
+                    sendStartTimerTitle(pls);
+                    pls.playSound(pls.getLocation(), Sound.SUCCESSFUL_HIT, 8, 2f);
+                    break;
+            }
 
         if (timer != 11 && timer != 0)
             if (timer == 1)
@@ -147,23 +157,33 @@ public class UHCStart extends BukkitRunnable {
                 }
             }
             Bukkit.broadcastMessage(UHC.getPrefix() + "§2Lancement de la Pré-Génération du monde...");
-            for (PlayerUHC p : main.getAlivePlayers()) {
-                if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) == 1) main.world.addSpawnLoad();
-                UHC.setF3(p.getPlayer().getPlayer(), !(boolean)GameConfig.ConfigurableParams.COORDS_F3.getValue());
+            for (PlayerUHC puhc : main.getAlivePlayers()) {
+                Player player = puhc.getPlayer().getPlayer();
+
+                if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) == 1)
+                    main.world.addSpawnLoad();
+
+                UHC.setF3(player, !(boolean)GameConfig.ConfigurableParams.COORDS_F3.getValue());
+
                 if (Scenarios.TEAM_HEALTH.isActivated()) {
-                    health.getScore(p.getPlayer().getName()).setScore((int)p.getTeam().getHealth());
-                    healthBelow.getScore(p.getPlayer().getName()).setScore((int)p.getTeam().getHealth());
+                    health.getScore(puhc.getPlayer().getName()).setScore((int)puhc.getTeam().getHealth());
+                    healthBelow.getScore(puhc.getPlayer().getName()).setScore((int)puhc.getTeam().getHealth());
                 }
-                if (p.isSpec() && !p.isHost() && !(boolean)GameConfig.ConfigurableParams.SPECTATORS.getValue())
-                    p.getPlayer().getPlayer().kickPlayer(UHC.getPrefix() + "§cLes spectateurs se sont pas autorisés.");
+                
+                if (puhc.isSpec() && !puhc.isHost() && !(boolean)GameConfig.ConfigurableParams.SPECTATORS.getValue())
+                    player.kickPlayer(UHC.getPrefix() + "§cLes spectateurs se sont pas autorisés.");
             }
+            
             if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) != 1)
                 for (int i = 0; i < main.getUHCTeamManager().getTeams().size(); i++)
                     main.world.addSpawnLoad();
+                
             main.world.loadChunks();
             main.world.setTime(0);
             main.world.setDayCycle((Boolean)GameConfig.ConfigurableParams.DAY_CYCLE.getValue());
             main.world.initialiseWorldBorder();
+            UHCWorld.removePlatform();
+            
             if((boolean) GameConfig.ConfigurableParams.CRAFT_GOLDEN_HEAD.getValue()) {
                 ShapedRecipe recette = new ShapedRecipe(UHC.getGoldenHead(1));
                 recette.shape("@@@", "@T@", "@@@");
@@ -245,6 +265,8 @@ public class UHCStart extends BukkitRunnable {
                 p.freeze();
                 p.setInvulnerable(true);
                 InventoryManager.clearInventory(player);
+                player.resetMaxHealth();
+                player.setHealth(player.getMaxHealth());
                 player.setLevel(0);
                 player.setExp(0f);
                 player.setGameMode(GameMode.SURVIVAL);
@@ -255,28 +277,43 @@ public class UHCStart extends BukkitRunnable {
                 player.updateInventory();
             }
             UHCWorld.setAchievements((Boolean)GameConfig.ConfigurableParams.ACHIEVEMENTS.getValue());
-            if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) == 1) for (PlayerUHC p : main.getAlivePlayers()) {
-                p.getPlayer().getPlayer().teleport(main.world.getSpawns().remove(0));
-                for (Player pl : Bukkit.getOnlinePlayers())
-                    pl.playSound(pl.getLocation(), Sound.CHICKEN_EGG_POP, 7f ,2f);
-                if (!Scenarios.ANONYMOUS.isActivated())
-                    Bukkit.broadcastMessage(UHC.getPrefix() + p.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
-                p.setLastLocation(p.getPlayer().getPlayer().getLocation().add(0, -38, 0));
+            
+            if (GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) == 1) 
+                for (PlayerUHC puhc : main.getAlivePlayers()) {
+                    Player player = puhc.getPlayer().getPlayer();
+                    
+                    player.teleport(main.world.getSpawns().remove(0));
+                    
+                    for (Player pl : Bukkit.getOnlinePlayers())
+                        pl.playSound(pl.getLocation(), Sound.CHICKEN_EGG_POP, 7f ,2f);
+                    
+                    if (!Scenarios.ANONYMOUS.isActivated())
+                        Bukkit.broadcastMessage(UHC.getPrefix() + player.getDisplayName() + " §ea été téléporté !");
+                    
+                    puhc.setLastLocation(player.getLocation().add(0, -38, 0));
             }
             else {
                 for (UHCTeam t : main.getUHCTeamManager().getTeams()) {
                     Location l = main.world.getSpawns().remove(0);
                     for (PlayerUHC playerUHC : t.getPlayers()) {
-                        playerUHC.getPlayer().getPlayer().teleport(l);
-                        playerUHC.getPlayer().getPlayer().setDisplayName(t.getPrefix().toString() + playerUHC.getPlayer().getPlayer().getName());
+                        Player player = playerUHC.getPlayer().getPlayer();
+                        
+                        player.teleport(l);
+                        
+                        player.setDisplayName(t.getPrefix().toString() + player.getName());
+                        
                         if (Scenarios.SLAVE_MARKET.isActivated() && SlaveMarket.owners.contains(playerUHC))
-                            playerUHC.getPlayer().getPlayer().setDisplayName(t.getPrefix().toString() + "§l" + playerUHC.getPlayer().getPlayer().getName());
-                        playerUHC.getPlayer().getPlayer().setPlayerListName(playerUHC.getPlayer().getPlayer().getDisplayName());
+                            player.setDisplayName(t.getPrefix().toString() + "§l" + player.getName());
+                        
+                        player.setPlayerListName(player.getDisplayName());
+                        
                         for (Player pl : Bukkit.getOnlinePlayers())
                             pl.playSound(pl.getLocation(), Sound.CHICKEN_EGG_POP, 7f ,2f);
+                        
                         if (!Scenarios.ANONYMOUS.isActivated())
-                            Bukkit.broadcastMessage(UHC.getPrefix() + playerUHC.getPlayer().getPlayer().getDisplayName() + " §ea été téléporté !");
-                        playerUHC.setLastLocation(playerUHC.getPlayer().getPlayer().getLocation().add(0, -39, 0));
+                            Bukkit.broadcastMessage(UHC.getPrefix() + player.getDisplayName() + " §ea été téléporté !");
+                        
+                        playerUHC.setLastLocation(player.getLocation().add(0, -39, 0));
                     }
                     t.getTeam().setAllowFriendlyFire((boolean)GameConfig.ConfigurableParams.FRIENDLY_FIRE.getValue());
                 }

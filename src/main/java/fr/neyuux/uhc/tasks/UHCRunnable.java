@@ -187,7 +187,7 @@ public class UHCRunnable extends BukkitRunnable {
             case 4:
             case 3:
             case 2:
-                Bukkit.broadcastMessage(UHC.getPrefix() + "§3Activation du §lBordure§3 dans §6"+pvpTimer+" secondes§3.");
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§3Activation du §lBordure§3 dans §6"+borderTimer+" secondes§3.");
                 for (Player p : Bukkit.getOnlinePlayers())
                     p.playSound(p.getLocation(), Sound.WOOD_CLICK, 5, 0.5f);
                 break;

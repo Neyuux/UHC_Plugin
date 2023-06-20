@@ -23,7 +23,7 @@ public class CommandFinish implements CommandExecutor {
 
         if (commandSender instanceof Player) {
             Player player = (Player)commandSender;
-            if (main.getGameConfig().starterModifier != null && main.getGameConfig().starterModifier.equals(player)) {
+            if (main.getGameConfig().starterModifier != null && main.getGameConfig().starterModifier.equals(player.getUniqueId())) {
                 main.getGameConfig().starterModifier = null;
                 InventoryManager.startInventory = new ItemStack[]{};
                 main.getInventoryManager().getStartArmor().clear();
@@ -39,11 +39,15 @@ public class CommandFinish implements CommandExecutor {
                 player.setGameMode(GameMode.ADVENTURE);
                 player.sendMessage(UHC.getPrefix() + "§dVous avez enregistré l'inventaire de Départ !");
                 UHC.playPositiveSound(player);
-            } else if (main.getGameConfig().deathInvModifier != null && main.getGameConfig().deathInvModifier.equals(player)) {
+            } else if (main.getGameConfig().deathInvModifier != null && main.getGameConfig().deathInvModifier.equals(player.getUniqueId())) {
                 main.getGameConfig().deathInvModifier = null;
                 main.getInventoryManager().getDeathInventory().clear();
                 for (ItemStack it : player.getInventory().getContents()) if (it != null) main.getInventoryManager().getDeathInventory().add(it);
                 player.sendMessage(UHC.getPrefix() + "§5Vous avez enregistré l'inventaire de Mort !");
+                UHC.playPositiveSound(player);
+
+                InventoryManager.giveWaitInventory(player);
+                player.setGameMode(GameMode.ADVENTURE);
                 UHC.playPositiveSound(player);
             } else {
                 player.sendMessage(UHC.getPrefix() + "§cVous ne modifiez aucun inventaire !");

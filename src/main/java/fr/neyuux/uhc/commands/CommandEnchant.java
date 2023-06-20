@@ -26,8 +26,8 @@ public class CommandEnchant implements CommandExecutor {
 
         if (commandSender instanceof Player) {
             Player player = (Player)commandSender;
-            if (player.getItemInHand() == null || player.getItemInHand().getType().equals(Material.AIR)) return true;
-            if (((main.getGameConfig().starterModifier != null) && main.getGameConfig().starterModifier.equals(player)) || ((main.getGameConfig().deathInvModifier != null) && main.getGameConfig().deathInvModifier.equals(player))) {
+            if (player.getItemInHand() == null || player.getItemInHand().getType() == Material.AIR) return true;
+            if (((main.getGameConfig().starterModifier != null) && main.getGameConfig().starterModifier.equals(player.getUniqueId())) || ((main.getGameConfig().deathInvModifier != null) && main.getGameConfig().deathInvModifier.equals(player.getUniqueId()))) {
                 Inventory inv = Bukkit.createInventory(null, 54, "§fEnchantement d'un objet");
                 GameConfig.setInvCoin(inv, (short)6);
                 inv.setItem(4, player.getItemInHand());

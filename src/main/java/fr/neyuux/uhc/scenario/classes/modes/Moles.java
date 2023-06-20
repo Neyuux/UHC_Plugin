@@ -110,11 +110,12 @@ public class Moles extends Scenario implements Listener {
                             hasChoosedMoles = true;
                             break;
                     }
+                    IGtimers[0]--;
                 }
                 
                 
                 if (hasChoosedMoles && !hasChoosedSuperMoles && superMoles) {
-                    switch (IGtimers[0]) {
+                    switch (IGtimers[1]) {
                         case 900:
                             Bukkit.broadcastMessage(getPrefix() + "§eSélection des §c§lSuper Taupes§e dans 15 minutes !");
                             break;
@@ -146,6 +147,7 @@ public class Moles extends Scenario implements Listener {
                             cancel();
                             break;
                     }
+                    IGtimers[1]--;
                 } else if (!superMoles && hasChoosedMoles) cancel();
                 
                 if (!UHC.getInstance().isState(Gstate.PLAYING)) cancel();
@@ -254,8 +256,12 @@ public class Moles extends Scenario implements Listener {
             List<PlayerUHC> players = new ArrayList<>();
 
             for (PlayerUHC pu : UHC.getInstance().players)
-                if (pu.getTeam() != null && !isTaupe(pu)) players.add(pu);
-            for (int i = 0; i < nOfTaupes; i++) moles.add(players.remove(random.nextInt(players.size())));
+                if (pu.getTeam() != null && !isTaupe(pu) && pu.isAlive()) players.add(pu);
+            for (int i = 0; i < nOfTaupes; i++) {
+                if (players.size() == 0)
+                    break;
+                moles.add(players.remove(random.nextInt(players.size())));
+            }
 
             while(teams != 0) {
                 List<Kits> ks = new ArrayList<>(activatedKits);
@@ -275,7 +281,7 @@ public class Moles extends Scenario implements Listener {
                         p.sendMessage("§cDésormais, votre but est de gagner avec votre nouvelle équipe " + t.getTeam().getDisplayName() + "§c.");
                         p.sendMessage("§cVoici la liste des commandes à votre disposition : ");
                         p.sendMessage(" §8§l- §6§l/uhc reveal §8: §cVous permet de révéler votre véritable idendité en échange d'une pomme en or");
-                        p.sendMessage(" §8§l- §6§l/uhc <message> t §8: §cVous permet de communiquer avec vos coéquipiers taupe");
+                        p.sendMessage(" §8§l- §6§l/uhc t <message> §8: §cVous permet de communiquer avec vos coéquipiers taupe");
                         p.sendMessage(" §8§l- §6§l/uhc claim §8: §cVous permet de recevoir le kit dont vous disposez pour vous aider à trahir");
                         p.sendMessage("§cVotre kit : " + kit.getName());
                         p.sendMessage("§8§l--------------------------------");

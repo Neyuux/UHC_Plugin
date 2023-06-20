@@ -697,33 +697,33 @@ public class CommandUHC implements CommandExecutor {
                     case "taupelist":
                         if (!Scenarios.MOLES.isActivated() || !main.isState(Gstate.PLAYING)) return true;
                         if ((playerUHC.isSpec() || main.isState(Gstate.FINISHED)) && playerUHC.isHost()) {
-                            Bukkit.broadcastMessage(UHC.getPrefix() + "§eListe des taupes de la partie :");
-                            Bukkit.broadcastMessage("§7------------------------------");
-                            Bukkit.broadcastMessage("");
+                            player.sendMessage(UHC.getPrefix() + "§eListe des taupes de la partie :");
+                            player.sendMessage("§7------------------------------");
+                            player.sendMessage("");
                             for (UHCTeam t : main.getUHCTeamManager().getTeams())
                                 if (t.getPrefix().isTaupePrefix() && !t.getPrefix().isSuperTaupePrefix()) {
-                                    Bukkit.broadcastMessage(" §0" + Symbols.SQUARE + " " + t.getTeam().getDisplayName() + "§8(§7" + t.getPlayers().size() + "§8) §6:");
+                                    player.sendMessage(" §0" + Symbols.SQUARE + " " + t.getTeam().getDisplayName() + "§8(§7" + t.getPlayers().size() + "§8) §6:");
                                     for (PlayerUHC pu : t.getPlayers()) {
                                         String details = " §8(";
                                         if (Moles.isSuperTaupe(pu)) details = details + "§c§lSuper Taupe§8) ";
                                         if (!pu.isAlive()) details = details + "§8(§cMort§8) ";
                                         if (pu.isAlive() && !pu.getPlayer().isOnline()) details = details + "§8(§7Déconnecté§8)";
-                                        Bukkit.broadcastMessage("  §0- §f" + pu.getPlayer().getName() + details);
+                                        player.sendMessage("  §0- §f" + pu.getPlayer().getName() + details);
                                     }
-                                    Bukkit.broadcastMessage("");
+                                    player.sendMessage("");
                                 }
                             if (Moles.areSuperMolesTogether && main.getUHCTeamManager().getTeamByDisplayName("§f§lSuper Taupes") != null) {
                                 UHCTeam t = main.getUHCTeamManager().getTeamByDisplayName("§f§lSuper Taupes");
-                                Bukkit.broadcastMessage(" §0" + Symbols.SQUARE + " " + t.getTeam().getDisplayName() + "§8(§7" + t.getPlayers().size() + "§8) §6:");
+                                player.sendMessage(" §0" + Symbols.SQUARE + " " + t.getTeam().getDisplayName() + "§8(§7" + t.getPlayers().size() + "§8) §6:");
                                 for (PlayerUHC pu : t.getPlayers()) {
                                     String details = " §8(";
                                     if (Moles.isSuperTaupe(pu)) details = details + "§c§lSuper Taupe§8) ";
                                     if (!pu.isAlive()) details = details + "§8(§cMort§8) ";
                                     if (pu.isAlive() && !pu.getPlayer().isOnline()) details = details + "§8(§7Déconnecté§8)";
-                                    Bukkit.broadcastMessage("  §0- §f" + pu.getPlayer().getName() + details);
+                                    player.sendMessage("  §0- §f" + pu.getPlayer().getName() + details);
                                 }
                             }
-                            Bukkit.broadcastMessage("§7------------------------------");
+                            player.sendMessage("§7------------------------------");
                         } else player.sendMessage(UHC.getPrefix() + "§cVous n'avez pas la permission d'utiliser cette commande.");
                         break;
                     case "aablist":

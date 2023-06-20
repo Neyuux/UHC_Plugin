@@ -91,7 +91,7 @@ public class InventoryManager {
         if (!player.equals(UHC.getInstance().getGameConfig().deathInvModifier) && !player.equals(UHC.getInstance().getGameConfig().starterModifier)) {
             clearInventory(player);
             player.getInventory().setItem(1, UHC.getSpecTear());
-            if (((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To"))
+            if (((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To") || Scenarios.SKY_DEFENDER.isActivated())
                 give(player, 4, GameConfig.getChooseTeamBanner(UHC.getInstance().getPlayerUHC(player.getUniqueId())));
             if (UHC.getInstance().getPlayerUHC(player.getUniqueId()).isHost())
                 player.getInventory().setItem(6, new ItemsStack(Material.REDSTONE_COMPARATOR, "§c§lConfiguration de la partie", "§7Permet de configurer la partie", "§b>>Clique droit").toItemStack());

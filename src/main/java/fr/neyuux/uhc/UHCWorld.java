@@ -8,6 +8,7 @@ import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PropertyManager;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
@@ -15,10 +16,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -26,10 +24,14 @@ import java.util.*;
 public class UHCWorld {
 
     private static World world;
+    private static World nether;
+    private static World end;
     private static boolean loaded = false;
     private static YamlConfiguration yconfig;
     private static final List<Location> spawns = new ArrayList<>();
     public static final List<Chunk> CORRECTED_CHUNKS = new ArrayList<>();
+    private static final List<World> worlds = new ArrayList<>();
+    private static final List<Block> toRemovePlatform = new ArrayList<>();
 
     public static String MAIN_WORLD = "Core";
 
@@ -52,11 +54,25 @@ public class UHCWorld {
 
         System.out.println(world);
         world = Bukkit.createWorld(new WorldCreator(seed.toString()).seed(seed));
+        nether = Bukkit.createWorld(new WorldCreator(seed + "_nether").environment(World.Environment.NETHER));
+        end = Bukkit.createWorld(new WorldCreator(seed + "_the_end").environment(World.Environment.THE_END));
+
+        worlds.add(world);
+        worlds.add(nether);
+        worlds.add(end);
+
         MAIN_WORLD = world.getName();
         this.createBarrierPlatform();
         System.out.println(world);
         spawns.clear();
         return this;
+    }
+
+    public static World addWorld(String worldname, boolean main) {
+        World world = Bukkit.createWorld(new WorldCreator(worldname));
+        worlds.add(world);
+        if (main) MAIN_WORLD = worldname;
+        return world;
     }
 
     public static boolean isCreated() {
@@ -91,16 +107,24 @@ public class UHCWorld {
     public void delete() {
         if (world == null) return;
         MAIN_WORLD = "Core";
-        for (Player p : world.getPlayers())
+        for (Player p : Bukkit.getOnlinePlayers())
             p.teleport(this.getPlatformLoc());
         long seed = world.getSeed();
         world.setAutoSave(false);
         //loaded = false;
-        Bukkit.unloadWorld(Long.toString(seed), false);
-        try {
-            FileUtils.deleteDirectory(world.getWorldFolder());
-        } catch (IOException ignored) { }
+
+        for (World world : worlds) {
+            Bukkit.unloadWorld(world, false);
+            try {
+                FileUtils.deleteDirectory(world.getWorldFolder());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         world = null;
+        nether = null;
+        end = null;
     }
 
     public void createBarrierPlatform() {
@@ -108,15 +132,23 @@ public class UHCWorld {
 
         for (int x = -25; x <= 25; x++)
             for (int z = -25; z <= 25; z++) {
-                w.getBlockAt(x, 130, z).setType(Material.BARRIER);
-                if (x == 25 || x == -25 || z == 25 || z == -25)
-                    w.getBlockAt(x, 132, z).setType(Material.BARRIER);
+                Block b = w.getBlockAt(x, 130, z);
+
+                b.setType(Material.BARRIER);
+                toRemovePlatform.add(b);
+
+                if (x == 25 || x == -25 || z == 25 || z == -25) {
+                    Block b2 = w.getBlockAt(x, 132, z);
+
+                    b2.setType(Material.BARRIER);
+                    toRemovePlatform.add(b2);
+                }
             }
         if (!MAIN_WORLD.equals("Core")) loadLocationChunks(new Location(world, 0, 70, 0), true, false);
     }
 
     public Location getPlatformLoc() {
-        return new Location(Bukkit.getWorld(MAIN_WORLD), new Random().nextInt(50)-24, 131.5, new Random().nextInt(50)-24);
+        return new Location(Bukkit.getWorld(MAIN_WORLD), new Random().nextInt(48)-24, 131.5, new Random().nextInt(48)-24);
     }
 
     public void loadChunks() {
@@ -212,7 +244,7 @@ public class UHCWorld {
     public List<Location> getSpawns() { return spawns; }
 
     public static Location getRandomLocation(World w, int size, int maxTentative) {
-        List<Material> mat = Arrays.asList(Material.WATER, Material.LAVA, Material.LEAVES, Material.AIR, Material.WATER_LILY, Material.STATIONARY_WATER, Material.STATIONARY_LAVA);
+        List<Material> mat = Arrays.asList(Material.WATER, Material.LAVA, Material.AIR, Material.WATER_LILY, Material.STATIONARY_WATER, Material.STATIONARY_LAVA);
         for (int i = 0; i <= maxTentative; i++) {
             int x = new Random().nextInt(size - (-size) + 1) + (-size);
             int z = new Random().nextInt(size - (-size) + 1) + (-size);
@@ -228,11 +260,12 @@ public class UHCWorld {
     }
 
     public void addSpawnLoad() {
-        if (world == null) throw new NullPointerException("Aucun monde n est cree");
+        World w = Bukkit.getWorld(MAIN_WORLD);
+        if (w == null) throw new NullPointerException("Aucun monde n est cree");
         Location tp = null;
         int border = (int)Math.round((double) GameConfig.ConfigurableParams.BORDERSIZE.getValue());
         while (tp == null || !isFarEnough(new ArrayList<>(spawns), tp, main.getAlivePlayers().size(), border/10/2, border/10))
-            tp = getRandomLocation(world, (int)Math.round((double) GameConfig.ConfigurableParams.BORDERSIZE.getValue()) / 2, 50);
+            tp = getRandomLocation(w, (int)Math.round((double) GameConfig.ConfigurableParams.BORDERSIZE.getValue()) / 2, 50);
 
         WorldListener.keepChunk.addAll(loadLocationChunks(tp, false, false));
         spawns.add(tp);
@@ -256,6 +289,14 @@ public class UHCWorld {
         return loc.getX() <= loc.getWorld().getWorldBorder().getSize() / 2 && loc.getZ() <= loc.getWorld().getWorldBorder().getSize() / 2;
     }
 
+    public static World getNether() {
+        return nether;
+    }
+
+    public static World getEnd() {
+        return end;
+    }
+
     public static void setAchievements(Boolean value) {
         final CraftServer server = (CraftServer) Bukkit.getServer();
         final MinecraftServer minecraftServer = server.getServer();
@@ -268,6 +309,12 @@ public class UHCWorld {
             manager.properties.store(out, "EditedByUHC");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void removePlatform() {
+        for (Block block : toRemovePlatform) {
+            block.setType(Material.AIR);
         }
     }
 

@@ -50,7 +50,11 @@ public class UHCTeam {
     private void setupTeam() {
         Scoreboard scoreboard = main.getUHCTeamManager().getScoreboard();
         if (!prefix.isTaupePrefix()) {
-            team = scoreboard.registerNewTeam(prefix + prefix.color.getName());
+
+            String teamname = prefix + prefix.color.getName();
+            teamname = teamname.substring(Math.max(teamname.length() - 16, 0));
+
+            team = scoreboard.registerNewTeam(teamname);
             team.setDisplayName(prefix + prefix.color.getDisplayName());
         } else {
             if (!prefix.isSuperTaupePrefix()) {
@@ -83,7 +87,7 @@ public class UHCTeam {
     public void add(Player player) {
         PlayerUHC playerUHC = main.getPlayerUHC(player.getUniqueId());
         
-        if (((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To") && players.size() >= GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) && !prefix.isTaupePrefix() && !(main.isState(Gstate.PLAYING) && (Scenarios.SWITCH.isActivated() || Scenarios.TRUE_LOVE.isActivated()))) {
+        if (((String)GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To") && players.size() >= GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString()) && !prefix.isTaupePrefix() && !(main.isState(Gstate.PLAYING) && (Scenarios.SWITCH.isActivated() || Scenarios.TRUE_LOVE.isActivated() || Scenarios.SKY_DEFENDER.isActivated()))) {
             player.sendMessage(UHC.getPrefix() + "§cL'équipe " + team.getDisplayName() + " §cest pleine !");
             return;
         }

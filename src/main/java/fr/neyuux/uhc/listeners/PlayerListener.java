@@ -1,9 +1,6 @@
 package fr.neyuux.uhc.listeners;
 
-import fr.neyuux.uhc.UHC;
-import fr.neyuux.uhc.InventoryManager;
-import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.GameConfig;
+import fr.neyuux.uhc.*;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.events.GameEndEvent;
@@ -15,8 +12,11 @@ import fr.neyuux.uhc.util.Loot;
 import fr.neyuux.uhc.util.LootItem;
 import fr.neyuux.uhc.util.ScoreboardSign;
 import fr.neyuux.uhc.util.VarsLoot;
+import net.minecraft.server.v1_8_R3.PortalTravelAgent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R3.CraftTravelAgent;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -328,11 +328,32 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPortal(PlayerPortalEvent e) {
         Player player = e.getPlayer();
-        if(e.getTo().getWorld().getEnvironment() == World.Environment.NETHER && !(boolean)GameConfig.ConfigurableParams.NETHER.getValue()) {
+        Location loc = null;
+
+        e.useTravelAgent(true);
+        if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)) {
+            
+            if (e.getFrom().getWorld().getUID().equals(UHCWorld.getNether().getUID()))
+                loc = e.getPortalTravelAgent().findOrCreate(e.getFrom().toVector().toLocation(Bukkit.getWorld(UHCWorld.MAIN_WORLD)));
+            else
+                loc = e.getPortalTravelAgent().findOrCreate(e.getFrom().toVector().toLocation(UHCWorld.getNether()));
+            
+        } else if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) {
+
+            if (e.getFrom().getWorld().getUID().equals(UHCWorld.getEnd().getUID()))
+                loc = e.getPortalTravelAgent().findOrCreate(e.getFrom().toVector().toLocation(Bukkit.getWorld(UHCWorld.MAIN_WORLD)));
+            else
+                loc = e.getPortalTravelAgent().findOrCreate(e.getFrom().toVector().toLocation(UHCWorld.getEnd()));
+            
+        }
+
+        e.setTo(loc);
+
+        if(e.getCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) && !(boolean)GameConfig.ConfigurableParams.NETHER.getValue()) {
             e.setCancelled(true);
             player.sendMessage(UHC.getPrefix() + "§cLe Nether est désactivé.");
             UHC.playNegativeSound(player);
-        } else if(e.getTo().getWorld().getEnvironment() == World.Environment.THE_END && !(boolean)GameConfig.ConfigurableParams.END.getValue()) {
+        } else if(e.getCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL) && !(boolean)GameConfig.ConfigurableParams.END.getValue()) {
             e.setCancelled(true);
             player.sendMessage(UHC.getPrefix() + "§cL'End est désactivé.");
             UHC.playNegativeSound(player);
@@ -389,7 +410,7 @@ public class PlayerListener implements Listener {
 
         if (main.isState(Gstate.WAITING) || main.isState(Gstate.STARTING))
             if (playings.size() >= (int) GameConfig.ConfigurableParams.SLOTS.getValue()) if (!p.isOp()) {
-                e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+                e.setResult(PlayerLoginEvent.Result.KICK_FULL);
                 e.setKickMessage(UHC.getPrefixWithoutArrow() + "\n" + "§cLe serveur est plein ... \n" + "§7Slots : §8[§e" + playings.size() + "§7/§c" + GameConfig.ConfigurableParams.SLOTS.getValue() + "§8]");
                 return;
             }
@@ -397,15 +418,20 @@ public class PlayerListener implements Listener {
         for (PlayerUHC pu : main.players) if (pu.isAlive()) playings.add(pu);
 
         if (main.isState(Gstate.PLAYING) && !(boolean)GameConfig.ConfigurableParams.SPECTATORS.getValue() && !playings.contains(main.getPlayerUHC(p.getUniqueId()))) {
-            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+            e.setResult(PlayerLoginEvent.Result.KICK_FULL);
             e.setKickMessage(UHC.getPrefixWithoutArrow() + "\n" + " §cLes spectateurs ne sont pas autorisés !");
             return;
         }
 
         if (main.hasWhitelist && !main.getWhitelist().contains(p)) {
-            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+            e.setResult(PlayerLoginEvent.Result.KICK_WHITELIST);
             e.setKickMessage(UHC.getPrefixWithoutArrow() + "\n" + "§cVous n'êtes pas whitelisté !");
             return;
+        }
+
+        if (Bukkit.getBannedPlayers().stream().anyMatch(offlinePlayer -> offlinePlayer.getUniqueId().equals(p.getUniqueId()))) {
+            e.setResult(PlayerLoginEvent.Result.KICK_BANNED);
+            e.setKickMessage(UHC.getPrefixWithoutArrow() + "\n" + "§cVous êtes banni !");
         }
 
         e.setResult(PlayerLoginEvent.Result.ALLOWED);

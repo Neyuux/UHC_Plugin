@@ -142,7 +142,8 @@ public class UHC extends JavaPlugin {
 		getCommand("scenario").setExecutor(new CommandScenario());
 		getCommand("helpop").setExecutor(new CommandHelpOp(this));
 
-		pm.addPermission(new Permission("uhc.host"));
+		if (pm.getPermissions().stream().noneMatch(permission -> permission.getName().equals("uhc.host")))
+			pm.addPermission(new Permission("uhc.host"));
 
 		reloadScoreboard();
 		rel();

@@ -357,15 +357,21 @@ public class FightListener implements Listener {
         if ((boolean)GameConfig.ConfigurableParams.LIGHTNING.getValue())
             player.getWorld().strikeLightningEffect(player.getLocation());
         if(!Scenarios.TIME_BOMB.isActivated() && !Scenarios.GRAVE_ROBBERS.isActivated()) {
-            if ((boolean)GameConfig.ConfigurableParams.BARRIER_HEAD.getValue()) {
-                player.getLocation().getBlock().setType(Material.NETHER_FENCE);
-                Block b = player.getWorld().getBlockAt(player.getLocation().add(0, 1, 0));
-                b.setTypeIdAndData(Material.SKULL.getId(), (byte) 1, true);
-                Skull skull = (Skull) b.getState();
-                skull.setSkullType(SkullType.PLAYER);
-                skull.setOwner(player.getName());
-                skull.setRotation(BlockFace.NORTH);
-                skull.update(true);
+
+            try {
+                if ((boolean) GameConfig.ConfigurableParams.BARRIER_HEAD.getValue()) {
+                    player.getLocation().getBlock().setType(Material.NETHER_FENCE);
+                    Block b = player.getWorld().getBlockAt(player.getLocation().add(0, 1, 0));
+                    b.setTypeIdAndData(Material.SKULL.getId(), (byte) 1, true);
+                    Skull skull = (Skull) b.getState();
+                    skull.setSkullType(SkullType.PLAYER);
+                    skull.setOwner(player.getName());
+                    skull.setRotation(BlockFace.NORTH);
+                    skull.update(true);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cImpossible de créer un le poteau avec la tête.");
             }
             InventoryManager.dropDeathStuff(player, ev.getStuffLocation());
             InventoryManager.clearInventory(player);

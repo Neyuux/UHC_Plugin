@@ -108,6 +108,8 @@ public class Anonymous extends Scenario implements Listener {
                 message = message.replaceAll("(?i)" + name.getValue(), name.getKey().getPlayer().getName());
         }
 
+        if (!Objects.equals(ev.getMessage(), message))
+            Bukkit.getLogger().info("UHC >> Anonymous >> changed name in command : " + message);
         ev.setMessage(message);
     }
 

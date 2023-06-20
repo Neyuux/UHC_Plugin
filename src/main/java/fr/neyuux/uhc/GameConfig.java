@@ -41,8 +41,8 @@ public class GameConfig implements Listener {
     private final UHC main;
     private final UHC.Modes mode;
     public final ArrayList<UUID> hosts = new ArrayList<>();
-    public Player starterModifier;
-    public Player deathInvModifier;
+    public UUID starterModifier;
+    public UUID deathInvModifier;
 
     public GameConfig(UHC main, UHC.Modes mode) {
         this.main = main;
@@ -498,7 +498,7 @@ public class GameConfig implements Listener {
                         }
                     }
                     if (param.equals(TEAMTYPE)) {
-                        if (mode.equals(UHC.Modes.LG)) {
+                        if (mode.equals(UHC.Modes.LG) || Scenarios.SKY_DEFENDER.isActivated()) {
                             player.sendMessage(UHC.getPrefix() + "§cImpossible de changer la taille des équipes avec ce mode.");
                             player.closeInventory();
                             return;
@@ -536,26 +536,36 @@ public class GameConfig implements Listener {
                 if (current.getItemMeta().getDisplayName().startsWith("§a§lModifier l'invetaire de ")) {
                     if (current.getItemMeta().getDisplayName().endsWith("Départ")) {
                         if (starterModifier != null) {
-                            player.sendMessage(UHC.getPrefix() + "§c\"§4§l" + starterModifier.getDisplayName() + "§c\" modifie déjà l'inventaire !");
+                            Player modifier = Bukkit.getPlayer(starterModifier);
+
+                            if (modifier == null)
+                                player.sendMessage(UHC.getPrefix() + "§cUn joueur modifie déjà l'inventaire !");
+                            else
+                                player.sendMessage(UHC.getPrefix() + "§c\"§4§l" + modifier.getDisplayName() + "§c\" modifie déjà l'inventaire !");
+
                             UHC.playNegativeSound(player);
                             return;
                         }
-                        starterModifier = player;
+                        starterModifier = player.getUniqueId();
                         player.sendMessage(UHC.getPrefix() + "§6Vous allez modifier l'inventaire de Départ. §9Pour le quiiter effectuez la commande §7§l/finish§9. §9Pour enchanter un objet, utiliez §7§l/enchant§9.");
                         player.setGameMode(GameMode.CREATIVE);
-                        InventoryManager.clearInventory(starterModifier);
-                        main.getInventoryManager().giveStartInventory(starterModifier);
+                        InventoryManager.clearInventory(player);
+                        main.getInventoryManager().giveStartInventory(player);
                     } else {
                         if (deathInvModifier != null) {
-                            player.sendMessage(UHC.getPrefix() + "§c\"§4§l" + deathInvModifier.getDisplayName() + "§c\" modifie déjà l'inventaire !");
-                            UHC.playNegativeSound(player);
+                            Player modifier = Bukkit.getPlayer(deathInvModifier);
+
+                            if (modifier == null)
+                                player.sendMessage(UHC.getPrefix() + "§cUn joueur modifie déjà l'inventaire !");
+                            else
+                                player.sendMessage(UHC.getPrefix() + "§c\"§4§l" + modifier.getDisplayName() + "§c\" modifie déjà l'inventaire !");                            UHC.playNegativeSound(player);
                             return;
                         }
-                        deathInvModifier = player;
+                        deathInvModifier = player.getUniqueId();
                         player.sendMessage(UHC.getPrefix() + "§6Vous allez modifier l'inventaire de Mort. §9Pour le quiiter effectuez la commande §7§l/finish§9. §9Pour enchanter un objet, utiliez §7§l/enchant§9.");
                         player.setGameMode(GameMode.CREATIVE);
-                        InventoryManager.clearInventory(deathInvModifier);
-                        InventoryManager.giveDeathInventory(deathInvModifier);
+                        InventoryManager.clearInventory(player);
+                        InventoryManager.giveDeathInventory(player);
                     }
                     player.closeInventory();
                     UHC.playPositiveSound(player);
@@ -1550,7 +1560,9 @@ public class GameConfig implements Listener {
 
     public static String getTeamTypeString(int size, boolean random) {
         if (Scenarios.SLAVE_MARKET.isActivated()) return "SlaveMarket";
-        if (Scenarios.TRUE_LOVE.isActivated()) return "TrueLove";
+        else if (Scenarios.TRUE_LOVE.isActivated()) return "TrueLove";
+        else if (Scenarios.SKY_DEFENDER.isActivated()) return "SkyDefender";
+
         if (size <= 1) return "FFA";
         else
         if (random)
@@ -1562,6 +1574,7 @@ public class GameConfig implements Listener {
     public static int getTeamTypeInt(String teamtype) {
         switch (teamtype) {
             case "FFA":
+            case "SkyDefender":
                 return 1;
             case "SlaveMarket":
                 return 0;
