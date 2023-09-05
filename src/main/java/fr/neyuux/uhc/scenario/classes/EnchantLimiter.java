@@ -25,8 +25,8 @@ public class EnchantLimiter extends Scenario implements Listener {
         super(Scenarios.ENCHANT_LIMITER, new ItemStack(Material.ENCHANTED_BOOK));
     }
 
-    public static int sharpnessMax = 5, protectionMax = 4, featherfallingMax = 4, thornsMax = 3, knockbackMax = 2,
-        powerMax = 5, punchMax = 2, infinityMax = 1;
+    public static int sharpnessIronMax = 3, protectionIronMax = 3, featherfallingMax = 4, thornsMax = 3, knockbackMax = 2,
+        powerMax = 3, punchMax = 2, infinityMax = 1, sharpnessDiamMax = 3, protectionDiamMax = 3;
 
     @Override
     protected void activate() {
@@ -52,9 +52,18 @@ public class EnchantLimiter extends Scenario implements Listener {
             int i = -1;
             Enchantment ench = en.getKey();
             Integer value = en.getValue();
+            String itemType = ev.getItem().getType().name();
+            boolean isIron = itemType.contains("IRON");
+            boolean isDiamond = itemType.contains("DIAMOND");
             
-            if (ench.equals(Enchantment.DAMAGE_ALL) && value > sharpnessMax) i = sharpnessMax;
-            if (ench.equals(Enchantment.PROTECTION_ENVIRONMENTAL) && value > protectionMax) i = protectionMax;
+            if (ench.equals(Enchantment.DAMAGE_ALL))
+                if (isIron && value > sharpnessIronMax) i = sharpnessIronMax;
+                else if (isDiamond && value > sharpnessDiamMax) i = sharpnessDiamMax;
+
+            if (ench.equals(Enchantment.PROTECTION_ENVIRONMENTAL))
+                if (isIron && value > protectionIronMax) i = protectionIronMax;
+                else if (isDiamond && value > protectionDiamMax) i = protectionDiamMax;
+
             if (ench.equals(Enchantment.PROTECTION_FALL) && value > featherfallingMax) i = featherfallingMax;
             if (ench.equals(Enchantment.THORNS) && value > thornsMax) i = thornsMax;
             if (ench.equals(Enchantment.KNOCKBACK) && value > knockbackMax) i = knockbackMax;
@@ -97,10 +106,19 @@ public class EnchantLimiter extends Scenario implements Listener {
                     int i = -1;
                     Enchantment ench = en.getKey();
                     Integer value = en.getValue();
-                    
-                    if (ench.equals(Enchantment.DAMAGE_ALL) && value > sharpnessMax) i = sharpnessMax;
-                    else if (ench.equals(Enchantment.PROTECTION_ENVIRONMENTAL) && value > protectionMax) i = protectionMax;
-                    else if (ench.equals(Enchantment.PROTECTION_FALL) && value > featherfallingMax) i = featherfallingMax;
+                    String itemType = result.getType().name();
+                    boolean isIron = itemType.contains("IRON");
+                    boolean isDiamond = itemType.contains("DIAMOND");
+
+                    if (ench.equals(Enchantment.DAMAGE_ALL))
+                        if (isIron && value > sharpnessIronMax) i = sharpnessIronMax;
+                        else if (isDiamond && value > sharpnessDiamMax) i = sharpnessDiamMax;
+
+                    if (ench.equals(Enchantment.PROTECTION_ENVIRONMENTAL))
+                        if (isIron && value > protectionIronMax) i = protectionIronMax;
+                        else if (isDiamond && value > protectionDiamMax) i = protectionDiamMax;
+
+                    if (ench.equals(Enchantment.PROTECTION_FALL) && value > featherfallingMax) i = featherfallingMax;
                     else if (ench.equals(Enchantment.THORNS) && value > thornsMax) i = thornsMax;
                     else if (ench.equals(Enchantment.KNOCKBACK) && value > knockbackMax) i = knockbackMax;
                     else if (ench.equals(Enchantment.ARROW_DAMAGE) && value > powerMax) i = powerMax;
