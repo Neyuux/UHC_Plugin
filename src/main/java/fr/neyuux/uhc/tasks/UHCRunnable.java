@@ -3,10 +3,12 @@ package fr.neyuux.uhc.tasks;
 import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.PlayerUHC;
 import fr.neyuux.uhc.UHC;
+import fr.neyuux.uhc.UHCWorld;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.scenario.classes.modes.Moles;
+import fr.neyuux.uhc.scenario.classes.modes.SkyDefender;
 import fr.neyuux.uhc.util.ScoreboardSign;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -72,6 +74,10 @@ public class UHCRunnable extends BukkitRunnable {
                     if (!GameConfig.ConfigurableParams.TEAMTYPE.getValue().equals("FFA")) {
                         for (PlayerUHC pu : main.getAlivePlayers())
                             if (pu.getPlayer().isOnline() && pu.getTeam() != null && pu.getTeam().getAlivePlayers().size() > 1) {
+
+                                if (Scenarios.SKY_DEFENDER.isActivated() && !pu.getTeam().getPrefix().symbol.contains("Défenseur"))
+                                    continue;
+
                                 Location l = pu.getPlayer().getPlayer().getLocation();
                                 DecimalFormat df = new DecimalFormat();
                                 df.setMaximumFractionDigits(1);
@@ -249,7 +255,7 @@ public class UHCRunnable extends BukkitRunnable {
                 else
                     en.getValue().removeLine(8);
 
-                en.getValue().setLine(10, "§b§lTaille de la bordure §b: " + Symbols.PLUS_MINUS + "§3" +  Math.round(Bukkit.getWorld(main.world.getSeed() + "").getWorldBorder().getSize() / 2.0f));
+                en.getValue().setLine(10, "§b§lTaille de la bordure §b: " + Symbols.PLUS_MINUS + "§3" +  Math.round(Bukkit.getWorld(UHCWorld.MAIN_WORLD).getWorldBorder().getSize() / 2.0f));
 
             } else if (main.mode.equals(UHC.Modes.LG)) {
                 en.getValue().setLine(8, "§6§lTimer §6: §e§l" + UHC.getTimer(timer));

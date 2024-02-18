@@ -213,7 +213,7 @@ public class PlayerListener implements Listener {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {
                         p.removePotionEffect(PotionEffectType.ABSORPTION);
                         main.setHealth(p);
-                    }, (long) 0.01);
+                    }, (long) 1);
             }
             main.setHealth(p);
         }
@@ -284,7 +284,7 @@ public class PlayerListener implements Listener {
             }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event) {
         Block b = event.getBlock();
         Material mat = b.getType();

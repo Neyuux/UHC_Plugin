@@ -1,9 +1,6 @@
 package fr.neyuux.uhc.commands;
 
-import fr.neyuux.uhc.GameConfig;
-import fr.neyuux.uhc.InventoryManager;
-import fr.neyuux.uhc.PlayerUHC;
-import fr.neyuux.uhc.UHC;
+import fr.neyuux.uhc.*;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.enums.Symbols;
 import fr.neyuux.uhc.listeners.FightListener;
@@ -526,7 +523,7 @@ public class CommandUHC implements CommandExecutor {
                         break;
                     case "bid":
                         if (Scenarios.SLAVE_MARKET.isActivated()) {
-                            if (SlaveMarket.owners.size() == SlaveMarket.nOwners) {
+                            if (SlaveMarket.owners.size() == SlaveMarket.nOwners && SlaveMarket.timers[0] > 0) {
                                 if (SlaveMarket.owners.contains(playerUHC)) {
                                     if (args.length > 1) {
                                         try {
@@ -536,7 +533,7 @@ public class CommandUHC implements CommandExecutor {
                                                     if (player.getInventory().getItem(player.getInventory().first(Material.DIAMOND)).getAmount() >= j) {
                                                         SlaveMarket.bid = j;
                                                         SlaveMarket.bestBidder = playerUHC;
-                                                        SlaveMarket.timers[0] = 4;
+                                                        SlaveMarket.timers[0] = 10;
                                                         UHC.playPositiveSound(player);
                                                         Bukkit.broadcastMessage(UHC.getPrefix() + Scenarios.SLAVE_MARKET.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + player.getDisplayName() + " §ea parié §b" + j + " diamants §e!");
                                                     } else player.sendMessage(UHC.getPrefix() + "§cVous avez pas assez de diamants !");
@@ -628,10 +625,12 @@ public class CommandUHC implements CommandExecutor {
                                 Moles.alreadyReveal.add(playerUHC);
                                 InventoryManager.give(player, null, new ItemStack(GOLDEN_APPLE));
                                 main.boards.get(playerUHC).setLine(0, player.getDisplayName());
+
+                                FightListener.checkWin();
+
                                 for (PlayerUHC pu : main.players)
                                     main.boards.get(pu).setLine(3, "§7§lTeams : §f" + main.getUHCTeamManager().getAliveTeams().size() + "§8/§7" + UHCTeamManager.baseteams + " §8(§7" + main.getAlivePlayers().size() + "§8 joueurs)");
 
-                                FightListener.checkWin();
                             } else player.sendMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous n'êtes pas une taupe ! (Demander à quelqu'un d'autre de lire ce message est interdit, je te vois venir)");
                         } else player.sendMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous êtes déjà reveal !");
                         break;
@@ -653,9 +652,12 @@ public class CommandUHC implements CommandExecutor {
                                         InventoryManager.give(player, null, new ItemStack(GOLDEN_APPLE));
                                     else InventoryManager.give(player, null, new ItemStack(GOLDEN_APPLE, 3));
                                     main.boards.get(playerUHC).setLine(0, player.getDisplayName());
+
+                                    FightListener.checkWin();
+
                                     for (PlayerUHC pu : main.players)
                                         main.boards.get(pu).setLine(3, "§7§lTeams : §f" + main.getUHCTeamManager().getAliveTeams().size() + "§8/§7" + UHCTeamManager.baseteams + " §8(§7" + main.getAlivePlayers().size() + "§8 joueurs)");
-                                    FightListener.checkWin();
+
                                 } else
                                     player.sendMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " Vous n'êtes pas une super taupe ! (Demander à quelqu'un d'autre de lire ce message est interdit, je te vois venir)");
                             } else player.sendMessage(UHC.getPrefix() + Scenarios.MOLES.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §cVous devez être reveal pour vous super reveal !");
@@ -704,10 +706,13 @@ public class CommandUHC implements CommandExecutor {
                                 if (t.getPrefix().isTaupePrefix() && !t.getPrefix().isSuperTaupePrefix()) {
                                     player.sendMessage(" §0" + Symbols.SQUARE + " " + t.getTeam().getDisplayName() + "§8(§7" + t.getPlayers().size() + "§8) §6:");
                                     for (PlayerUHC pu : t.getPlayers()) {
-                                        String details = " §8(";
-                                        if (Moles.isSuperTaupe(pu)) details = details + "§c§lSuper Taupe§8) ";
-                                        if (!pu.isAlive()) details = details + "§8(§cMort§8) ";
-                                        if (pu.isAlive() && !pu.getPlayer().isOnline()) details = details + "§8(§7Déconnecté§8)";
+                                        String details = "";
+                                        if (Moles.isSuperTaupe(pu)) details = details + "§8(§c§lSuper Taupe§8) ";
+
+                                        if (!pu.isAlive())
+                                            details = details + "§8(§cMort§8) ";
+                                        else if (pu.isAlive() && !pu.getPlayer().isOnline())
+                                            details = details + "§8(§7Déconnecté§8)";
                                         player.sendMessage("  §0- §f" + pu.getPlayer().getName() + details);
                                     }
                                     player.sendMessage("");
@@ -779,10 +784,17 @@ public class CommandUHC implements CommandExecutor {
                     case "pregenworld":
                         if (sender.isOp()) {
                             Bukkit.broadcastMessage(UHC.getPrefix() + "§b" + sender.getName() + " §2a commencé la prégénération du monde !");
-                            main.world.generateChunks(World.Environment.NORMAL);
+                            main.world.generateChunks(Bukkit.getWorld(UHCWorld.MAIN_WORLD));
                         }
 
                     break;
+                    case "genskydef":
+                        UHCWorld.setSkydefender(!UHCWorld.isSkydefender());
+                        WorldCreator worldCreator = WorldCreator.name("skydefender").seed(Bukkit.getWorld(UHCWorld.MAIN_WORLD).getSeed());
+
+                        World world = worldCreator.createWorld();
+                        UHCWorld.addWorld(world, true);
+                        break;
                     case "crafts":
                     case "customcrafts":
                     case "craft":

@@ -85,7 +85,7 @@ public class FightListener implements Listener {
                     formattedPlayerHealth = format.format(playerUHC.getTeam().getHealth() - ev.getFinalDamage());
                     dp.sendMessage(UHC.getPrefix() + "§fL'équipe " + playerUHC.getTeam().getTeam().getDisplayName() + " §fpossède en tout §4§l" + formattedPlayerHealth + Symbols.HEARTH + "§f.");
                 } else {
-                    formattedPlayerHealth = format.format(playerUHC.health + playerUHC.getAbsorption());
+                    formattedPlayerHealth = format.format((player.getHealth() + playerUHC.getAbsorption()) / 2D);
                     dp.sendMessage(UHC.getPrefix() + player.getDisplayName() + " §fpossède actuellement §4§l" + formattedPlayerHealth + Symbols.HEARTH + "§f.");
                 }
             }
@@ -195,7 +195,7 @@ public class FightListener implements Listener {
                 eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un zombie.");
                 break;
             case SLIME:
-                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par une flèche.");
+                eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un slime.");
                 break;
             case GHAST:
                 eliminate(player, true, null, player.getDisplayName() + "§c s'est fait tué par un Ghast.");

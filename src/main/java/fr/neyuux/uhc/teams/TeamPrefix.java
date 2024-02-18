@@ -44,27 +44,9 @@ public class TeamPrefix {
 
 
     private String getCurrentSymbol() {
-        if (main.getUHCTeamManager().getTeams().size() < 14)
-            return "";
-        else if (main.getUHCTeamManager().getTeams().size() < 28)
-            return symbols[0];
-        else if (main.getUHCTeamManager().getTeams().size() < 42)
-            return symbols[1];
-        else if (main.getUHCTeamManager().getTeams().size() < 56)
-            return symbols[2];
-        else if (main.getUHCTeamManager().getTeams().size() < 70)
-            return symbols[3];
-        else if (main.getUHCTeamManager().getTeams().size() < 84)
-            return symbols[4];
-        else if (main.getUHCTeamManager().getTeams().size() < 98)
-            return symbols[5];
-        else if (main.getUHCTeamManager().getTeams().size() < 112)
-            return symbols[6];
-        else if (main.getUHCTeamManager().getTeams().size() < 126)
-            return symbols[7];
-        else if (main.getUHCTeamManager().getTeams().size() < 140)
-            return symbols[8];
-        return "null";
+        int teamSize = main.getUHCTeamManager().getTeams().size();
+        int index = ((int) (teamSize / 14f)) - 1;
+        return index < symbols.length ? (index < 0 ? "" : symbols[index]) : "null";
     }
 
     public TeamPrefix toTaupePrefix() {

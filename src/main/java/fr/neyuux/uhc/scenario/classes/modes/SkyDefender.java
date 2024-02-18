@@ -25,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -37,8 +38,6 @@ import java.util.UUID;
 
 public class SkyDefender extends Scenario implements Listener {
 
-    private UHCTeam defenderTeam;
-    private UHCTeam attackersTeam;
     private Location bannerLoc;
     private Location teleporterFromLoc;
     private Location teleporterToLoc;
@@ -51,18 +50,21 @@ public class SkyDefender extends Scenario implements Listener {
     @Override
     protected void activate() {
 
-        World world = UHCWorld.addWorld("skydefender", true);
+        Bukkit.getScheduler().runTaskTimer(UHC.getInstance(), () -> {
+            System.out.println(String.valueOf(UHC.getInstance().getUHCTeamManager().getTeams()));
+        }, 0L, 50L);
+
+        UHCWorld.setSkydefender(true);
+        UHCWorld.addWorld("skydefender", true, skydefworld -> {
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                player.teleport(new Location(skydefworld, 25, 200, 25));
+                InventoryManager.giveWaitInventory(player);
+            });
+        });
 
         UHCTeamManager teamManager = UHC.getInstance().getUHCTeamManager();
 
         teamManager.clearTeams();
-        this.defenderTeam = teamManager.createTeam(new TeamPrefix(UHC.getInstance(), UHCTeamColors.BLUE, "§9Défenseur "));
-        this.attackersTeam = teamManager.createTeam(new TeamPrefix(UHC.getInstance(), UHCTeamColors.RED, "§c"));
-
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            player.teleport(new Location(world, 0, 200, 0));
-            InventoryManager.giveWaitInventory(player);
-        });
 
         File configfile = new File(UHC.getInstance().getDataFolder(), "config.yml");
         YamlConfiguration yconfig = YamlConfiguration.loadConfiguration(configfile);
@@ -76,6 +78,9 @@ public class SkyDefender extends Scenario implements Listener {
             e.printStackTrace();
             Bukkit.broadcastMessage(UHC.getPrefix() + "§4[§cErreur§4] §cImpossible de créer la config du Sky Defender !");
         }
+
+        teamManager.createTeam(new TeamPrefix(UHC.getInstance(), UHCTeamColors.BLUE, "§9Défenseur "));
+        teamManager.createTeam(new TeamPrefix(UHC.getInstance(), UHCTeamColors.RED, "§c"));
     }
 
     @Override
@@ -87,17 +92,23 @@ public class SkyDefender extends Scenario implements Listener {
         YamlConfiguration yconfig = YamlConfiguration.loadConfiguration(file);
         World world =  Bukkit.getWorld(UHCWorld.MAIN_WORLD);
 
+        UHCWorld.removePlatform();
+
         this.bannerLoc = getLocationFromDoubleList(yconfig.getDoubleList("skydefender.banner"), world);
         this.teleporterFromLoc = getLocationFromDoubleList(yconfig.getDoubleList("skydefender.teleporter.from"), world);
         this.teleporterToLoc = getLocationFromDoubleList(yconfig.getDoubleList("skydefender.teleporter.to"), world);
 
-        this.defenderTeam.getAlivePlayers().forEach(playerUHC -> playerUHC.getPlayer().getPlayer().teleport(this.bannerLoc));
+        System.out.println(this.bannerLoc);
+        System.out.println(this.getDefenderTeam());
+        this.getDefenderTeam().getPlayers().forEach(playerUHC -> {
+            playerUHC.getPlayer().getPlayer().teleport(this.bannerLoc);
+        });
 
-        this.defenderTeam.getTeam().setAllowFriendlyFire(false);
-        this.attackersTeam.getTeam().setAllowFriendlyFire(true);
+        this.getDefenderTeam().getTeam().setAllowFriendlyFire(false);
+        this.getAttackersTeam().getTeam().setAllowFriendlyFire(true);
 
-        UHCWorld.getArmorStand(teleporterFromLoc).setCustomName("§5§lTeleporteur");
-        UHCWorld.getArmorStand(teleporterToLoc).setCustomName("§5§lTeleporteur");
+        UHCWorld.getArmorStand(teleporterFromLoc.clone().add(0, 1, 0)).setCustomName("§5§lTeleporteur");
+        UHCWorld.getArmorStand(teleporterToLoc.clone().add(0, 1, 0)).setCustomName("§5§lTeleporteur");
         Bukkit.getScheduler().runTaskTimer(UHC.getInstance(), () -> {
             this.createParticleColumn(this.teleporterFromLoc);
             this.createParticleColumn(this.teleporterToLoc);
@@ -120,39 +131,45 @@ public class SkyDefender extends Scenario implements Listener {
         PlayerUHC playerUHC = ev.getPlayerUHC();
 
         if (playerUHC.getTeam() != null)
-            if (playerUHC.getTeam().equals(this.defenderTeam) && this.defenderTeam.getAlivePlayers().size() == 1) {
+            if (playerUHC.getTeam().equals(this.getDefenderTeam()) && this.getDefenderTeam().getAlivePlayers().size() == 1) {
                 Bukkit.getScheduler().runTaskLater(UHC.getInstance(), () -> {
-                    Bukkit.broadcastMessage(UHC.getPrefix() + Scenarios.SKY_DEFENDER.getDisplayName() + "§8§l"+ Symbols.DOUBLE_ARROW+" §r" + "§b§lTOUS LES §9§lDÉFENSEURS SONT MORTS ! LE PREMIER ATTAQUANT A CASSER LA BANNIERE REMPORTERA LA VICTOIRE !");
+                    Bukkit.broadcastMessage(UHC.getPrefix() + Scenarios.SKY_DEFENDER.getDisplayName() + "§8§l"+ Symbols.DOUBLE_ARROW+" §r" + "§9§lTOUS LES DÉFENSEURS SONT MORTS ! LE PREMIER ATTAQUANT A CASSER LA BANNIERE REMPORTERA LA VICTOIRE !");
                 }, 1L);
-            } else if (playerUHC.getTeam().equals(this.attackersTeam) && this.attackersTeam.getAlivePlayers().size() == 1) {
+            } else if (playerUHC.getTeam().equals(this.getAttackersTeam()) && this.getAttackersTeam().getAlivePlayers().size() == 1) {
                 UHC.stopInfiniteActionBarForAllPlayers();
                 UHC.getInstance().setState(Gstate.FINISHED);
                 new UHCStop(UHC.getInstance()).runTaskTimer(UHC.getInstance(), 0, 20);
 
                 Bukkit.broadcastMessage(UHC.getPrefix() + "§6Victoire des §9§lDéfenseurs §6!");
-                Bukkit.broadcastMessage(UHC.getPrefix() + "§eNombre de gagnants : " + this.defenderTeam.getAlivePlayers().size() + " §7:");
-                for (PlayerUHC pu : this.defenderTeam.getAlivePlayers())
+                Bukkit.broadcastMessage(UHC.getPrefix() + "§eNombre de gagnants : " + this.getDefenderTeam().getAlivePlayers().size() + " §7:");
+                for (PlayerUHC pu : this.getDefenderTeam().getAlivePlayers())
                     Bukkit.broadcastMessage(UHC.getPrefix() + pu.getPlayer().getPlayer().getDisplayName() + " §8(§c" + pu.getKills() + " kills§8)");
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     p.playSound(p.getLocation(), Sound.ZOMBIE_REMEDY, 9, 1);
-                    UHC.sendTitle(p, "§c§l§n§kaa§r §e§l§nVictoire des §9§lDéfenseurs §c§l§n§kaa", "§6§l§nNombre de Survivants§r §7§l: §f" + this.defenderTeam.getAlivePlayers().size(), 20, 180, 20);
+                    UHC.sendTitle(p, "§c§l§n§kaa§r §e§l§nVictoire des §9§lDéfenseurs §c§l§n§kaa", "§6§l§nNombre de Survivants§r §7§l: §f" + this.getDefenderTeam().getAlivePlayers().size(), 20, 180, 20);
                 }
             }
+    }
+
+    @EventHandler
+    public void onCheckWin(GameEndEvent ev) {
+        if (this.getAttackersTeam().getAlivePlayers().size() > 0)
+            ev.setCancelled(true);
     }
 
     @EventHandler
     public void onBannerBreak(BlockBreakEvent ev) {
         Block b = ev.getBlock();
 
-        if (b.getType() != Material.BANNER)
+        if (b.getType() != Material.WALL_BANNER && b.getType() != Material.STANDING_BANNER)
             return;
 
-        if (b.getLocation().distanceSquared(this.bannerLoc) > 4)
+        if (b.getLocation().distanceSquared(this.bannerLoc) > 16)
             return;
 
         Player winner = ev.getPlayer();
 
-        if (this.defenderTeam.getAlivePlayers().size() > 0) {
+        if (this.getDefenderTeam().getAlivePlayers().size() > 0) {
             ev.setCancelled(true);
             winner.sendMessage(UHC.getPrefix() + Scenarios.SKY_DEFENDER.getDisplayName() + "§8§l"+ Symbols.DOUBLE_ARROW+" §r" + "§cTous les défenseurs doivent être morts pour pouvoir casser la bannière !");
             UHC.playNegativeSound(winner);
@@ -175,7 +192,13 @@ public class SkyDefender extends Scenario implements Listener {
     @EventHandler
     public void onMooveTeleporter(PlayerMoveEvent ev) {
 
-        if (!this.defenderTeam.getAlivePlayers().contains(UHC.getInstance().getPlayerUHC(ev.getPlayer().getUniqueId())))
+        if (UHC.getInstance().getPlayerUHC(ev.getPlayer().getUniqueId()) == null)
+            return;
+
+        if (this.getDefenderTeam() == null)
+            return;
+
+        if (!this.getDefenderTeam().getAlivePlayers().contains(UHC.getInstance().getPlayerUHC(ev.getPlayer().getUniqueId())))
             return;
 
         if (this.teleportedRecently.contains(ev.getPlayer().getUniqueId()))
@@ -188,6 +211,20 @@ public class SkyDefender extends Scenario implements Listener {
         } else if (to.distanceSquared(this.teleporterToLoc) < 1.5D)
             this.teleport(ev, this.teleporterFromLoc);
 
+    }
+
+    @EventHandler
+    public void onMobSpawn(EntitySpawnEvent ev) {
+        switch (ev.getEntityType()) {
+            case ZOMBIE:
+            case ENDERMAN:
+            case SPIDER:
+            case SKELETON:
+            case CREEPER:
+                if (ev.getLocation().getY() > 100)
+                    ev.setCancelled(true);
+                break;
+        }
     }
 
 
@@ -237,5 +274,23 @@ public class SkyDefender extends Scenario implements Listener {
                 });
             }
         }
+    }
+
+    private UHCTeam getDefenderTeam() {
+        UHCTeamManager teamManager = UHC.getInstance().getUHCTeamManager();
+        System.out.println(teamManager);
+        System.out.println(Scenarios.SKY_DEFENDER.isActivated() + " / " + teamManager.getTeams().size());
+        if (Scenarios.SKY_DEFENDER.isActivated() && teamManager.getTeams().size() <= 2)
+            return teamManager.getByID(1);
+        else
+            return null;
+    }
+
+    private UHCTeam getAttackersTeam() {
+        UHCTeamManager teamManager = UHC.getInstance().getUHCTeamManager();
+        if (Scenarios.SKY_DEFENDER.isActivated() && teamManager.getTeams().size() <= 2)
+            return teamManager.getByID(2);
+        else
+            return null;
     }
 }

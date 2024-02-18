@@ -106,8 +106,10 @@ public class UHCTeam {
         if (playerUHC.isHost() && !main.isState(Gstate.PLAYING))
             player.setDisplayName(TeamPrefix.getHostPrefix() + player.getDisplayName());
         player.setPlayerListName(player.getDisplayName());
-        if (!Scenarios.SLAVE_MARKET.isActivated() || main.isState(Gstate.PLAYING))main.boards.get(playerUHC).setLine(2, "ßeßl…quipe ße: " + team.getDisplayName());
-        main.boards.get(playerUHC).setLine(0, player.getDisplayName());
+        if (!Scenarios.SLAVE_MARKET.isActivated() && !main.isState(Gstate.PLAYING)) {
+            main.boards.get(playerUHC).setLine(2, "ßeßl…quipe ße: " + team.getDisplayName());
+            main.boards.get(playerUHC).setLine(0, player.getDisplayName());
+        }
 
         Bukkit.getPluginManager().callEvent(new TeamChangeEvent(playerUHC, this));
     }
@@ -336,5 +338,14 @@ public class UHCTeam {
 
     public Set<PlayerUHC> getDeathPlayers() {
         return deathPlayers;
+    }
+
+    @Override
+    public String toString() {
+        return "UHCTeam{" +
+                "prefix=" + prefix +
+                ", id=" + id +
+                ", size=" + this.getPlayers().size() +
+                "}";
     }
 }

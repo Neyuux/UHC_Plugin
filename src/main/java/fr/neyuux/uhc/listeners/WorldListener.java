@@ -7,6 +7,7 @@ import fr.neyuux.uhc.UHCWorld;
 import fr.neyuux.uhc.enums.Gstate;
 import fr.neyuux.uhc.scenario.Scenarios;
 import org.bukkit.*;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
@@ -23,6 +24,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.generator.BlockPopulator;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,6 +94,28 @@ public class WorldListener implements Listener {
 
     }
 
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void chunkLoadReplaceRoofedForest(ChunkLoadEvent event) {
+
+        final World w = event.getWorld();
+
+        if (event.isNewChunk() && UHCWorld.isSkydefender() && w.getName().equals("skydefender")){
+
+            final Chunk c = event.getChunk();
+            int X = c.getX();
+            int Z = c.getZ();
+            if (X <= -110 && X >= -140 && Z <= -110 && Z >= -140 ){
+
+                for (int x=0; x<16; x++){
+                    for (int z=0; z<16; z++){
+                        final Block block = c.getBlock(x, w.getHighestBlockYAt(x,z) , z);
+                        block.setBiome(Biome.PLAINS);
+                    }
+                }
+            }
+        }
+    }
+
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onKill(EntityDeathEvent e){
@@ -113,6 +137,14 @@ public class WorldListener implements Listener {
                 || type == EntityType.MAGMA_CUBE || type == EntityType.PIG_ZOMBIE || type == EntityType.SILVERFISH || type == EntityType.SKELETON
                 || type == EntityType.SLIME || type == EntityType.SPIDER || type == EntityType.WITCH || type == EntityType.ZOMBIE)
             up.addMonster();
+
+
+        if (type == EntityType.ENDERMAN) {
+            e.getDrops().clear();
+
+            if (new Random().nextDouble() <= 0.10)
+                e.getDrops().add(new ItemStack(Material.ENDER_PEARL));
+        }
     }
 
 

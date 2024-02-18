@@ -291,7 +291,7 @@ public class Moles extends Scenario implements Listener {
                 teams--;
             }
         }
-        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + "§eLes taupes ont été annoncées !");
+        Bukkit.broadcastMessage(UHC.getPrefix() + scenario.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eLes taupes ont été annoncées !");
         for (PlayerUHC pu : UHC.getInstance().players)
             if (pu.getPlayer().isOnline())
                 if (moles.contains(pu)) pu.getPlayer().getPlayer().playSound(pu.getPlayer().getPlayer().getLocation(), Sound.GHAST_SCREAM, 1, 1);
@@ -356,17 +356,17 @@ public class Moles extends Scenario implements Listener {
     public enum Kits {
 
         AERIEN("§fAerien", ENDER_PEARL, Arrays.asList(
-                new ItemStack(ENDER_PEARL, 16),
+                new ItemStack(ENDER_PEARL, 4),
                 new ItemsStack(ENCHANTED_BOOK).toItemStackWithEnchant(new AbstractMap.SimpleEntry<>(Enchantment.PROTECTION_FALL, 4)),
                 new ItemStack(FEATHER, 8))),
         ALCHIMISTE("§eAlchimiste", BREWING_STAND_ITEM, Arrays.asList(
                 getPotion(PotionEffectType.HARM, 1, 0, true, true, PotionType.INSTANT_DAMAGE),
-                getPotion(PotionEffectType.POISON, 33, 0, true, true, PotionType.POISON),
-                getPotion(PotionEffectType.WEAKNESS, 60, 0, true, true, PotionType.WEAKNESS),
-                getPotion(PotionEffectType.SLOW, 60, 0, true, true, PotionType.SLOWNESS))),
+                getPotion(PotionEffectType.POISON, 20, 0, true, true, PotionType.POISON),
+                getPotion(PotionEffectType.WEAKNESS, 40, 0, true, true, PotionType.WEAKNESS),
+                getPotion(PotionEffectType.SLOW, 40, 0, true, true, PotionType.SLOWNESS))),
         MINEUR("§7Mineur", DIAMOND_PICKAXE, Arrays.asList(
                 new ItemsStack(DIAMOND_PICKAXE).toItemStackWithEnchant(new AbstractMap.SimpleEntry<>(Enchantment.DIG_SPEED, 3)),
-                new ItemStack(EXP_BOTTLE, 8))),
+                new ItemStack(EXP_BOTTLE, 10))),
         PYROMANE("§6Pyromane", BLAZE_POWDER, Arrays.asList(
                 new ItemsStack(FLINT_AND_STEEL).toItemStack(),
                 new ItemsStack(LAVA_BUCKET).toItemStack(),

@@ -10,6 +10,7 @@ import fr.neyuux.uhc.events.PluginReloadEvent;
 import fr.neyuux.uhc.scenario.Scenario;
 import fr.neyuux.uhc.scenario.Scenarios;
 import fr.neyuux.uhc.teams.UHCTeam;
+import fr.neyuux.uhc.teams.UHCTeamManager;
 import fr.neyuux.uhc.util.ScoreboardSign;
 import org.bukkit.Bukkit;
 import org.bukkit.FireworkEffect;
@@ -58,6 +59,8 @@ public class SlaveMarket extends Scenario implements Listener {
         for (PlayerUHC pu : owners)
             if (pu.getPlayer().isOnline() && ownersDiamond.get(pu) != 0)
                 InventoryManager.give(pu.getPlayer().getPlayer(), null, new ItemStack(Material.DIAMOND, ownersDiamond.get(pu)));
+
+        UHC.stopInfiniteActionBarForAllPlayers();
     }
 
     @Override
@@ -90,14 +93,6 @@ public class SlaveMarket extends Scenario implements Listener {
             ScoreboardSign ss = new ScoreboardSign(playerUHC.getPlayer().getPlayer(), Scenarios.SLAVE_MARKET.getDisplayName());
             ss.create();
             ss.setLine(13, "§0");
-            int l = 0;
-            for (UHCTeam t : UHC.getInstance().getUHCTeamManager().getTeams()) {
-                if (l == 13) break;
-                Player owner = null;
-                for (PlayerUHC pu : t.getPlayers()) if (owners.contains(pu)) owner = pu.getPlayer().getPlayer();
-                ss.setLine(l, t.getTeam().getDisplayName() + " §7: §f§l" + t.getPlayers().size() + " §ejoueurs / §f§l" + owner.getInventory().getItem(4).getAmount() + " §bdiamants");
-                l++;
-            }
             UHC.getInstance().boards.put(playerUHC, ss);
         }
 
@@ -109,7 +104,7 @@ public class SlaveMarket extends Scenario implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (timers[0] == -5 && player[0] != null && playerUHC[0] != null) {
+                if (timers[0] == 0 && player[0] != null && playerUHC[0] != null) {
                     UHCTeam t;
                     if (bestBidder != null) t = bestBidder.getTeam();
                     else t = UHC.getInstance().getUHCTeamManager().getTeams().get(new Random().nextInt(UHC.getInstance().getUHCTeamManager().getTeams().size()));
@@ -124,19 +119,27 @@ public class SlaveMarket extends Scenario implements Listener {
                     fwm.addEffect(FireworkEffect.builder().withColor(t.getPrefix().color.getDyecolor().getColor()).with(FireworkEffect.Type.STAR).build());
                     fw.setFireworkMeta(fwm);
                     ((CraftFirework)fw).getHandle().expectedLifespan = 1;
-                    Bukkit.broadcastMessage(UHC.getPrefix() + Scenarios.SLAVE_MARKET.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + t.getPlayers().get(t.getPlayers().size() - 1).getPlayer().getPlayer().getDisplayName() + " §ea acheté §f" + player[0].getDisplayName() + " §epour §b§l" + bid + " §bdiamants !");
+                    Bukkit.broadcastMessage(UHC.getPrefix() + Scenarios.SLAVE_MARKET.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " " + t.getPlayers().get(0).getPlayer().getPlayer().getDisplayName() + " §ea acheté §f" + player[0].getDisplayName() + " §epour §b§l" + bid + " §bdiamants !");
                 }
-                for (PlayerUHC puhc : UHC.getInstance().players) {
-                    int l = 0;
-                    if (UHC.getInstance().boards.containsKey(puhc))
-                        for (UHCTeam t : UHC.getInstance().getUHCTeamManager().getTeams()) {
-                            Player owner = null;
-                            for (PlayerUHC pu : t.getPlayers()) if (owners.contains(pu)) owner = pu.getPlayer().getPlayer();
-                            UHC.getInstance().boards.get(puhc).setLine(l, t.getTeam().getDisplayName() + " §7: §f§l" + t.getPlayers().size() + " §ejoueurs / §f§l" + owner.getInventory().getItem(owner.getInventory().first(Material.DIAMOND)).getAmount() + " §bdiamants");
-                            l++;
-                        }
+
+                int l = 0;
+                for (UHCTeam team : UHC.getInstance().getUHCTeamManager().getTeams()) {
+                    int finalL = l;
+                    team.getPlayers()
+                            .stream()
+                            .filter(teammemberUHC -> owners.contains(teammemberUHC))
+                            .map(playerUHC1 -> playerUHC1.getPlayer().getPlayer())
+                            .findFirst()
+                            .ifPresent(owner -> {
+                                for (ScoreboardSign ss : UHC.getInstance().boards.values()) {
+                                    String s = team.getTeam().getDisplayName() + " §8(§b" + owner.getInventory().getItem(4).getAmount() + " d§8) "+team.getPrefix().color.getColor()+"§7" + Symbols.DOUBLE_ARROW + " §f§l" + team.getPlayers().size() + " "+team.getPrefix().color.getColor()+"§ejoueur" + (team.getPlayers().size() != 1 ? "s" : "");
+                                    ss.setLine(finalL, s);
+                                }
+                            });
+                    l++;
                 }
-                if (timers[0] == -6) {
+
+                if (timers[0] == -1) {
                     if (players.isEmpty()) {
                         cancel();
                         canStart = true;
@@ -153,13 +156,15 @@ public class SlaveMarket extends Scenario implements Listener {
                     player[0] = playerUHC[0].getPlayer().getPlayer();
                     //tp player
                     player[0].getInventory().clear();
+                    bid = 0;
+                    bestBidder = null;
                     for (Map.Entry<PlayerUHC, ScoreboardSign> en : UHC.getInstance().boards.entrySet())
                         en.getValue().setLine(14, "§f" + player[0].getName() + " §eest mis aux enchères !");
                     Bukkit.broadcastMessage("§f" + player[0].getName() +" §aest mis aux enchères !");
-                    timers[0] = 55;
+                    timers[0] = 60;
                 }
                 if (bestBidder != null) UHC.sendInfiniteActionBarForAllPlayers(bestBidder.getTeam().getPrefix().color.getColor() + "§l" + bestBidder.getPlayer().getName() + " §7- §b" + bid + " diamants");
-                InventoryManager.setAllPlayersLevels(timers[0] + 6, (timers[0] + 6) / 60f);
+                InventoryManager.setAllPlayersLevels(timers[0], (timers[0]) / 60f);
                 timers[0]--;
             }
         }.runTaskTimer(UHC.getInstance(), 0 ,20);

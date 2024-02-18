@@ -94,6 +94,7 @@ public class PreGameListener implements Listener {
             player.setDisplayName(player.getName());
             main.getUHCTeamManager().getScoreboard().getTeam("Joueur").addEntry(player.getName());
         }
+        player.setGameMode(GameMode.ADVENTURE);
         player.setPlayerListName(player.getDisplayName());
         player.teleport(main.world.getPlatformLoc());
         main.setLobbyScoreboard(player);
@@ -266,9 +267,17 @@ public class PreGameListener implements Listener {
                         waitTicks[0]--;
                     }
                 }.runTaskTimer(main, 0L, 1L);
-            } else
-                while (SlaveMarket.owners.size() != SlaveMarket.nOwners)
-                    SlaveMarket.owners.add(main.players.get(new Random().nextInt(main.players.size())));
+            } else {
+                int max = 40;
+                while (SlaveMarket.owners.size() != SlaveMarket.nOwners && max > 0) {
+                    PlayerUHC playerUHC = main.players.get(new Random().nextInt(main.players.size()));
+                    if (SlaveMarket.owners.contains(playerUHC)) {
+                        max--;
+                        continue;
+                    }
+                    SlaveMarket.owners.add(playerUHC);
+                }
+            }
 
             new BukkitRunnable() {
                 final int[] i = {0, 0};
@@ -297,7 +306,7 @@ public class PreGameListener implements Listener {
                                         player.playSound(p.getLocation(), Sound.FIREWORK_LAUNCH, 8, 1);
                                     t.add(p);
                                     //tp p
-                                    InventoryManager.give(p, 4, new ItemStack(Material.DIAMOND, SlaveMarket.diamonds));
+                                    InventoryManager.give(p, 4, new ItemsStack(Material.DIAMOND, SlaveMarket.diamonds, "§b§lDiamants").toItemStack());
                                     p.getInventory().remove(Material.REDSTONE_COMPARATOR);
                                     p.getInventory().remove(Material.GHAST_TEAR);
                                     if (!main.getPlayerUHC(p.getUniqueId()).isHost()) p.setDisplayName(p.getDisplayName().substring(0, 2) + "§l" + p.getDisplayName().substring(2));
@@ -355,7 +364,17 @@ public class PreGameListener implements Listener {
                     PreGameListener.waitTask = null;
                 }
             }
+        } else {
+            if (current.getType() == Material.DIAMOND && current.hasItemMeta() && current.getItemMeta().hasDisplayName() && current.getItemMeta().getDisplayName().equals("§b§lDiamants"))
+                ev.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onDropDiamsSlaveMarket(PlayerDropItemEvent ev) {
+        ItemStack current = ev.getItemDrop().getItemStack();
+        if (current.getType() == Material.DIAMOND && current.hasItemMeta() && current.getItemMeta().hasDisplayName() && current.getItemMeta().getDisplayName().equals("§b§lDiamants"))
+            ev.setCancelled(true);
     }
 
 
@@ -379,7 +398,7 @@ public class PreGameListener implements Listener {
             ItemsStack it = new ItemsStack(t.getBanner());
             it.setName(t.getTeam().getDisplayName());
             it.setLore("§eJoueurs : ");
-            for (int p = 0; p < GameConfig.getTeamTypeInt((String)TEAMTYPE.getValue()); p++)
+            for (int p = 0; p < (Scenarios.SKY_DEFENDER.isActivated() ? 10 : GameConfig.getTeamTypeInt((String)TEAMTYPE.getValue())); p++)
                 if (t.getPlayers().size() - 1 >= p)
                     it.addLore(t.getPrefix().color.getColor() + " - " + t.getPlayers().get(p).getPlayer().getPlayer().getPlayerListName());
                 else it.addLore(t.getPrefix().color.getColor() + " - ");

@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import static fr.neyuux.uhc.GameConfig.ConfigurableParams.SLOTS;
@@ -39,7 +40,7 @@ public class TrueLove extends Scenario implements Listener {
 
     public static int teamSize = 1;
 
-    public static List<PlayerUHC> lovers = new ArrayList<>();
+    public static HashSet<PlayerUHC> lovers = new HashSet<>();
     private static final HashMap<PlayerUHC, UHCTeam> waitList = new HashMap<>();
 
     @Override
@@ -124,7 +125,7 @@ public class TrueLove extends Scenario implements Listener {
 
     @EventHandler
     public void onWin(GameEndEvent ev) {
-        if (UHC.getInstance().getAlivePlayers().size() > teamSize * 2) ev.setCancelled(true);
+        if (UHC.getInstance().getAlivePlayers().size() > teamSize + 1) ev.setCancelled(true);
     }
 
 
@@ -160,9 +161,9 @@ public class TrueLove extends Scenario implements Listener {
             players.removeAll(team.getDeathPlayers());
             if (players.size() < GameConfig.getTeamTypeInt(GameConfig.ConfigurableParams.TEAMTYPE.getValue().toString())) {
                 team.add(player1UHC.getPlayer().getPlayer());
-                if (!lovers.contains(player1UHC)) lovers.add(player1UHC);
+                lovers.add(player1UHC);
                 team.add(player2UHC.getPlayer().getPlayer());
-                if (!lovers.contains(player2UHC)) lovers.add(player2UHC);
+                lovers.add(player2UHC);
                 UHC.playPositiveSound(player1UHC.getPlayer().getPlayer());
                 UHC.sendTitle(player1UHC.getPlayer().getPlayer(), "§d§lTrue Love", team.getPrefix().color.getColor() + " Vous rejoignez l'équipe " + team.getTeam().getDisplayName() + " !", 3, 40, 7);
                 UHC.playPositiveSound(player2UHC.getPlayer().getPlayer());

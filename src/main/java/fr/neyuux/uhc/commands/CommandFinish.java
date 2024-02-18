@@ -1,5 +1,6 @@
 package fr.neyuux.uhc.commands;
 
+import fr.neyuux.uhc.GameConfig;
 import fr.neyuux.uhc.UHC;
 import fr.neyuux.uhc.InventoryManager;
 import org.bukkit.GameMode;
@@ -23,8 +24,8 @@ public class CommandFinish implements CommandExecutor {
 
         if (commandSender instanceof Player) {
             Player player = (Player)commandSender;
-            if (main.getGameConfig().starterModifier != null && main.getGameConfig().starterModifier.equals(player.getUniqueId())) {
-                main.getGameConfig().starterModifier = null;
+            if (GameConfig.starterModifier != null && GameConfig.starterModifier.equals(player.getUniqueId())) {
+                GameConfig.starterModifier = null;
                 InventoryManager.startInventory = new ItemStack[]{};
                 main.getInventoryManager().getStartArmor().clear();
                 PlayerInventory pi = player.getInventory();
@@ -39,8 +40,8 @@ public class CommandFinish implements CommandExecutor {
                 player.setGameMode(GameMode.ADVENTURE);
                 player.sendMessage(UHC.getPrefix() + "§dVous avez enregistré l'inventaire de Départ !");
                 UHC.playPositiveSound(player);
-            } else if (main.getGameConfig().deathInvModifier != null && main.getGameConfig().deathInvModifier.equals(player.getUniqueId())) {
-                main.getGameConfig().deathInvModifier = null;
+            } else if (GameConfig.deathInvModifier != null && GameConfig.deathInvModifier.equals(player.getUniqueId())) {
+                GameConfig.deathInvModifier = null;
                 main.getInventoryManager().getDeathInventory().clear();
                 for (ItemStack it : player.getInventory().getContents()) if (it != null) main.getInventoryManager().getDeathInventory().add(it);
                 player.sendMessage(UHC.getPrefix() + "§5Vous avez enregistré l'inventaire de Mort !");

@@ -20,6 +20,7 @@ import java.io.*;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class UHCWorld {
 
@@ -32,6 +33,8 @@ public class UHCWorld {
     public static final List<Chunk> CORRECTED_CHUNKS = new ArrayList<>();
     private static final List<World> worlds = new ArrayList<>();
     private static final List<Block> toRemovePlatform = new ArrayList<>();
+
+    private static boolean skydefender = false;
 
     public static String MAIN_WORLD = "Core";
 
@@ -68,10 +71,24 @@ public class UHCWorld {
         return this;
     }
 
-    public static World addWorld(String worldname, boolean main) {
-        World world = Bukkit.createWorld(new WorldCreator(worldname));
+    public static World addWorld(String worldname, boolean main, Consumer<World> consumer) {
+
+        World world = Bukkit.getWorld("skydefender");
+
+        if (world == null)
+            Bukkit.createWorld(new WorldCreator(worldname));
+
         worlds.add(world);
         if (main) MAIN_WORLD = worldname;
+
+        consumer.accept(world);
+
+        return world;
+    }
+
+    public static World addWorld(World world, boolean main) {
+        worlds.add(world);
+        if (main) MAIN_WORLD = world.getName();
         return world;
     }
 
@@ -80,32 +97,37 @@ public class UHCWorld {
     }
 
     public long getSeed() {
-        if (world == null) return 0;
-        return world.getSeed();
+        World w = Bukkit.getWorld(MAIN_WORLD);
+        if (w == null) return 0;
+        return w.getSeed();
     }
 
     public void changePVP(boolean value) {
-        if (world == null) throw new NullPointerException("Aucun monde n est cree");
-        world.setPVP(value);
+        World w = Bukkit.getWorld(MAIN_WORLD);
+        if (w == null) throw new NullPointerException("Aucun monde n est cree");
+        w.setPVP(value);
     }
 
     public Boolean hasPvP() {
-        if (world == null) throw new NullPointerException("Aucun monde n est cree");
-        return world.getPVP();
+        World w = Bukkit.getWorld(MAIN_WORLD);
+        if (w == null) throw new NullPointerException("Aucun monde n est cree");
+        return w.getPVP();
     }
 
     public void setDayCycle(Boolean value) {
-        if (world == null) throw new NullPointerException("Aucun monde n est cree");
-        world.setGameRuleValue("doDaylightCycle", value.toString().toLowerCase());
+        World w = Bukkit.getWorld(MAIN_WORLD);
+        if (w == null) throw new NullPointerException("Aucun monde n est cree");
+        w.setGameRuleValue("doDaylightCycle", value.toString().toLowerCase());
     }
 
     public void setTime(long value) {
-        if (world == null) throw new NullPointerException("Aucun monde n est cree");
-        world.setTime(value);
+        World w = Bukkit.getWorld(MAIN_WORLD);
+        if (w == null) throw new NullPointerException("Aucun monde n est cree");
+        w.setTime(value);
     }
 
     public void delete() {
-        if (world == null) return;
+        if (world == null || MAIN_WORLD.equals("skydefender")) return;
         MAIN_WORLD = "Core";
         for (Player p : Bukkit.getOnlinePlayers())
             p.teleport(this.getPlatformLoc());
@@ -128,6 +150,8 @@ public class UHCWorld {
     }
 
     public void createBarrierPlatform() {
+        if (MAIN_WORLD.equals("skydefender"))
+            return;
         World w = Bukkit.getWorld(MAIN_WORLD);
 
         for (int x = -25; x <= 25; x++)
@@ -144,7 +168,7 @@ public class UHCWorld {
                     toRemovePlatform.add(b2);
                 }
             }
-        if (!MAIN_WORLD.equals("Core")) loadLocationChunks(new Location(world, 0, 70, 0), true, false);
+        if (!MAIN_WORLD.equals("Core")) loadLocationChunks(new Location(w, 0, 70, 0), true, false);
     }
 
     public Location getPlatformLoc() {
@@ -162,7 +186,7 @@ public class UHCWorld {
                 Bukkit.broadcastMessage(UHC.getPrefix() + "§2Chargement du monde : §a§l" + df.format(d / (main.getAlivePlayers().size() + 1) * 100) + "%§2.");
             }
         }
-        loadLocationChunks(new Location(world, 0, 70, 0), true, true);
+        loadLocationChunks(new Location(Bukkit.getWorld(MAIN_WORLD), 0, 70, 0), true, true);
         Bukkit.broadcastMessage(UHC.getPrefix() + "§2Chargement du monde : §a§l100%§2.");
         loaded = true;
     }
@@ -192,8 +216,9 @@ public class UHCWorld {
         return chunks;
     }
 
-    public void generateChunks(final World.Environment env) {
+    public void generateChunks(final World world) {
         Double size = (Double) GameConfig.ConfigurableParams.BORDERSIZE.getValue();
+        World.Environment env = world.getEnvironment();
 
         if (env == World.Environment.NETHER)
             size /= 2;
@@ -201,14 +226,14 @@ public class UHCWorld {
         VeinGenerator veinGenerator = new VeinGenerator();
         SugarCaneGenerator sugarCaneGenerator = new SugarCaneGenerator();
         long time = System.currentTimeMillis();
-        UHCChunkLoader chunkLoaderThread = new UHCChunkLoader(world, size.intValue(), 250, 18) {
+        UHCChunkLoader chunkLoaderThread = new UHCChunkLoader(world, size.intValue(), 300, 10) {
             public void onDoneLoadingWorld() {
                 String finalTime = UHC.getTimer(Math.toIntExact((System.currentTimeMillis() - time) / 1000));
 
                 Bukkit.getLogger().info("UHC >> Environment " + env.toString() + " 100% loaded");
                 Bukkit.broadcastMessage(UHC.getPrefix() + "§2Préchargement du monde terminé ! §o(Temps utilisé : " + finalTime + ")");
                 if (env.equals(World.Environment.NORMAL) && (boolean)GameConfig.ConfigurableParams.NETHER.getValue()) {
-                    UHCWorld.this.generateChunks(World.Environment.NETHER);
+                    UHCWorld.this.generateChunks(getNether());
                 }
             }
 
@@ -226,11 +251,13 @@ public class UHCWorld {
     }
 
     public static boolean isFarEnough(ArrayList<Location> list, Location loc, Integer player, Integer center, Integer border) {
-        if (world == null) throw new NullPointerException("Aucun monde n est cree");
+        World w = Bukkit.getWorld(MAIN_WORLD);
+        
+        if (w == null) throw new NullPointerException("Aucun monde n est cree");
         boolean farEnought = true;
 
         for (Location l : list)
-            if (l.distance(loc) < player || loc.distance(new Location(world, 0, 0, 0)) < center
+            if (l.distance(loc) < player || loc.distance(new Location(w, 0, 0, 0)) < center
                     || (double) GameConfig.ConfigurableParams.BORDERSIZE.getValue() - loc.getBlockX() < border
                     || (double) GameConfig.ConfigurableParams.BORDERSIZE.getValue() - loc.getBlockZ() < border) {
                 farEnought = false;
@@ -297,6 +324,14 @@ public class UHCWorld {
         return end;
     }
 
+    public static boolean isSkydefender() {
+        return skydefender;
+    }
+
+    public static void setSkydefender(boolean skydefender) {
+        UHCWorld.skydefender = skydefender;
+    }
+
     public static void setAchievements(Boolean value) {
         final CraftServer server = (CraftServer) Bukkit.getServer();
         final MinecraftServer minecraftServer = server.getServer();
@@ -320,7 +355,7 @@ public class UHCWorld {
 
     public void initialiseWorldBorder() {
         int size = (int) Math.round((double)GameConfig.ConfigurableParams.BORDERSIZE.getValue());
-        World world = Bukkit.getWorld("" + getSeed());
+        World world = Bukkit.getWorld(MAIN_WORLD);
         WorldBorder border = world.getWorldBorder();
         border.setCenter(0, 0);
         border.setSize(size);
@@ -338,7 +373,7 @@ public class UHCWorld {
         int size = (int) Math.round((double)GameConfig.ConfigurableParams.BORDERSIZE.getValue());
         int fsize = (int) Math.round((double)GameConfig.ConfigurableParams.FINAL_BORDERSIZE.getValue());
         double speed = Math.round((double)GameConfig.ConfigurableParams.BORDERSPEED.getValue());
-        World world = Bukkit.getWorld("" + getSeed());
+        World world = Bukkit.getWorld(MAIN_WORLD);
         WorldBorder border = world.getWorldBorder();
         border.setSize(fsize, (long) (((size - fsize) / speed)) / 2);
     }

@@ -41,8 +41,8 @@ public class GameConfig implements Listener {
     private final UHC main;
     private final UHC.Modes mode;
     public final ArrayList<UUID> hosts = new ArrayList<>();
-    public UUID starterModifier;
-    public UUID deathInvModifier;
+    public static UUID starterModifier;
+    public static UUID deathInvModifier;
 
     public GameConfig(UHC main, UHC.Modes mode) {
         this.main = main;
@@ -535,7 +535,7 @@ public class GameConfig implements Listener {
             if (current.hasItemMeta() && !current.getType().equals(Material.AIR) && !current.equals(getReturnArrow())) {
                 if (current.getItemMeta().getDisplayName().startsWith("§a§lModifier l'invetaire de ")) {
                     if (current.getItemMeta().getDisplayName().endsWith("Départ")) {
-                        if (starterModifier != null) {
+                        if (starterModifier != null && !player.getUniqueId().equals(starterModifier)) {
                             Player modifier = Bukkit.getPlayer(starterModifier);
 
                             if (modifier == null)
@@ -552,7 +552,7 @@ public class GameConfig implements Listener {
                         InventoryManager.clearInventory(player);
                         main.getInventoryManager().giveStartInventory(player);
                     } else {
-                        if (deathInvModifier != null) {
+                        if (deathInvModifier != null && !player.getUniqueId().equals(deathInvModifier)) {
                             Player modifier = Bukkit.getPlayer(deathInvModifier);
 
                             if (modifier == null)
@@ -573,9 +573,11 @@ public class GameConfig implements Listener {
                     if (current.getItemMeta().getDisplayName().endsWith("Départ")) {
                         InventoryManager.startInventory = new ItemStack[]{};
                         main.getInventoryManager().getStartArmor().clear();
+                        starterModifier = null;
                         player.sendMessage(UHC.getPrefix() + "§cVous avez supprimé l'inventaire de Départ.");
                     } else {
                         main.getInventoryManager().getDeathInventory().clear();
+                        deathInvModifier = null;
                         player.sendMessage(UHC.getPrefix() + "§cVous avez supprimé l'inventaire de Mort.");
                     }
                     UHC.playPositiveSound(player);

@@ -110,6 +110,13 @@ public class UHCTeamManager {
         return null;
     }
 
+    public UHCTeam getByID(int id) {
+        for (UHCTeam t : teams)
+            if (t.id == id)
+                return t;
+        return null;
+    }
+
     private List<UHCTeam> sortTeams() {
         List<UHCTeam> l = new ArrayList<>(teams);
         l.sort((o1, o2) -> {

@@ -44,6 +44,7 @@ public class Anonymous extends Scenario implements Listener {
     private static int used;
     private static final HashMap<PlayerUHC, String> realName = new HashMap<>();
     private static final UHC main = UHC.getInstance();
+    private PlayerSkin skin;
 
     @Override
     protected void activate() {
@@ -63,7 +64,9 @@ public class Anonymous extends Scenario implements Listener {
         if (usedName.equals("")) usedName = choosable.get(new Random().nextInt(choosable.size())).getPlayer().getName();
         Bukkit.broadcastMessage(getPrefix() + "§6Identité sélectionnée pour la partie : §b§l" + usedName + "§6.");
 
-        for (PlayerUHC pl : choosable) changeNameAndSkin(pl.getPlayer().getPlayer(), "§kAnonymous" + used + "§r", usedName);
+        this.skin = new PlayerSkin(Bukkit.getOfflinePlayer(usedName).getUniqueId());
+
+        for (PlayerUHC pl : choosable) changeNameAndSkin(pl.getPlayer().getPlayer(), "§kAnonymous" + used + "§r", skin);
     }
 
 
@@ -76,6 +79,7 @@ public class Anonymous extends Scenario implements Listener {
     @EventHandler
     public void onRel(PluginReloadEvent ev) {
         usedName = "";
+        this.skin = null;
         realName.clear();
     }
 
@@ -83,7 +87,7 @@ public class Anonymous extends Scenario implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
-        if(!main.getPlayerUHC(p.getUniqueId()).isSpec()) changeNameAndSkin(p, "§kAnonymous" + used + "§r", usedName);
+        if(!main.getPlayerUHC(p.getUniqueId()).isSpec()) changeNameAndSkin(p, "§kAnonymous" + used + "§r", this.skin);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -113,7 +117,7 @@ public class Anonymous extends Scenario implements Listener {
         ev.setMessage(message);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onEnd(GameEndEvent ev) {
         if (!ev.isCancelled())
             resetNamesAndSkins();
@@ -121,7 +125,7 @@ public class Anonymous extends Scenario implements Listener {
 
 
 
-    public static void changeNameAndSkin(Player p, String customName, String skinName) {
+    public static void changeNameAndSkin(Player p, String customName, PlayerSkin skin) {
         realName.put(main.getPlayerUHC(p.getUniqueId()), p.getName());
 
         UHCTeam t = null;
@@ -144,7 +148,6 @@ public class Anonymous extends Scenario implements Listener {
             Field bH = entityHuman.getDeclaredField("bH");
             bH.setAccessible(true);
             GameProfile gp = new GameProfile(p.getUniqueId(), customName);
-            PlayerSkin skin = new PlayerSkin(Bukkit.getOfflinePlayer(skinName).getUniqueId().toString().replace("-", ""));
             if (skin.getSkinName() != null)
                 gp.getProperties().put(skin.getSkinName(), new Property(skin.getSkinName(), skin.getSkinValue(), skin.getSkinSignature()));
             bH.set(entityPlayer, gp);
@@ -185,7 +188,7 @@ public class Anonymous extends Scenario implements Listener {
                     Field bH = entityHuman.getDeclaredField("bH");
                     bH.setAccessible(true);
                     GameProfile gp = new GameProfile(p.getUniqueId(), en.getValue());
-                    PlayerSkin skin = new PlayerSkin(Bukkit.getOfflinePlayer(en.getValue()).getUniqueId().toString().replace("-", ""));
+                    PlayerSkin skin = new PlayerSkin(Bukkit.getOfflinePlayer(en.getValue()).getUniqueId());
                     if (skin.getSkinName() != null)
                         gp.getProperties().put(skin.getSkinName(), new Property(skin.getSkinName(), skin.getSkinValue(), skin.getSkinSignature()));
                     bH.set(entityPlayer, gp);
