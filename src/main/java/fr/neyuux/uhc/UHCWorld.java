@@ -1,5 +1,6 @@
 package fr.neyuux.uhc;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import fr.neyuux.uhc.listeners.WorldListener;
 import fr.neyuux.uhc.util.SugarCaneGenerator;
 import fr.neyuux.uhc.util.UHCChunkLoader;
@@ -20,6 +21,7 @@ import java.io.*;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 public class UHCWorld {
@@ -106,6 +108,8 @@ public class UHCWorld {
         World w = Bukkit.getWorld(MAIN_WORLD);
         if (w == null) throw new NullPointerException("Aucun monde n est cree");
         w.setPVP(value);
+        if (getNether() != null) getNether().setPVP(value);
+        if (getEnd() != null) getEnd().setPVP(value);
     }
 
     public Boolean hasPvP() {
@@ -353,9 +357,16 @@ public class UHCWorld {
         }
     }
 
-    public void initialiseWorldBorder() {
+    public void initialiseWorlds() {
+        this.initWorld(Bukkit.getWorld(MAIN_WORLD));
+        if ((boolean)GameConfig.ConfigurableParams.NETHER.getValue())
+            this.initWorld(getNether());
+        if ((boolean)GameConfig.ConfigurableParams.END.getValue())
+            this.initWorld(getEnd());
+    }
+
+    private void initWorld(World world) {
         int size = (int) Math.round((double)GameConfig.ConfigurableParams.BORDERSIZE.getValue());
-        World world = Bukkit.getWorld(MAIN_WORLD);
         WorldBorder border = world.getWorldBorder();
         border.setCenter(0, 0);
         border.setSize(size);
@@ -370,12 +381,13 @@ public class UHCWorld {
     }
 
     public void startWorldBorder() {
-        int size = (int) Math.round((double)GameConfig.ConfigurableParams.BORDERSIZE.getValue());
-        int fsize = (int) Math.round((double)GameConfig.ConfigurableParams.FINAL_BORDERSIZE.getValue());
-        double speed = Math.round((double)GameConfig.ConfigurableParams.BORDERSPEED.getValue());
         World world = Bukkit.getWorld(MAIN_WORLD);
         WorldBorder border = world.getWorldBorder();
-        border.setSize(fsize, (long) (((size - fsize) / speed)) / 2);
+        final double speed = (double)GameConfig.ConfigurableParams.BORDERSPEED.getValue();
+        final double fsize = (double) GameConfig.ConfigurableParams.FINAL_BORDERSIZE.getValue();
+        final double diff = Math.abs(border.getSize() - fsize);
+        final double time = diff / speed;
+        border.setSize(fsize, (long) time);
     }
 
     public static ArmorStand getArmorStand(Location loc) {

@@ -240,7 +240,7 @@ public class PlayerUHC {
         inv.setItem(7, new ItemsStack(Material.INK_SACK, (short)1, "§cVie du joueur", "§c§lVie : §4" + df.format(player.getPlayer().getHealth()) + Symbols.HEARTH, "§e§lAbso : §6" + df.format(((CraftPlayer)player.getPlayer().getPlayer()).getHandle().getAbsorptionHearts()), "§d§lSaturation : §5" + foodLevel).toItemStack());
         ItemsStack food = new ItemsStack(Material.BREWING_STAND_ITEM, "§5Effets de potion du joueur");
         for (PotionEffect pe : player.getPlayer().getActivePotionEffects())
-            food.addLore("§e" + UHC.translatePotionEffect(pe.getType()) + "§l" + (pe.getAmplifier() - 1) + "§7: §6" + UHC.getTimer(pe.getDuration() / 20));
+            food.addLore("§e" + UHC.translatePotionEffect(pe.getType()) + "§l " + (pe.getAmplifier() + 1) + "§7: §6" + UHC.getTimer(pe.getDuration() / 20));
         inv.setItem(6, food.toItemStack());
         inv.setItem(5, new ItemsStack(Material.EXP_BOTTLE, "§aNiveau du joueur", "§aNiveau : §l" + player.getPlayer().getLevel(), "§2Expérience : §l" + player.getPlayer().getExp()).toItemStack());
 

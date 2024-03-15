@@ -132,7 +132,7 @@ public class UHCTeam {
             Player player = pu.getPlayer().getPlayer();
 
             if (((String) GameConfig.ConfigurableParams.TEAMTYPE.getValue()).startsWith("To")) {
-                player.sendMessage(UHC.getPrefix() + prefix.color.getColor() + "Vous avez bien quitté l'équipe " + team.getDisplayName() + " !");
+                player.sendMessage(UHC.getPrefix() + prefix.color.getColor() + "Vous avez quitté l'équipe " + team.getDisplayName() + " !");
                 player.setDisplayName(player.getName());
                 player.setPlayerListName(player.getDisplayName());
 
@@ -205,11 +205,8 @@ public class UHCTeam {
     }
 
     public void removeTeam() {
-        for (PlayerUHC pu : players) {
-            Player player = pu.getPlayer().getPlayer();
-            if (player != null)
-                player.setDisplayName(player.getName());
-        }
+
+        for (PlayerUHC pu : new ArrayList<>(players)) this.leave(pu);
 
         try {
             if (team != null)

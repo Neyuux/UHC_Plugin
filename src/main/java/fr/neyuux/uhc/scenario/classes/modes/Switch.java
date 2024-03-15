@@ -113,6 +113,8 @@ public class Switch extends Scenario implements Listener {
             baseTeams.get(player2UHC).add(player1);
             player1.sendMessage(UHC.getPrefix() + Scenarios.SWITCH.getDisplayName() + " §8§l" + Symbols.DOUBLE_ARROW + " §eVous avez switch avec " + baseTeams.get(player2UHC).getTeam().getPrefix() + player2.getName() + " §e!");
             player1.playSound(player1.getLocation(), Sound.ENDERMAN_TELEPORT, 8, 1f);
+            UHC.getInstance().boards.get(player1UHC).setLine(4, "§c§lKills §c: §l" + player1UHC.getKills() + " §4(" + player1UHC.getTeam().getAlivePlayersKills() + ")");
+            UHC.getInstance().boards.get(player1UHC).setLine(0, player1.getDisplayName());
         }
     }
 

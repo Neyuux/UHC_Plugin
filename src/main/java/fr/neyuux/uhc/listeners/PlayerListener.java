@@ -116,7 +116,7 @@ public class PlayerListener implements Listener {
         }
         if (main.isState(Gstate.PLAYING)) main.setGameScoreboard(player);
         else if (main.isState(Gstate.FINISHED)) main.setKillsScoreboard(player);
-        UHC.setPlayerTabList(player, UHC.getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
+        UHC.setPlayerTabList(player, UHC.getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lManon" + "\n" + "§bDev by §d§lManon" + "\n", "\n" + "§fMerci à moi même.");
         if (playerUHC.getTeam() != null && playerUHC.isAlive())
             playerUHC.getTeam().reconnect(player);
         if (playerUHC.isSpec()) player.setDisplayName("§8[§7Spectateur§8] §7" + player.getName() + "§r");
@@ -292,14 +292,18 @@ public class PlayerListener implements Listener {
         HashMap<Material, Loot> loots = VarsLoot.getBlocksLoots();
 
         if (loots.containsKey(mat)) {
-            Loot loot = loots.get(mat);
+            event.setCancelled(true);
+            b.setType(Material.AIR);
 
+            Loot loot = loots.get(mat);
             World w = b.getLocation().getWorld();
 
             if (loot.getExp() != 0) {
                 ExperienceOrb orb = w.spawn(b.getLocation(), ExperienceOrb.class);
                 orb.setExperience((int) (event.getExpToDrop() == 0 ? loot.getExp() : loot.getExp() * event.getExpToDrop()));
             }
+
+            Location location = b.getLocation().clone().add(0.5, 0.5, 0.5);
 
             for (LootItem item : loot.getLoots()) {
                 ItemStack is = item.getLootItem();
@@ -310,12 +314,10 @@ public class PlayerListener implements Listener {
                         byte data = (byte) (b.getData() & 0x3);
                         is = new ItemStack(mat, amount, data);
                     }
-                    w.dropItemNaturally(b.getLocation().add(0.5, 0.5, 0.5), is);
+                    w.dropItemNaturally(location, is);
                 }
             }
             event.setExpToDrop(0);
-            event.setCancelled(true);
-            b.setType(Material.AIR);
         }
     }
 

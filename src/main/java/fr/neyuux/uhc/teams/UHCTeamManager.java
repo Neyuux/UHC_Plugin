@@ -44,14 +44,11 @@ public class UHCTeamManager {
     public void removeTeam(UHCTeam team) {
         team.removeTeam();
         teams.remove(team);
-        UHCTeamColors.used =- 1;
+        UHCTeamColors.used -= 1;
     }
 
     public void clearTeams() {
         for (UHCTeam t : teams) {
-            try {
-                for (PlayerUHC p : t.getPlayers()) t.leave(p);
-            } catch (ConcurrentModificationException ignored) {}
             t.removeTeam();
         }
         teams.clear();

@@ -91,6 +91,11 @@ public class UHCRunnable extends BukkitRunnable {
                                         if (h <= 40) shealth = "§6";
                                         if (h <= 20) shealth = "§c";
 
+                                        if (!l.getWorld().equals(tu.getPlayer().getPlayer().getLocation().getWorld())) {
+                                            tm.append(shealth).append(" ").append("§c\u2715 §7| ");
+                                            continue;
+                                        }
+
                                         String sdist = "§b";
                                         double d = l.distance(tu.getPlayer().getPlayer().getLocation());
                                         if (d >= 30) sdist = "§a";

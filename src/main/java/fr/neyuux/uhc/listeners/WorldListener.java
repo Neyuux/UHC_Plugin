@@ -18,6 +18,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -147,5 +148,12 @@ public class WorldListener implements Listener {
         }
     }
 
-
+    @EventHandler
+    public void onLeaveDecay(LeavesDecayEvent event) {
+        event.getBlock().setType(Material.AIR);
+        if (Math.random() * 100 < (double)GameConfig.ConfigurableParams.APPLE.getValue()) {
+            event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(),
+                    new ItemStack(Material.APPLE));
+        }
+    }
 }

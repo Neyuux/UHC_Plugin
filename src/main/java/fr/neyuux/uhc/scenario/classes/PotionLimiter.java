@@ -49,8 +49,9 @@ public class PotionLimiter extends Scenario implements Listener {
         Player p = (Player) e.getPlayer();
         Inventory inv = e.getInventory();
         if (e.getInventory() instanceof BrewerInventory) {
-            for (int i = 0; i < 3; i++)
-                if (inv.getItem(i).getType().equals(Material.POTION)) {
+            for (int i = 0; i < 3; i++) {
+                ItemStack it = inv.getItem(i);
+                if (it != null && inv.getItem(i).getType().equals(Material.POTION)) {
                     Potion pot = Potion.fromItemStack(inv.getItem(i));
                     if (!hasPotions) cancel(p, e, pot.toItemStack(1), getPrefix() + "§cLes potions sont désactivées.");
                     if (!hasLevel2Potions && pot.getLevel() > 1) cancel(p, e, pot.toItemStack(1), getPrefix() + "§cLes potions de niveau 2 sont désactivées.");
@@ -67,6 +68,7 @@ public class PotionLimiter extends Scenario implements Listener {
                         else if (!hasPoison && pe.getType().equals(PotionEffectType.POISON)) cancel(p, e, pot.toItemStack(1), getPrefix() + "§cLes potions de poison sont désactivées.");
                         else if (!hasRegeneration && pe.getType().equals(PotionEffectType.REGENERATION)) cancel(p, e, pot.toItemStack(1), getPrefix() + "§cLes potions de régénération sont désactivées.");
                 }
+            }
         }
     }
 

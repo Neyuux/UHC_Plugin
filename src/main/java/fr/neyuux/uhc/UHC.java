@@ -538,7 +538,7 @@ public class UHC extends JavaPlugin {
 			fr.neyuux.uhc.InventoryManager.giveWaitInventory(p);
 			p.updateInventory();
 			setLobbyScoreboard(p);
-			UHC.setPlayerTabList(p, getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lNeyuux_" + "\n", "\n" + "§fMerci à moi même.");
+			UHC.setPlayerTabList(p, getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lManon" + "\n" + "§bDev by §d§lManon" + "\n", "\n" + "§fMerci à moi même.");
 
 			try {
 				Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Joueur").addEntry(p.getName());

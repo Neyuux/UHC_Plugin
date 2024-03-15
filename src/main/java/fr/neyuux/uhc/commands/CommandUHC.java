@@ -58,8 +58,6 @@ public class CommandUHC implements CommandExecutor {
                                     "§6/uhc aablist §cAffiche la liste des assaults and battery de la partie");
 
                             player.openInventory(main.getGameConfig().getGameConfigInv(player));
-
-                            Bukkit.broadcastMessage(player.getItemInHand().getType() + "");
                         }
                     break;
 

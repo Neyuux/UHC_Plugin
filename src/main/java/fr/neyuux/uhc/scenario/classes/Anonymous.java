@@ -45,6 +45,7 @@ public class Anonymous extends Scenario implements Listener {
     private static final HashMap<PlayerUHC, String> realName = new HashMap<>();
     private static final UHC main = UHC.getInstance();
     private PlayerSkin skin;
+    private static final HashMap<PlayerUHC, PlayerSkin> realSkin = new HashMap<>();
 
     @Override
     protected void activate() {
@@ -127,6 +128,7 @@ public class Anonymous extends Scenario implements Listener {
 
     public static void changeNameAndSkin(Player p, String customName, PlayerSkin skin) {
         realName.put(main.getPlayerUHC(p.getUniqueId()), p.getName());
+        realSkin.put(main.getPlayerUHC(p.getUniqueId()), new PlayerSkin(p.getUniqueId()));
 
         UHCTeam t = null;
         if (main.getPlayerUHC(p.getUniqueId()).getTeam() != null) {
@@ -188,7 +190,7 @@ public class Anonymous extends Scenario implements Listener {
                     Field bH = entityHuman.getDeclaredField("bH");
                     bH.setAccessible(true);
                     GameProfile gp = new GameProfile(p.getUniqueId(), en.getValue());
-                    PlayerSkin skin = new PlayerSkin(Bukkit.getOfflinePlayer(en.getValue()).getUniqueId());
+                    PlayerSkin skin = realSkin.get(en.getKey());
                     if (skin.getSkinName() != null)
                         gp.getProperties().put(skin.getSkinName(), new Property(skin.getSkinName(), skin.getSkinValue(), skin.getSkinSignature()));
                     bH.set(entityPlayer, gp);

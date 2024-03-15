@@ -103,9 +103,10 @@ public class NMSPatcher {
         mobs.add(new BiomeBase.BiomeMeta(EntitySheep.class, 1, 3, 4));
         mobs.add(new BiomeBase.BiomeMeta(EntityRabbit.class, 2, 2, 2));
         mobs.add(new BiomeBase.BiomeMeta(EntityPig.class, 4, 4, 5));
-        mobs.add(new BiomeBase.BiomeMeta(EntityChicken.class, 10, 5, 7));
-        mobs.add(new BiomeBase.BiomeMeta(EntityCow.class, 10, 5, 7));
+        mobs.add(new BiomeBase.BiomeMeta(EntityChicken.class, 9, 4, 7));
+        mobs.add(new BiomeBase.BiomeMeta(EntityCow.class, 9, 4, 7));
         mobs.add(new BiomeBase.BiomeMeta(EntityWolf.class, 4, 1, 4));
+        mobs.add(new BiomeBase.BiomeMeta(EntityHorse.class, 1, 2, 5));
 
         defaultMobField.set(biomeBase, mobs);
         Reflection.setFinalStatic(biome, biomeBase);

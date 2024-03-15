@@ -498,7 +498,7 @@ public class GameConfig implements Listener {
                         }
                     }
                     if (param.equals(TEAMTYPE)) {
-                        if (mode.equals(UHC.Modes.LG) || Scenarios.SKY_DEFENDER.isActivated()) {
+                        if (mode.equals(UHC.Modes.LG) || Scenarios.SKY_DEFENDER.isActivated() || Scenarios.SLAVE_MARKET.isActivated()) {
                             player.sendMessage(UHC.getPrefix() + "§cImpossible de changer la taille des équipes avec ce mode.");
                             player.closeInventory();
                             return;

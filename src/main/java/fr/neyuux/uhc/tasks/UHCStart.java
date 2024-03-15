@@ -181,7 +181,7 @@ public class UHCStart extends BukkitRunnable {
             main.world.loadChunks();
             main.world.setTime(0);
             main.world.setDayCycle((Boolean)GameConfig.ConfigurableParams.DAY_CYCLE.getValue());
-            main.world.initialiseWorldBorder();
+            main.world.initialiseWorlds();
             UHCWorld.removePlatform();
             
             if((boolean) GameConfig.ConfigurableParams.CRAFT_GOLDEN_HEAD.getValue()) {
