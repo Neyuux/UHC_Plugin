@@ -102,7 +102,7 @@ public class PreGameListener implements Listener {
         InventoryManager.giveWaitInventory(player);
         UHC.setPlayerTabList(player, UHC.getPrefixWithoutArrow() + "\n" + "§fBienvenue sur la map de §c§lManon" + "\n" + "§bDev by §d§lManon" + "\n", "\n" + "§fMerci à moi même.");
 
-        int onlines = Bukkit.getOnlinePlayers().size();
+        int onlines = main.players.size();
         int maxonlines = (int) GameConfig.ConfigurableParams.SLOTS.getValue();
         String joinmessage = "§a" + onlines;
         if (onlines >= (maxonlines / 4)) joinmessage = "§3" + onlines;

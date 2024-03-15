@@ -435,9 +435,6 @@ public class PlayerListener implements Listener {
             e.setResult(PlayerLoginEvent.Result.KICK_BANNED);
             e.setKickMessage(UHC.getPrefixWithoutArrow() + "\n" + "§cVous êtes banni !");
         }
-
-        e.setResult(PlayerLoginEvent.Result.ALLOWED);
-        e.allow();
     }
 
 }

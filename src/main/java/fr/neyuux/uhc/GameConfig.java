@@ -640,7 +640,7 @@ public class GameConfig implements Listener {
                     ItemMeta itm = inv.getItem(4).getItemMeta();
                     itm.setLore(Collections.singletonList("§bValeur : " + cp.getName().substring(0, 2) + "§l" + cp.getVisibleValue()));
                     inv.getItem(4).setItemMeta(itm);
-                    main.players.forEach(playerUHC -> main.boards.get(playerUHC).setLine(4, "§6§lSlots §6: §f" + Bukkit.getServer().getOnlinePlayers().size() + "§6/§e" + GameConfig.ConfigurableParams.SLOTS.getValue()));
+                    main.players.forEach(playerUHC -> main.boards.get(playerUHC).setLine(4, "§6§lSlots §6: §f" + main.players.size() + "§6/§e" + GameConfig.ConfigurableParams.SLOTS.getValue()));
                 }
             } else if (current.equals(getReturnArrow())) {
                 if (inv.getName().endsWith("§d§lStarter")) pp = ParamParts.STARTER;
